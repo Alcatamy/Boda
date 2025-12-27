@@ -69,14 +69,18 @@ export default function GallerySection() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
             >
-              <div style={{ position: 'relative', width: '100%', height: 'auto' }}>
+              {/* Aspect Ratio Container for Masonry items. 
+                  Since we don't have dimensions, we use 'auto' height but Next.js needs help.
+                  We'll use width/height=0 and sizes="100vw" style trick for auto-height images */}
+              <div style={{ position: 'relative', width: '100%', marginBottom: '1rem' }}>
                  <Image 
                   src={getImageUrl(photo.storage_path)} 
-                  alt={photo.caption || "Wedding moment"} 
-                  width={500}
-                  height={500}
+                  alt={photo.caption || "Wedding moment"}
+                  width={600}
+                  height={800} // Placeholder aspect ratio, but CSS will override
                   className={styles.image}
-                  style={{ width: '100%', height: 'auto' }}
+                  style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
             </motion.div>
