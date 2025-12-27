@@ -11,7 +11,8 @@ export default function Logistics() {
     { time: "18:00", event: "Ceremonia Religiosa" },
     { time: "20:00", event: "Cóctel de Bienvenida" },
     { time: "21:30", event: "Banquete" },
-    { time: "00:00", event: "Fiesta" },
+    { time: "00:00", event: "Baile y Fiesta" },
+    { time: "04:00", event: "Fin de Fiesta" },
   ];
 
   return (
@@ -100,6 +101,14 @@ export default function Logistics() {
             <div className={styles.transportInfo}>
               <Calendar className={styles.smallIcon} size={20} />
               <p>Sábado, 25 de Julio de 2026</p>
+            </div>
+
+            <div className={styles.separador} style={{ margin: '1.5rem 0', borderTop: '1px solid var(--color-border)' }} />
+
+            <div className={styles.contactInfo} style={{ textAlign: 'center' }}>
+               <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', marginBottom: '0.5rem' }}>Contacto</h4>
+               <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Nadia: 646 46 14 47</p>
+               <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Adrián: 691 77 22 32</p>
             </div>
             
             <div style={{ marginTop: "2rem" }}>

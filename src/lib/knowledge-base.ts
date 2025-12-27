@@ -8,32 +8,30 @@ GRAN DÍA:
 - Ceremonia: Ermita de Nuestra Señora de los Remedios, Colmenar Viejo (18:00h).
 - Celebración: Hacienda Mityana, Colmenar Viejo (20:00h).
 
-HORARIOS:
-- 17:30: Llegada de invitados a la Ermita.
-- 18:00: Ceremonia Religiosa en Ermita de Nuestra Señora de los Remedios.
-- 20:00: Cóctel de Bienvenida en Hacienda Mityana.
+HORARIOS DETALLADOS:
+- 18:00: Ceremonia Religiosa en la Ermita.
+- 20:00: Inicio del Cóctel en Hacienda Mityana.
 - 21:30: Banquete / Cena.
-- 00:00: Barra libre y fiesta (estimado).
+- 00:00: Comienzo del baile y la fiesta.
+- 04:00: Fin de la celebración.
 
-UBICACIONES:
-1. CEREMONIA (18:00h):
+UBICACIONES EXACTAS:
+1. CEREMONIA:
    - Ermita de Nuestra Señora de los Remedios.
-   - Dirección: Carretera de Guadalix, Km 4, 5, 28770, Colmenar Viejo.
+   - Dirección: Carretera de Guadalix, Km 4,5, 28770, Colmenar Viejo, Madrid.
 
-2. CELEBRACIÓN (20:00h):
+2. CELEBRACIÓN:
    - Hacienda Mityana.
-   - Dirección: Carretera M - 607 km 37.8, 28770, Colmenar Viejo.
+   - Dirección: Carretera M-607 km 37.8, 28770, Colmenar Viejo, Madrid.
+   - Nota: Hay un trayecto corto entre la Ermita y la Hacienda.
 
-TRANSPORTE:
-- (Pendiente de confirmar detalles de autobuses por los novios. Si preguntan, di que se confirmará más adelante).
-
-DRESS CODE:
-- Etiqueta formal / Cocktail elegante.
+CONFIRMACIÓN Y CONTACTO:
+- Los invitados pueden confirmar en esta web (sección RSVP).
+- Teléfonos de contacto (para dudas urgentes):
+  - Nadia: 646 46 14 47
+  - Adrián: 691 77 22 32
 
 REGALOS:
 - Vuestra presencia es nuestro mayor regalo.
 - Disponemos de número de cuenta (consultar sección de Regalo en la web).
-
-CONTACTO DE EMERGENCIA EL DÍA DE LA BODA:
-- (Pendiente de asignar).
 `;
