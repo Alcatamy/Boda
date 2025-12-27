@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
     <div className={styles.container}>
       <div className={styles.card}>
         <h1 className={styles.title}>Admin Access</h1>
-        <p className={styles.subtitle}>Boda Adriana & Adrián</p>
+        <p className={styles.subtitle}>Boda Nadia & Adrián</p>
         
         <form onSubmit={handleLogin} className={styles.form}>
           <div className={styles.field}>

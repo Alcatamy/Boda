@@ -12,8 +12,6 @@ type FormData = {
   lastName: string;
   attending: string; // "yes" | "no"
   dietaryRestrictions: string;
-  hasPlusOne: boolean;
-  plusOneName: string;
   message: string;
 };
 
@@ -23,7 +21,6 @@ export default function RsvpForm() {
   
   const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
   const attending = watch("attending");
-  const hasPlusOne = watch("hasPlusOne");
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
@@ -38,9 +35,8 @@ export default function RsvpForm() {
             last_name: data.lastName,
             attending: data.attending === "yes",
             dietary_restrictions: data.dietaryRestrictions,
-            has_plus_one: data.hasPlusOne,
-            plus_one_name: data.plusOneName,
             message: data.message,
+            // has_plus_one and plus_one_name removed
           },
         ]);
 
@@ -142,32 +138,7 @@ export default function RsvpForm() {
                 rows={2}
               />
             </div>
-
-            <div className={styles.checkboxGroup}>
-              <label className={styles.checkboxLabel}>
-                <input 
-                  type="checkbox" 
-                  {...register("hasPlusOne")} 
-                  className={styles.checkbox}
-                />
-                <span>¿Llevas acompañante? (+1)</span>
-              </label>
-            </div>
-
-            {hasPlusOne && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={styles.fieldGroup}
-              >
-                <label htmlFor="plusOneName">Nombre del Acompañante</label>
-                <input 
-                  {...register("plusOneName")} 
-                  placeholder="Nombre completo"
-                  className={styles.input}
-                />
-              </motion.div>
-            )}
+            {/* Removed Plus One Checkbox and Logic */}
           </motion.div>
         )}
       </AnimatePresence>

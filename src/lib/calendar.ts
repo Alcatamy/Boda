@@ -35,7 +35,7 @@ END:VCALENDAR`;
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.setAttribute("download", "boda-adriana-y-adrian.ics");
+  link.setAttribute("download", "boda-nadia-y-adrian.ics");
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
