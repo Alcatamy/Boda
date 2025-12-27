@@ -134,10 +134,10 @@ export default function RsvpForm() {
             className={styles.conditionalSection}
           >
             <div className={styles.fieldGroup}>
-              <label htmlFor="dietaryRestrictions">Alergias o Restricciones Alimentarias</label>
+              <label htmlFor="dietaryRestrictions">Alergias, Intolerancias o Especificaciones</label>
               <textarea 
                 {...register("dietaryRestrictions")} 
-                placeholder="Ej: Vegetariano, alergia a nueces..."
+                placeholder="Ej: Sin gluten, Vegano, Alergia a nueces..."
                 className={styles.textarea}
                 rows={2}
               />
