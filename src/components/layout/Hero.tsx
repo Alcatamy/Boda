@@ -1,0 +1,63 @@
+"use client";
+
+import { useRef } from "react";
+import Image from "next/image";
+import { motion, useScroll, useTransform } from "framer-motion";
+import styles from "./Hero.module.css";
+
+export default function Hero() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
+  return (
+    <section ref={containerRef} className={styles.hero}>
+      {/* Background Image with Overlay */}
+      <div className={styles.imageWrapper}>
+        <motion.div style={{ y, height: "120%", position: "relative", width: "100%" }} className={styles.parallaxWrapper}>
+          <Image
+            src="/images/hero-couple.png"
+            alt="Adriana y Adrián"
+            fill
+            priority
+            className={styles.image}
+            style={{ objectFit: "cover", objectPosition: "center" }}
+          />
+        </motion.div>
+        <div className={styles.overlay} />
+      </div>
+
+      {/* Hero Content */}
+      <motion.div 
+        className={styles.content}
+        style={{ opacity }}
+      >
+        <motion.div
+           initial={{ opacity: 0, y: 30 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
+           className={styles.titleWrapper}
+        >
+          <h2 className={styles.subtitle}>Reserva la Fecha</h2>
+          <h1 className={styles.title}>Adriana & Adrián</h1>
+          <p className={styles.date}>20 de Septiembre, 2025 • Madrid, España</p>
+        </motion.div>
+
+        <motion.div
+           initial={{ opacity: 0 }}
+           animate={{ opacity: 1 }}
+           transition={{ delay: 1.5, duration: 1 }}
+           className={styles.scrollIndicator}
+        >
+          <span>Desliza para explorar</span>
+          <div className={styles.line} />
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}

@@ -1,0 +1,77 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.imageWrapper {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+}
+
+.actions {
+  display: flex;
+  padding: 0.5rem;
+}
+
+.approveBtn, .rejectBtn {
+  flex: 1;
+  border: none;
+  padding: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.approveBtn {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.approveBtn:hover {
+  background-color: #bbf7d0;
+}
+
+.rejectBtn {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.rejectBtn:hover {
+  background-color: #fecaca;
+}
+
+.loading, .empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

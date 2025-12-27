@@ -1,0 +1,131 @@
+.section {
+  padding: var(--section-spacing) 0;
+  background-color: var(--color-base-white);
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.content {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.header {
+  margin-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon {
+  color: var(--accent);
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  color: var(--text-primary);
+}
+
+.text {
+  font-family: var(--font-sans);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.card {
+  background-color: var(--bg-secondary);
+  padding: 2.5rem;
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.ibanRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  border: 1px solid #e5e5e5;
+}
+
+.iban {
+  font-family: monospace;
+  font-size: 1.1rem;
+  color: var(--color-text-charcoal);
+  letter-spacing: 0.05em;
+}
+
+.value {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.copyBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copyBtn:hover {
+  color: var(--accent);
+}
+
+.toast {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-text-charcoal);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-family: var(--font-sans);
+}
+
+.thankYou {
+  margin-top: 2rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--accent);
+}
+
+@media (max-width: 600px) {
+  .ibanRow {
+    padding: 0.75rem;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .iban {
+    font-size: 0.9rem;
+  }
+}
