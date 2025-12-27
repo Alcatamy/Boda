@@ -8,11 +8,10 @@ import styles from "./Logistics.module.css";
 
 export default function Logistics() {
   const schedule = [
-    { time: "17:30", event: "Llegada de invitados" },
-    { time: "18:00", event: "Ceremonia Civil" },
-    { time: "19:00", event: "Cóctel de Bienvenida" },
-    { time: "21:00", event: "Cena de Gala" },
-    { time: "23:30", event: "Baile y Fiesta" },
+    { time: "18:00", event: "Ceremonia Religiosa" },
+    { time: "20:00", event: "Cóctel de Bienvenida" },
+    { time: "21:30", event: "Banquete" },
+    { time: "00:00", event: "Fiesta" },
   ];
 
   return (
@@ -26,7 +25,7 @@ export default function Logistics() {
           className={styles.header}
         >
           <h2 className={styles.title}>Detalles del Evento</h2>
-          <p className={styles.subtitle}>Todo lo que necesitas saber para nuestro gran día</p>
+          <p className={styles.subtitle}>Acompáñanos en Colmenar Viejo</p>
         </motion.div>
 
         <div className={styles.grid}>
@@ -42,7 +41,7 @@ export default function Logistics() {
               <Clock className={styles.icon} size={32} />
               <h3>Itinerario</h3>
             </div>
-            {/* Added visual context if needed, otherwise keeping list clean */}
+            
             <ul className={styles.scheduleList}>
               {schedule.map((item, index) => (
                 <li key={index} className={styles.scheduleItem}>
@@ -59,7 +58,7 @@ export default function Logistics() {
                   height={250} 
                   className={styles.locationImage}
                 />
-                <p className={styles.imageCaption}>Ceremonia en la Ermita</p>
+                <p className={styles.imageCaption}>Ermita Ntra. Sra. de los Remedios</p>
              </div>
           </motion.div>
 
@@ -73,34 +72,34 @@ export default function Logistics() {
           >
             <div className={styles.cardHeader}>
               <MapPin className={styles.icon} size={32} />
-              <h3>Ubicación</h3>
+              <h3>Ubicaciones</h3>
             </div>
-             <Image 
-                src="/images/location-estate.png" 
-                alt="Finca El Gasco" 
-                width={400} 
-                height={250} 
-                className={styles.locationImage}
-             />
+             
             <div className={styles.locationDetails}>
-              <h4>Finca El Gasco</h4>
-              <p>Torrelodones, Madrid</p>
-              <p className={styles.address}>
-                Dirección exacta disponible en Google Maps
-              </p>
+              <h4>Ceremonia (18:00h)</h4>
+              <p><strong>Ermita de Ntra. Sra. de los Remedios</strong></p>
+              <p className={styles.address}>Carretera de Guadalix, Km 4.5, Colmenar Viejo</p>
+              
+              <div style={{ margin: '1.5rem 0', borderTop: '1px solid var(--color-border)' }} />
+
+              <h4>Celebración (20:00h)</h4>
+              <p><strong>Hacienda Mityana</strong></p>
+              <p className={styles.address}>Carretera M-607 km 37.8, Colmenar Viejo</p>
+
               <a 
                 href="https://maps.google.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className={styles.mapButton}
+                style={{ marginTop: '1rem' }}
               >
-                Ver en Mapa
+                Ver Mapa
               </a>
             </div>
             
             <div className={styles.transportInfo}>
               <Calendar className={styles.smallIcon} size={20} />
-              <p>Habrá autobuses disponibles desde Plaza de España a las 16:30.</p>
+              <p>Sábado, 25 de Julio de 2026</p>
             </div>
             
             <div style={{ marginTop: "2rem" }}>

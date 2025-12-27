@@ -18,7 +18,7 @@ export default function RsvpSection() {
           <span className={styles.label}>Reserva tu lugar</span>
           <h2 className={styles.title}>Confirma tu Asistencia</h2>
           <p className={styles.description}>
-            Por favor, confirma tu asistencia antes del 1 de Agosto de 2025 para ayudarnos a organizar todo perfectamente.
+            Por favor, confirma tu asistencia antes del 1 de Junio de 2026 para ayudarnos a organizar todo perfectamente.
           </p>
         </motion.div>
         

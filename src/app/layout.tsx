@@ -14,13 +14,13 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Adriana y Adrián | Nuestra Boda",
+  title: "Nadia y Adrián | Nuestra Boda",
   description: "Acompáñanos a celebrar nuestro gran día. Confirma tu asistencia y descubre todos los detalles.",
   openGraph: {
-    title: "Adriana y Adrián | Nuestra Boda",
+    title: "Nadia y Adrián | Nuestra Boda",
     description: "Acompáñanos a celebrar nuestro gran día.",
-    url: "https://boda-adriana-adrian.vercel.app", // Placeholder
-    siteName: "Adriana y Adrián Wedding",
+    url: "https://boda-nadia-adrian.vercel.app", // Placeholder
+    siteName: "Nadia y Adrián Wedding",
     images: [
       {
         url: "/og-image.jpg", // We assume this exists or will exist

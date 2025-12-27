@@ -44,8 +44,8 @@ export default function Hero() {
            className={styles.titleWrapper}
         >
           <h2 className={styles.subtitle}>Reserva la Fecha</h2>
-          <h1 className={styles.title}>Adriana & Adrián</h1>
-          <p className={styles.date}>20 de Septiembre, 2025 • Madrid, España</p>
+          <h1 className={styles.title}>Nadia & Adrián</h1>
+          <p className={styles.date}>25 de Julio, 2026 • Colmenar Viejo, Madrid</p>
         </motion.div>
 
         <motion.div

@@ -35,9 +35,9 @@ export default function Preloader() {
             transition={{ duration: 1, delay: 0.2 }}
             className={styles.content}
           >
-            <h1 className={styles.initials}>A & A</h1>
+            <h1 className={styles.initials}>N & A</h1>
             <div className={styles.line} />
-            <p className={styles.date}>20 . 09 . 2025</p>
+            <p className={styles.date}>25 . 07 . 2026</p>
           </motion.div>
         </motion.div>
       )}
