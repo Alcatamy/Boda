@@ -1,86 +1,331 @@
 .section {
-  padding: var(--section-spacing) 0;
-  background-color: var(--color-base-white);
-  border-top: 1px solid rgba(0,0,0,0.05);
+  padding: 5rem 0;
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--color-border);
 }
 
-.content {
-  max-width: 600px;
+.container {
+  max-width: 1200px;
   margin: 0 auto;
-  text-align: center;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
 }
 
-.header {
-  margin-bottom: 3rem;
+/* HERO SECTION */
+.heroRow {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .heroRow {
+    flex-direction: row;
+    align-items: center;
+    gap: 4rem;
+  }
+}
+
+.heroContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(204, 163, 94, 0.1);
+  color: var(--accent);
+  padding: 0.4rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  width: fit-content;
+}
+
+.heroTitle {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+.gradientText {
+  background: linear-gradient(to right, var(--accent), #e8b05a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.heroText {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 600px;
+}
+
+/* IMAGE CARD & PROGRESS */
+.imageCard {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.imageWrapper {
+  position: relative;
+  aspect-ratio: 4/3;
+  width: 100%;
+}
+
+.heroImage {
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+}
+
+.progressContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  color: white;
+}
+
+.progressLabel {
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.progressValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.progressBarBg {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(255,255,255,0.3);
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background-color: var(--accent);
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(204, 163, 94, 0.5);
+}
+
+/* EXPERIENCES */
+.experiencesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+.sectionSubtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 800px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.experienceCard {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: border-color 0.3s;
+}
+
+.experienceCard:hover {
+  border-color: var(--accent);
+}
+
+.expIcon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+
+.expTitle {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.expDesc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* CONTRIBUTE */
+.contributeSection {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.headerCentered {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
 }
 
-.icon {
+.smallTag {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  font-weight: 700;
   color: var(--accent);
+  text-transform: uppercase;
 }
 
-.title {
+.titleLarge {
   font-family: var(--font-serif);
   font-size: 2.5rem;
   color: var(--text-primary);
 }
 
-.text {
-  font-family: var(--font-sans);
+.textMuted {
+  font-size: 1rem;
   color: var(--text-secondary);
-  line-height: 1.6;
 }
 
-.card {
-  background-color: var(--bg-secondary);
-  padding: 2.5rem;
-  border-radius: 8px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
+.paymentGrid {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 2rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
 }
 
-.details {
+@media (min-width: 900px) {
+  .paymentGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Payment Cards */
+.paymentCard {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.cardHeader {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
-.label {
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
+.iconCircle {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+
+.paymentCard h3 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+.ibanBox {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.labelTiny {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #9ca3af;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 0.25rem;
 }
 
 .ibanRow {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  background: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  border: 1px solid #e5e5e5;
 }
 
-.iban {
+.ibanCode {
   font-family: monospace;
-  font-size: 1.1rem;
-  color: var(--color-text-charcoal);
-  letter-spacing: 0.05em;
-}
-
-.value {
-  font-family: var(--font-serif);
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text-primary);
+  letter-spacing: 0.05em;
+  word-break: break-all;
 }
 
 .copyBtn {
@@ -89,43 +334,68 @@
   cursor: pointer;
   color: var(--text-secondary);
   transition: color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .copyBtn:hover {
   color: var(--accent);
 }
 
-.toast {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: var(--color-text-charcoal);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-family: var(--font-sans);
+.detailsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-.thankYou {
-  margin-top: 2rem;
-  font-family: var(--font-serif);
-  font-style: italic;
+.detailBox {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.detailValue {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.infoBox {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background-color: rgba(204, 163, 94, 0.05);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(204, 163, 94, 0.1);
+}
+
+.infoIcon {
   color: var(--accent);
+  flex-shrink: 0;
 }
 
-@media (max-width: 600px) {
-  .ibanRow {
-    padding: 0.75rem;
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  .iban {
-    font-size: 0.9rem;
-  }
+.cardInactive {
+  opacity: 0.7;
+  border-style: dashed;
+}
+
+.cardBodyCentered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  gap: 1rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.comingSoonBadge {
+  background-color: var(--bg-secondary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }

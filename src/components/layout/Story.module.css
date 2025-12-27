@@ -1,74 +1,161 @@
 .storySection {
-  padding: var(--section-spacing) 0;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
+  padding: 8rem 0;
   background-color: var(--bg-secondary);
   overflow: hidden;
-}
-
-.contentWrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
-}
-
-.textColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
 }
 
 .heading {
   font-family: var(--font-serif);
   font-size: 3.5rem;
   color: var(--text-primary);
-  margin-bottom: 1rem;
+  text-align: center;
+  margin-bottom: 5rem;
 }
 
-.paragraph {
-  font-family: var(--font-sans);
-  font-size: 1.125rem;
-  color: var(--text-secondary);
-  line-height: 1.8;
-  max-width: 50ch;
+.timeline {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 0;
 }
 
-.imageColumn {
+/* Central Line */
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: var(--text-secondary);
+  opacity: 0.2;
+  transform: translateX(-50%);
+}
+
+.timelineItem {
+  position: relative;
+  margin-bottom: 6rem;
+  width: 100%;
+}
+
+.timelineContent {
   position: relative;
   display: flex;
+  align-items: center;
   justify-content: center;
+  width: 100%;
 }
 
-.imageFrame {
+.timelineRow {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timelineRow.reverse {
+  flex-direction: row-reverse;
+}
+
+.imageCol, .textCol {
+  width: 45%;
   position: relative;
-  overflow: hidden;
-  border-radius: 4px; /* Soft edge */
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }
 
-.image {
-  display: block;
+/* Image Styles */
+.imageWrapper {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  aspect-ratio: 3/4;
+  background-color: #f0f0f0;
+}
+
+.yearOverlay {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background-color: white;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.storyImage {
+  object-fit: cover;
   transition: transform 0.7s ease;
 }
 
-.imageFrame:hover .image {
-  transform: scale(1.03);
+.imageWrapper:hover .storyImage {
+  transform: scale(1.05);
 }
 
-@media (max-width: 960px) {
-  .contentWrapper {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    text-align: center;
-  }
+/* Text Styles */
+.title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
 
-  .textColumn {
-    align-items: center;
+.description {
+  font-family: var(--font-sans);
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Center Marker */
+.marker {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  background-color: var(--background);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  z-index: 2;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .storySection {
+    padding: 4rem 0;
   }
   
-  .heading {
-    font-size: 2.5rem;
+  .timeline::before {
+    left: 20px;
+  }
+
+  .timelineItem {
+    padding-left: 3rem;
+  }
+
+  .marker {
+    left: 20px;
+  }
+
+  .timelineRow, .timelineRow.reverse {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .imageCol, .textCol {
+    width: 100%;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+  
+  .yearOverlay {
+    font-size: 1.25rem;
   }
 }
