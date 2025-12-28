@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, Plane, Gift, Lock, Info } from "lucide-react";
+import { Check, Plane, Gift } from "lucide-react";
 import Image from "next/image";
 import styles from "./GiftRegistry.module.css";
 
@@ -63,68 +63,85 @@ export default function GiftRegistry() {
           </div>
         </div>
 
-
-
-        {/* CONTRIBUTE SECTION */}
-        <div className={styles.contributeSection}>
+        {/* CROWDFUNDING DASHBOARD */}
+        <div className={styles.crowdSection}>
           <div className={styles.headerCentered}>
-            <span className={styles.smallTag}>DETALLE EXCLUSIVO</span>
-            <h2 className={styles.titleLarge}>Forma parte del sueño</h2>
-            <p className={styles.textMuted}>Cada aportación nos acerca un paso más a esta experiencia única.</p>
+            <span className={styles.smallTag}>HAZ TU REGALO</span>
+            <h2 className={styles.titleLarge}>Únete a la Aventura</h2>
+            <p className={styles.textMuted}>Tu aportación hace posible cada kilómetro de este viaje.</p>
           </div>
 
-          <div className={styles.paymentGrid}>
+          <div className={styles.dashboardCard}>
             
-            {/* Bank Transfer */}
-            <div className={styles.paymentCard}>
-              <div className={styles.cardHeader}>
-                 <div className={styles.iconCircle}><Gift size={24} /></div>
-                 <h3>Transferencia Bancaria</h3>
-              </div>
+            {/* STATS ROW */}
+            <div className={styles.statsRow}>
+               <div className={styles.statBox}>
+                 <span className={styles.statLabel}>Objetivo Conseguido</span>
+                 <span className={styles.statValue}>75%</span>
+                 <div className={styles.miniBar}><div style={{width: '75%'}} className={styles.miniBarFill}></div></div>
+               </div>
+               <div className={styles.statBoxHighlight}>
+                 <span className={styles.statLabel}>Aportación Media</span>
+                 <span className={styles.statValue}>170€</span>
+                 <span className={styles.statSub}>Regalo más frecuente</span>
+               </div>
+               <div className={styles.statBox}>
+                 <span className={styles.statLabel}>Participantes</span>
+                 <span className={styles.statValue}>84</span>
+               </div>
+            </div>
+
+            {/* ACTION GRID */}
+            <div className={styles.actionGrid}>
               
-              <div className={styles.cardBody}>
+              {/* LEFT: BANK DETAILS (Passive) */}
+              <div className={styles.bankColumn}>
+                <h3>1. Realiza tu Transferencia</h3>
+                <p className={styles.stepDesc}>Haz tu aportación a nuestra cuenta común.</p>
                 
-                <div className={styles.ibanBox}>
-                  <span className={styles.labelTiny}>IBAN</span>
-                  <div className={styles.ibanRow}>
-                    <code className={styles.ibanCode}>{iban}</code>
-                    <button onClick={copyToClipboard} className={styles.copyBtn} aria-label="Copiar">
-                      {copied ? <Check size={18} /> : <Copy size={18} />}
-                    </button>
+                <div className={styles.ibanCard}>
+                   <div className={styles.ibanHeader}>
+                     <div className={styles.bankIcon}><Gift size={20}/></div>
+                     <span>Cuenta de Boda</span>
+                   </div>
+                   <code className={styles.ibanCode}>{iban}</code>
+                   <button onClick={copyToClipboard} className={styles.copyBtnText}>
+                      {copied ? "¡Copiado!" : "Copiar IBAN"}
+                   </button>
+                   <div className={styles.bankMeta}>
+                     <span>Titulares: Nadia & Adrián</span>
+                   </div>
+                </div>
+              </div>
+
+              {/* RIGHT: PLEDGE FORM (Active) */}
+              <div className={styles.pledgeColumn}>
+                <h3>2. Registra tu Regalo</h3>
+                <p className={styles.stepDesc}>¡Déjanos tu mensaje y el importe para el gráfico!</p>
+                
+                <form className={styles.pledgeForm} onSubmit={(e) => { e.preventDefault(); alert("¡Gracias! Tu aportación ha sido registrada en nuestro corazón (y en el gráfico próximamente)."); }}>
+                  <div className={styles.inputGroup}>
+                    <label>Tu Nombre</label>
+                    <input type="text" placeholder="Ej: Tía Paqui" required className={styles.input} />
                   </div>
-                </div>
+                  
+                  <div className={styles.inputGroup}>
+                    <label>Importe del Regalo (€)</label>
+                    <input type="number" placeholder="Ej: 170" min="1" required className={styles.input} />
+                  </div>
 
-                <div className={styles.detailsRow}>
-                   <div className={styles.detailBox}>
-                      <span className={styles.labelTiny}>TITULARES</span>
-                      <p className={styles.detailValue}>Nadia & Adrián</p>
-                   </div>
-                   <div className={styles.detailBox}>
-                      <span className={styles.labelTiny}>BIC/SWIFT</span>
-                      <p className={styles.detailValue}>BSCHESMMXXX</p>
-                   </div>
-                </div>
+                  <div className={styles.inputGroup}>
+                    <label>Mensaje</label>
+                    <textarea placeholder="¡Disfrutad mucho chicos!" rows={2} className={styles.textarea} />
+                  </div>
 
-                <div className={styles.infoBox}>
-                  <Info size={16} className={styles.infoIcon} />
-                  <p>Por favor, indicad vuestros nombres en el concepto para poder agradeceros.</p>
-                </div>
-
+                  <button type="submit" className={styles.pledgeBtn}>
+                    <Check size={18} /> Registrar Aportación
+                  </button>
+                </form>
               </div>
+
             </div>
-
-            {/* Placeholder for "Stripe/Card" future integration or fake UI */}
-            <div className={`${styles.paymentCard} ${styles.cardInactive}`}>
-              <div className={styles.cardHeader}>
-                 <div className={styles.iconCircle}><Lock size={24} /></div>
-                 <h3>Pago con Tarjeta</h3>
-              </div>
-              <div className={styles.cardBodyCentered}>
-                <p>Próximamente disponible</p>
-                <span className={styles.comingSoonBadge}>En construcción</span>
-              </div>
-            </div>
-
           </div>
         </div>
 
