@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import styles from "./Story.module.css";
 
+// All photos provided by user, oldest to newest (chronological order)
 const storyPhotos = [
   "/images/story/2016.jpg",
   "/images/story/2018.jpg",
@@ -30,29 +31,28 @@ export default function Story() {
             
             <div className={styles.narrativeText}>
               <p>
-                Todo comenzó con una coincidencia inesperada en una entrega de premios de bádminton, el deporte que nos vio crecer. 
-                Aunque nuestras caminos se habían cruzado antes, fue esa noche cuando sembramos la semilla de lo que vendría.
+                Todo comenzó en una entrega de premios de bádminton, el deporte que nos vio crecer. 
+                Fue una coincidencia que sembró la semilla de lo que vendría después.
               </p>
               <br />
               <p>
-                Dos años después, el destino nos volvió a unir en el pabellón. A pesar de los 60 minutos de distancia que nos separaban, 
-                decidimos apostar por nosotros. Fueron años de viajes, videollamadas y kilómetros recorridos con ilusión.
+                Dos años más tarde, el pabellón nos volvió a unir. Pese a que vivíamos a <strong>una hora de distancia</strong> (entre la casa de mis padres y la tuya, ¡que se dice pronto!), 
+                decidimos apostar por nosotros. Fueron muchos kilómetros, pero cada viaje valía la pena.
               </p>
               <br />
               <p>
-                Hemos crecido de la mano. Pasamos de ser estudiantes con sueños a adultos construyendo una realidad juntos. 
-                Nos hemos apoyado en cada examen, en cada logro laboral y en cada desafío de la vida adulta.
+                Hemos crecido de la mano. No solo en edad, sino como personas. Nos hemos apoyado en cada etapa, 
+                celebrando logros y superando retos, siempre juntos. Construyendo día a día lo que somos hoy.
               </p>
               <br />
               <p>
-                En 2024 cumplimos uno de nuestros mayores sueños: nuestro propio hogar. Un refugio construido con esfuerzo y mucho amor. 
-                Y ahora, tras 11 años de camino compartido, el 25 de Julio de 2026 daremos el paso más importante: unirnos para siempre, 
-                rodeados de la gente que nos quiere.
+                En 2024 cumplimos el sueño de nuestro propio hogar. Y ahora, tras 11 años de camino, 
+                el 25 de Julio de 2026 daremos el paso de unirnos para siempre, rodeados de toda la gente que nos quiere.
               </p>
             </div>
           </motion.div>
 
-          {/* Photo Grid Column */}
+          {/* Photo Grid / Collage */}
           <motion.div 
              className={styles.imageGrid}
              initial={{ opacity: 0, x: 30 }}

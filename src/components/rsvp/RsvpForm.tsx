@@ -145,7 +145,6 @@ export default function RsvpForm() {
                     />
                     <div className={styles.menuEmoji}>🥩</div>
                     <span className={styles.menuTitle}>Carne</span>
-                    <span className={styles.menuDesc}>Solomillo Premium</span>
                  </label>
                  
                  <label className={`${styles.menuCard} ${menuChoice === "fish" ? styles.menuSelected : ""}`}>
@@ -157,7 +156,6 @@ export default function RsvpForm() {
                     />
                     <div className={styles.menuEmoji}>🐟</div>
                     <span className={styles.menuTitle}>Pescado</span>
-                    <span className={styles.menuDesc}>Lubina Salvaje</span>
                  </label>
               </div>
               {errors.menuChoice && <span className={styles.error}>Elige tu plato principal</span>}

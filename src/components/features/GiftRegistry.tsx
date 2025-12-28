@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Copy, Check, Plane, Gift, Camera, BedDouble, Lock, Info, Star } from "lucide-react";
+import { Copy, Check, Plane, Gift, Lock, Info } from "lucide-react";
 import Image from "next/image";
 import styles from "./GiftRegistry.module.css";
 
@@ -15,24 +14,6 @@ export default function GiftRegistry() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  const experiences = [
-    {
-      icon: <Star size={24} />,
-      title: "Cena en Crucero",
-      desc: "Navegando por la Bahía de Ha Long al atardecer.",
-    },
-    {
-      icon: <Camera size={24} />,
-      title: "Recuerdos Eternos",
-      desc: "Sesión de fotos en los templos de Bali.",
-    },
-    {
-      icon: <BedDouble size={24} />,
-      title: "Noches de Ensueño",
-      desc: "Estancia en una Villa privada en Ubud. ¡Relax!",
-    },
-  ];
 
   return (
     <section id="registry" className={styles.section}>
@@ -82,33 +63,7 @@ export default function GiftRegistry() {
           </div>
         </div>
 
-        {/* EXPERIENCES GRID */}
-        <div className={styles.experiencesSection}>
-          <h3 className={styles.sectionTitle}>Una Experiencia Inolvidable</h3>
-          <p className={styles.sectionSubtitle}>
-            Más que cosas materiales, soñamos con momentos únicos. Vuestra aportación se convertirá en recuerdos imborrables de nuestro primer gran viaje como marido y mujer.
-          </p>
-          
-          <div className={styles.grid}>
-            {experiences.map((exp, i) => (
-              <motion.div 
-                key={i}
-                className={styles.experienceCard}
-                whileHover={{ y: -5 }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <div className={styles.expIcon}>{exp.icon}</div>
-                <div>
-                  <h4 className={styles.expTitle}>{exp.title}</h4>
-                  <p className={styles.expDesc}>{exp.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+
 
         {/* CONTRIBUTE SECTION */}
         <div className={styles.contributeSection}>

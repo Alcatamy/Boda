@@ -35,7 +35,7 @@ export default function Header() {
     >
       <div className={styles.container}>
         <div className={styles.logo}>
-          <Link href="/">A & A</Link>
+          <Link href="/">N & A</Link>
         </div>
 
         {/* Desktop Nav */}

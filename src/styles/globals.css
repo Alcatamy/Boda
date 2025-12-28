@@ -4,8 +4,8 @@
   --color-base-ivory: #f5f5f4; /* Stone-100 */
   --color-primary-gold: #c5a059; /* Elegant Muted Gold */
   --color-primary-gold-hover: #b08d4b;
-  --color-text-charcoal: #292524; /* Stone-800 */
-  --color-text-muted: #78716c; /* Stone-500 */
+  --color-text-charcoal: #1c1917; /* Stone-900 (Darker than 800) */
+  --color-text-muted: #57534e; /* Stone-600 (Darker than 500) */
   --color-border: #e7e5e4; /* Stone-200 */
 
   /* Semantic Colors */
