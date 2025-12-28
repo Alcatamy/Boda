@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/lib/supabase";
-import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { Loader2, CheckCircle, AlertCircle, Utensils } from "lucide-react";
 import styles from "./RsvpForm.module.css";
 
 type FormData = {
@@ -12,6 +12,7 @@ type FormData = {
   lastName: string;
   attending: string; // "yes" | "no"
   dietaryRestrictions: string;
+  menuChoice: string; // "meat" | "fish"
   message: string;
 };
 
@@ -21,6 +22,7 @@ export default function RsvpForm() {
   
   const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
   const attending = watch("attending");
+  const menuChoice = watch("menuChoice");
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
@@ -35,6 +37,7 @@ export default function RsvpForm() {
             last_name: data.lastName,
             attending: data.attending === "yes",
             dietary_restrictions: data.dietaryRestrictions,
+            menu_choice: data.menuChoice,
             message: data.message,
             // has_plus_one and plus_one_name removed
           },
@@ -59,7 +62,7 @@ export default function RsvpForm() {
       >
         <CheckCircle size={64} className={styles.successIcon} />
         <h3>¡Gracias por confirmar!</h3>
-        <p>Hemos recibido tu respuesta correctamente.</p>
+        <p>Hemos recibido tu respuesta y selección de menú correctamente.</p>
         <button 
           onClick={() => setSubmitStatus("idle")}
           className={styles.resetButton}
@@ -129,6 +132,37 @@ export default function RsvpForm() {
             exit={{ opacity: 0, height: 0 }}
             className={styles.conditionalSection}
           >
+            {/* Menu Selection */}
+            <div className={styles.fieldGroup}>
+              <label>Elección de Menú Principal <Utensils size={14} style={{marginLeft: 8, opacity: 0.7}}/></label>
+              <div className={styles.menuGrid}>
+                 <label className={`${styles.menuCard} ${menuChoice === "meat" ? styles.menuSelected : ""}`}>
+                    <input 
+                      type="radio" 
+                      value="meat"
+                      {...register("menuChoice", { required: true })}
+                      className={styles.hiddenRadio}
+                    />
+                    <div className={styles.menuEmoji}>🥩</div>
+                    <span className={styles.menuTitle}>Carne</span>
+                    <span className={styles.menuDesc}>Solomillo Premium</span>
+                 </label>
+                 
+                 <label className={`${styles.menuCard} ${menuChoice === "fish" ? styles.menuSelected : ""}`}>
+                    <input 
+                      type="radio" 
+                      value="fish"
+                      {...register("menuChoice", { required: true })}
+                      className={styles.hiddenRadio}
+                    />
+                    <div className={styles.menuEmoji}>🐟</div>
+                    <span className={styles.menuTitle}>Pescado</span>
+                    <span className={styles.menuDesc}>Lubina Salvaje</span>
+                 </label>
+              </div>
+              {errors.menuChoice && <span className={styles.error}>Elige tu plato principal</span>}
+            </div>
+
             <div className={styles.fieldGroup}>
               <label htmlFor="dietaryRestrictions">Alergias, Intolerancias o Especificaciones</label>
               <textarea 

@@ -197,6 +197,68 @@
   justify-content: center;
 }
 
+/* Menu Selection */
+.menuGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.menuCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: white;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.menuCard:hover {
+  border-color: var(--accent);
+  background-color: rgba(204, 163, 94, 0.02);
+}
+
+.menuSelected {
+  border-color: var(--accent);
+  background-color: rgba(204, 163, 94, 0.08); /* Soft gold bg */
+  box-shadow: 0 4px 12px rgba(204, 163, 94, 0.2);
+  transform: translateY(-2px);
+}
+
+.hiddenRadio {
+  appearance: none;
+  position: absolute;
+}
+
+.menuEmoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.25rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.menuTitle {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.menuDesc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 @media (max-width: 600px) {
   .row {
     flex-direction: column;

@@ -52,7 +52,7 @@ export default function GiftRegistry() {
             </h2>
             
             <p className={styles.heroText}>
-              Vuestra presencia es nuestro mayor regalo. Sin embargo, si deseáis ayudarnos a comenzar nuestra aventura juntos, podéis contribuir a nuestro viaje soñado por el Sudeste Asiático.
+              Vuestra compañía es el regalo más valioso. Sin embargo, para aquellos que deseéis tener un detalle, hemos creado este fondo destinado a hacer realidad nuestra <strong>Gran Aventura</strong> por el Sudeste Asiático.
             </p>
           </div>
 
@@ -72,7 +72,7 @@ export default function GiftRegistry() {
             {/* Progress Bar Overlay */}
             <div className={styles.progressContainer}>
               <div className={styles.progressHeader}>
-                <span className={styles.progressLabel}>Estado del viaje</span>
+                <span className={styles.progressLabel}>Objetivo del Viaje</span>
                 <span className={styles.progressValue}>75%</span>
               </div>
               <div className={styles.progressBarBg}>
@@ -84,8 +84,10 @@ export default function GiftRegistry() {
 
         {/* EXPERIENCES GRID */}
         <div className={styles.experiencesSection}>
-          <h3 className={styles.sectionTitle}>¿En qué invertiremos vuestro regalo?</h3>
-          <p className={styles.sectionSubtitle}>Queremos ser transparentes. Ya tenemos tostadora. Lo que más ilusión nos hace es vivir experiencias únicas.</p>
+          <h3 className={styles.sectionTitle}>Una Experiencia Inolvidable</h3>
+          <p className={styles.sectionSubtitle}>
+            Más que cosas materiales, soñamos con momentos únicos. Vuestra aportación se convertirá en recuerdos imborrables de nuestro primer gran viaje como marido y mujer.
+          </p>
           
           <div className={styles.grid}>
             {experiences.map((exp, i) => (
@@ -111,9 +113,9 @@ export default function GiftRegistry() {
         {/* CONTRIBUTE SECTION */}
         <div className={styles.contributeSection}>
           <div className={styles.headerCentered}>
-            <span className={styles.smallTag}>HAZ TU REGALO</span>
-            <h2 className={styles.titleLarge}>Contribuye a la Aventura</h2>
-            <p className={styles.textMuted}>Elige la forma más cómoda para ti. Todo va directo a nuestro fondo común.</p>
+            <span className={styles.smallTag}>DETALLE EXCLUSIVO</span>
+            <h2 className={styles.titleLarge}>Forma parte del sueño</h2>
+            <p className={styles.textMuted}>Cada aportación nos acerca un paso más a esta experiencia única.</p>
           </div>
 
           <div className={styles.paymentGrid}>
