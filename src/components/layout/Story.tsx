@@ -16,7 +16,7 @@ const storyPhotos = [
   "/images/story/20181207_190537.jpg",    // Dec 2018
   "/images/story/20190627_141615.jpg",    // Jun 2019
   "/images/story/IMG_20200726_001303.jpg",// Jul 2020
-  "/images/story/hero-foto.png",          // ~2020 (10th oldest)
+  "/images/story/nueva-foto-10.jpg",      // ~2020 (10th oldest)
   "/images/story/IMG_20201225_192843.jpg",// Dec 2020
   "/images/story/IMG_20210828_182808.jpg",// Aug 2021
   "/images/story/IMG_20210901_172706.jpg",// Sep 2021
@@ -28,7 +28,6 @@ const storyPhotos = [
   "/images/story/AirBrush_20240529135359.jpg", // May 2024
   "/images/story/PXL_20250801_103322546.jpg",  // Aug 2025
   "/images/story/PXL_20250803_100301502.jpg",  // Aug 2025
-  "/images/story/IMG-20251228-WA0020.jpg",     // Dec 2025
 ];
 
 export default function Story() {
