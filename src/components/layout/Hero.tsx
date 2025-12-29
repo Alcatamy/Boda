@@ -21,7 +21,7 @@ export default function Hero() {
       <div className={styles.imageWrapper}>
         <motion.div style={{ y, height: "120%", position: "relative", width: "100%" }} className={styles.parallaxWrapper}>
           <Image
-            src="/images/story/hero-couple.jpg"
+            src="/images/hero-bg.png"
             alt="Nadia y Adrián"
             fill
             priority
