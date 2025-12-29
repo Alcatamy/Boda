@@ -16,6 +16,7 @@ const storyPhotos = [
   "/images/story/20181207_190537.jpg",    // Dec 2018
   "/images/story/20190627_141615.jpg",    // Jun 2019
   "/images/story/IMG_20200726_001303.jpg",// Jul 2020
+  "/images/story/hero-foto.png",          // ~2020 (10th oldest)
   "/images/story/IMG_20201225_192843.jpg",// Dec 2020
   "/images/story/IMG_20210828_182808.jpg",// Aug 2021
   "/images/story/IMG_20210901_172706.jpg",// Sep 2021
