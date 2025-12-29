@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google"; // Import fonts
+import { Montserrat, Cormorant_Garamond } from "next/font/google"; // Import fonts
 import "@/styles/globals.css";
 
 // Configure fonts
-const inter = Inter({
+const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
-const playfair = Playfair_Display({
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
   variable: "--font-serif",
 });
 
@@ -44,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${montserrat.variable} ${cormorant.variable}`}>
       <body>
         <Preloader />
         <NoiseOverlay />

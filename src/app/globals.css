@@ -1,12 +1,26 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Luxury Warmth Palette */
+  --background: #FDFCFB;
+  /* Soft Linen */
+  --foreground: #2D2926;
+  /* Off-Black */
+  --color-accent: #B4975A;
+  /* Muted Gold */
+  --color-surface: #FFFFFF;
+
+  --color-base-white: #ffffff;
+  --color-base-black: #000000;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1C1917;
+    /* Warm Dark Grey */
+    --foreground: #FDFCFB;
+    /* Soft Linen */
+    --color-accent: #D4AF37;
+    /* Brighter Gold for Dark Mode */
+    --color-surface: #292524;
   }
 }
 
@@ -19,7 +33,7 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

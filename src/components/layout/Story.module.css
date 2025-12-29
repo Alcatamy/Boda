@@ -1,110 +1,111 @@
 .storySection {
-  padding: 8rem 0;
-  background-color: var(--bg-secondary);
+  padding: 120px 0;
+  /* Increased padding */
+  background-color: var(--background);
   overflow: hidden;
 }
 
 .heading {
   font-family: var(--font-serif);
   font-size: 3.5rem;
-  color: var(--text-primary);
+  color: var(--foreground);
   margin-bottom: 2rem;
   text-align: left;
+  letter-spacing: -0.02em;
+  /* Editorial tightening */
 }
 
 .contentWrapper {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 4rem;
-  align-items: center;
+  gap: 6rem;
+  /* More breathing room */
+  align-items: start;
 }
 
 @media (min-width: 900px) {
   .contentWrapper {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 40% 1fr;
+    /* Asymmetric balance */
   }
 }
 
 .textColumn {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
+  position: sticky;
+  top: 120px;
 }
 
 .narrativeText {
   font-family: var(--font-sans);
-  font-size: 1.1rem;
-  color: var(--text-secondary);
+  font-size: 1.125rem;
+  color: var(--foreground);
   line-height: 1.8;
-  white-space: pre-line; /* Allows paragraphs from text */
+  opacity: 0.8;
+  white-space: pre-line;
 }
 
-/* Photo Grid / Collage */
+/* Photo Grid: Curated Gallery */
 .imageGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+  /* Specified 24px gap */
+  width: 100%;
 }
 
 .imageItem {
   position: relative;
-  border-radius: 4px;
+  border-radius: 8px;
+  /* Soft rounding */
   overflow: hidden;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-  background-color: white;
-  padding: 0.5rem; /* Polaroid effect */
-  transition: transform 0.3s ease, z-index 0.3s;
-  width: 140px; /* Small base size */
-  aspect-ratio: 3/4;
+  background-color: var(--color-surface);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  aspect-ratio: 4/5;
+  /* Editorial Portrait Ratio */
+  width: 100%;
 }
 
 .imageItem:hover {
-  transform: scale(1.1) rotate(0deg);
-  z-index: 10;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(180, 151, 90, 0.15);
+  /* Muted Gold shadow */
 }
 
 .storyImage {
   object-fit: cover;
   width: 100%;
   height: 100%;
+  transition: transform 0.8s ease;
 }
 
-/* Specific rotations for "scattered" look */
-.imageItem:nth-child(odd) {
-  transform: rotate(-3deg);
-}
-
-.imageItem:nth-child(even) {
-  transform: rotate(3deg);
-}
-
-.imageItem:nth-child(3n) {
-  transform: rotate(1deg) translateY(-10px);
+.imageItem:hover .storyImage {
+  transform: scale(1.05);
 }
 
 @media (max-width: 768px) {
   .storySection {
-    padding: 4rem 0;
+    padding: 80px 0;
   }
-  
+
   .heading {
     text-align: center;
     font-size: 2.5rem;
   }
 
   .contentWrapper {
-    gap: 3rem;
+    gap: 4rem;
   }
-  
+
   .imageGrid {
-    gap: 0.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
-  
-  .imageItem {
-    width: 30%; /* 3 per row roughly */
+
+  .textColumn {
+    position: static;
   }
 }
