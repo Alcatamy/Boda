@@ -77,22 +77,22 @@
 @media (max-width: 768px) {
   .miniGrid {
     gap: 10px;
-    /* Juntitas */
     padding: 20px 10px;
+    /* Ensure wrapping happens */
+    flex-direction: row;
+    align-items: flex-start;
   }
 
   .miniPhotoItem {
-    max-width: 100%;
-    /* Double size effectively (full width) */
-    aspect-ratio: 1/1;
-    /* Square or 4/5 for mobile impact? User said double size */
+    flex: 0 0 calc(50% - 5px);
+    /* 2 items per row (gap is 10px total, so 5px each side approx or calc) */
+    width: calc(50% - 5px);
+    margin-bottom: 10px;
     transform: none !important;
-    /* Reset rotation for clean mobile view or keep? User said "rotativas" in general but "juntitas" in mobile. Let's keep subtle rotation but ensure size. */
+    /* No rotation */
+    aspect-ratio: 1/1;
+    /* Square for mobile grid uniformity */
   }
-
-  /* Reset nth-child rotations for mobile if "juntitas" implies a neat stack, 
-     BUT user previously wanted "rotativas". 
-     I will keep rotations but ensure they are large. */
 }
 
 .miniPhotoItem {
