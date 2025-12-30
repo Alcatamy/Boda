@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import EnvelopeIntro from "@/components/features/EnvelopeIntro/EnvelopeIntro";
 import MusicPlayer from "@/components/features/MusicPlayer/MusicPlayer";
 import SpotlightCursor from "@/components/ui/SpotlightCursor";
+import ButterflyEffect from "@/components/ui/ButterflyEffect";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const [hasOpenedEnvelope, setHasOpenedEnvelope] = useState(false);
@@ -26,7 +27,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             <MusicPlayer autoPlay={hasOpenedEnvelope} />
 
             {/* Global Effects */}
-            {showContent && <SpotlightCursor />}
+            {showContent && (
+                <>
+                    <SpotlightCursor />
+                    <ButterflyEffect />
+                </>
+            )}
 
             {/* Main Content */}
             <main style={{

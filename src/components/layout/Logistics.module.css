@@ -162,7 +162,8 @@
 .mapButton:hover {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
-  color: white;
+  color: var(--text-primary);
+  /* Dark text for contrast on gold */
 }
 
 .iconBox {
@@ -186,13 +187,14 @@
 .infoItem {
   display: flex;
   gap: 1rem;
-  align-items: flex-start;
+  align-items: center;
+  /* Centered alignment */
 }
 
 .infoIcon {
   color: var(--color-accent);
   flex-shrink: 0;
-  margin-top: 0.2rem;
+  /* Removed margin-top */
 }
 
 .infoLabel {

@@ -21,16 +21,16 @@ export default function GallerySection() {
     const { data } = await supabase
       .from('photos')
       .select('*')
-      .eq('is_approved', true) 
+      .eq('is_approved', true)
       .order('created_at', { ascending: false });
-    
+
     setPhotos(data || []);
   }, []);
 
   useEffect(() => {
     // eslint-disable-next-line
     fetchPhotos();
-    
+
     // Optional: Real-time subscription
     const channel = supabase
       .channel('public:photos')
@@ -48,7 +48,7 @@ export default function GallerySection() {
   return (
     <section id="gallery" className={styles.section}>
       <div className="container">
-        <motion.div 
+        <motion.div
           className={styles.header}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -62,8 +62,8 @@ export default function GallerySection() {
 
         <div className={styles.grid}>
           {photos.map((photo) => (
-            <motion.div 
-              key={photo.id} 
+            <motion.div
+              key={photo.id}
               className={styles.item}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -72,21 +72,20 @@ export default function GallerySection() {
               {/* Aspect Ratio Container for Masonry items. 
                   Since we don't have dimensions, we use 'auto' height but Next.js needs help.
                   We'll use width/height=0 and sizes="100vw" style trick for auto-height images */}
-              <div style={{ position: 'relative', width: '100%', marginBottom: '1rem' }}>
-                 <Image 
-                  src={getImageUrl(photo.storage_path)} 
+              <div className={styles.imageWrapper}>
+                <Image
+                  src={getImageUrl(photo.storage_path)}
                   alt={photo.caption || "Wedding moment"}
                   width={600}
-                  height={800} // Placeholder aspect ratio, but CSS will override
+                  height={750}
                   className={styles.image}
-                  style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  sizes="(max-width: 600px) 50vw, (max-width: 1200px) 33vw, 25vw"
                 />
               </div>
             </motion.div>
           ))}
           {photos.length === 0 && (
-             <p className={styles.empty}>Aún no hay fotos. ¡Sé el primero en subir una!</p>
+            <p className={styles.empty}>Aún no hay fotos. ¡Sé el primero en subir una!</p>
           )}
         </div>
       </div>

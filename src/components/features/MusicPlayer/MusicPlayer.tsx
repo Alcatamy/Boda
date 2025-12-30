@@ -104,8 +104,8 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
                                     {isPlaying ? <Pause size={20} /> : <Play size={20} fill="currentColor" />}
                                 </button>
                                 <div className={styles.trackInfo}>
-                                    <span className={styles.trackTitle}>Perfect Symphony</span>
-                                    <span className={styles.trackArtist}>Nuestra Canción</span>
+                                    <span className={styles.trackTitle}>Adventure of a Lifetime</span>
+                                    <span className={styles.trackArtist}>Coldplay</span>
                                 </div>
                             </div>
 
