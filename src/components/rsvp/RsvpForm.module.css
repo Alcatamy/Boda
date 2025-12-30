@@ -255,7 +255,7 @@
 .submitButton {
   margin-top: 1.5rem;
   padding: 1.25rem;
-  background: linear-gradient(135deg, var(--color-accent) 0%, #9A814C 100%);
+  background: var(--color-primary-gold);
   color: white;
   border: none;
   border-radius: 4px;
