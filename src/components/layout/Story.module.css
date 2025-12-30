@@ -1,111 +1,133 @@
 .storySection {
-  padding: 120px 0;
-  /* Increased padding */
+  padding: 10rem 0;
   background-color: var(--background);
   overflow: hidden;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
 .heading {
   font-family: var(--font-serif);
   font-size: 3.5rem;
   color: var(--foreground);
-  margin-bottom: 2rem;
-  text-align: left;
+  text-align: center;
+  margin-bottom: 5rem;
   letter-spacing: -0.02em;
-  /* Editorial tightening */
 }
 
-.contentWrapper {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 6rem;
-  /* More breathing room */
-  align-items: start;
-}
-
-@media (min-width: 900px) {
-  .contentWrapper {
-    grid-template-columns: 40% 1fr;
-    /* Asymmetric balance */
-  }
-}
-
-.textColumn {
+.zigzagWrapper {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  position: sticky;
-  top: 120px;
+  gap: 8rem;
 }
 
-.narrativeText {
-  font-family: var(--font-sans);
-  font-size: 1.125rem;
-  color: var(--foreground);
+.row {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+}
+
+.rowReverse {
+  flex-direction: row-reverse;
+}
+
+/* TEXT BLOCK */
+.textBlock {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.paragraph {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
   line-height: 1.8;
-  opacity: 0.8;
-  white-space: pre-line;
+  color: var(--foreground);
+  opacity: 0.9;
 }
 
-/* Photo Grid: Curated Gallery */
-.imageGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 24px;
-  /* Specified 24px gap */
-  width: 100%;
+.decorativeLine {
+  width: 60px;
+  height: 1px;
+  background-color: var(--color-accent);
+  margin-top: 1rem;
 }
 
-.imageItem {
+/* PHOTO BLOCK */
+.photoBlock {
+  flex: 1;
+}
+
+.miniGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* Make images look like scattered Polaroids or organized chaos */
+.miniPhotoItem {
   position: relative;
-  border-radius: 8px;
-  /* Soft rounding */
-  overflow: hidden;
-  background-color: var(--color-surface);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  width: calc(50% - 0.5rem);
   aspect-ratio: 4/5;
-  /* Editorial Portrait Ratio */
-  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-surface);
+  transition: transform 0.4s ease;
 }
 
-.imageItem:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(180, 151, 90, 0.15);
-  /* Muted Gold shadow */
+/* Add subtle rotation to alternate images for "cool" effect */
+.miniPhotoItem:nth-child(odd) {
+  transform: translateY(20px) rotate(-2deg);
+}
+
+.miniPhotoItem:nth-child(even) {
+  transform: translateY(-20px) rotate(2deg);
+}
+
+.miniPhotoItem:hover {
+  transform: scale(1.05) rotate(0deg);
+  z-index: 10;
+  box-shadow: 0 20px 40px rgba(180, 151, 90, 0.2);
 }
 
 .storyImage {
   object-fit: cover;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.8s ease;
 }
 
-.imageItem:hover .storyImage {
-  transform: scale(1.05);
-}
+@media (max-width: 900px) {
+  .row {
+    flex-direction: column;
+    gap: 3rem;
+  }
 
-@media (max-width: 768px) {
-  .storySection {
-    padding: 80px 0;
+  .rowReverse {
+    flex-direction: column;
   }
 
   .heading {
-    text-align: center;
     font-size: 2.5rem;
   }
 
-  .contentWrapper {
-    gap: 4rem;
+  .paragraph {
+    font-size: 1.1rem;
+    text-align: center;
   }
 
-  .imageGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+  .decorativeLine {
+    margin: 1rem auto 0;
   }
 
-  .textColumn {
-    position: static;
+  .miniPhotoItem:nth-child(odd),
+  .miniPhotoItem:nth-child(even) {
+    transform: none;
+    /* Remove fancy transforms on mobile for stability */
   }
 }

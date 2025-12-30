@@ -39,6 +39,8 @@ import ChatWidget from "@/components/features/ChatWidget";
 import NoiseOverlay from "@/components/ui/NoiseOverlay";
 import Preloader from "@/components/ui/Preloader";
 
+import ClientLayout from "@/components/layout/ClientLayout";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,9 +51,11 @@ export default function RootLayout({
       <body>
         <Preloader />
         <NoiseOverlay />
-        <Header />
-        {children}
-        <ChatWidget />
+        <ClientLayout>
+          <Header />
+          {children}
+          <ChatWidget />
+        </ClientLayout>
       </body>
     </html>
   );

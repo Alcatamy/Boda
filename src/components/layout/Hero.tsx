@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import styles from "./Hero.module.css";
+import Countdown from "@/components/features/Countdown/Countdown";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -39,6 +39,14 @@ export default function Hero() {
           <h2 className={styles.subtitle}>Reserva la Fecha</h2>
           <h1 className={styles.title}>Nadia & Adrián</h1>
           <p className={styles.date}>25 de Julio, 2026 • Colmenar Viejo, Madrid</p>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1, duration: 0.8 }}
+          >
+            <Countdown />
+          </motion.div>
         </motion.div>
 
         <motion.div

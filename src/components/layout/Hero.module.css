@@ -48,7 +48,8 @@
   position: relative;
   z-index: 2;
   text-align: center;
-  color: var(--color-base-white);
+  color: var(--foreground);
+  /* Changed from white to dark */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -69,20 +70,25 @@
   letter-spacing: 0.2em;
   font-size: 0.875rem;
   opacity: 0.9;
+  color: var(--color-accent);
+  /* Gold accent for subtitle */
 }
 
 .title {
   font-family: var(--font-serif);
-  font-size: 4rem;
-  line-height: 1.1;
+  font-size: 5rem;
+  /* Larger for impact */
+  line-height: 1;
   font-weight: 400;
+  letter-spacing: -0.03em;
 }
 
 .date {
   font-family: var(--font-sans);
   font-size: 1.125rem;
-  margin-top: 1rem;
-  opacity: 0.9;
+  margin-top: 1.5rem;
+  opacity: 0.8;
+  letter-spacing: 0.05em;
 }
 
 .scrollIndicator {
@@ -97,12 +103,15 @@
   letter-spacing: 0.1em;
   opacity: 0.8;
   text-transform: uppercase;
+  color: var(--foreground);
 }
 
 .line {
   width: 1px;
-  height: 48px;
-  background-color: var(--color-base-white);
+  height: 60px;
+  /* Longer line */
+  background-color: var(--color-accent);
+  /* Gold line */
 }
 
 @media (max-width: 768px) {

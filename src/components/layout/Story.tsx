@@ -31,67 +31,82 @@ const storyPhotos = [
 ];
 
 export default function Story() {
+  // Define content blocks for ZigZag layout
+  const blocks = [
+    {
+      id: 1,
+      text: `Todo comenzó en una entrega de premios de bádminton, el deporte que nos vio crecer. 
+             Fue una coincidencia que sembró la semilla de lo que vendría después.`,
+      photos: storyPhotos.slice(0, 3) // First 3 photos
+    },
+    {
+      id: 2,
+      text: `Dos años después, el pabellón volvió a cruzar nuestros caminos. Aunque una hora de distancia 
+             separaba nuestras casas, decidimos apostar por lo que sentíamos. Fueron muchos kilómetros 
+             recorridos, pero cada viaje mereció la pena.`,
+      photos: storyPhotos.slice(3, 7) // Next 4 photos
+    },
+    {
+      id: 3,
+      text: `Desde el colegio hasta hoy, hemos crecido juntos en todos los sentidos. No solo en edad, 
+             sino como personas. Nos hemos apoyado en cada etapa, celebrando logros y superando retos, 
+             siempre de la mano. Construyendo día a día lo que somos hoy.`,
+      photos: storyPhotos.slice(7, 13) // Next 6 photos
+    },
+    {
+      id: 4,
+      text: `En 2024 dimos un paso importante: estrenamos nuestro primer hogar juntos. Y ahora, tras 11 años de camino, 
+             el 25 de Julio de 2026 daremos el paso de unirnos para siempre, rodeados de toda la gente que nos quiere.`,
+      photos: storyPhotos.slice(13, 22) // Remaining photos
+    }
+  ];
+
   return (
     <section className={styles.storySection} id="story">
-      <div className="container">
-        <div className={styles.contentWrapper}>
+      <div className={styles.container}>
+        <motion.h2
+          className={styles.heading}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          Nuestra Historia
+        </motion.h2>
 
-          {/* Text Column */}
-          <motion.div
-            className={styles.textColumn}
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className={styles.heading}>Nuestra Historia</h2>
-
-            <div className={styles.narrativeText}>
-              <p>
-                Todo comenzó en una entrega de premios de bádminton, el deporte que nos vio crecer.
-                Fue una coincidencia que sembró la semilla de lo que vendría después.
-              </p>
-              <br />
-              <p>
-                Dos años después, el pabellón volvió a cruzar nuestros caminos. Aunque una hora de distancia
-                separaba nuestras casas, decidimos apostar por lo que sentíamos. Fueron muchos kilómetros
-                recorridos, pero cada viaje mereció la pena.
-              </p>
-              <br />
-              <p>
-                Desde el colegio hasta hoy, hemos crecido juntos en todos los sentidos. No solo en edad,
-                sino como personas. Nos hemos apoyado en cada etapa, celebrando logros y superando retos,
-                siempre de la mano. Construyendo día a día lo que somos hoy.
-              </p>
-              <br />
-              <p>
-                En 2024 dimos un paso importante: estrenamos nuestro primer hogar juntos. Y ahora, tras 11 años de camino,
-                el 25 de Julio de 2026 daremos el paso de unirnos para siempre, rodeados de toda la gente que nos quiere.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Photo Grid / Collage */}
-          <motion.div
-            className={styles.imageGrid}
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            {storyPhotos.map((src, index) => (
-              <div key={index} className={styles.imageItem}>
-                <Image
-                  src={src}
-                  alt={`Nuestra historia ${index + 1}`}
-                  fill
-                  className={styles.storyImage}
-                  sizes="(max-width: 768px) 33vw, 15vw"
-                />
+        <div className={styles.zigzagWrapper}>
+          {blocks.map((block, index) => (
+            <motion.div
+              key={block.id}
+              className={`${styles.row} ${index % 2 === 1 ? styles.rowReverse : ''}`}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8 }}
+            >
+              {/* Text Side */}
+              <div className={styles.textBlock}>
+                <p className={styles.paragraph}>{block.text}</p>
+                <div className={styles.decorativeLine} />
               </div>
-            ))}
-          </motion.div>
 
+              {/* Photo Side (Mini Grid) */}
+              <div className={styles.photoBlock}>
+                <div className={styles.miniGrid}>
+                  {block.photos.map((src, i) => (
+                    <div key={i} className={styles.miniPhotoItem}>
+                      <Image
+                        src={src}
+                        alt={`Historia ${block.id}-${i}`}
+                        fill
+                        className={styles.storyImage}
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
