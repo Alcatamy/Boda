@@ -68,3 +68,12 @@
     letter-spacing: 0.1em;
     text-align: right;
 }
+
+.empty {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-style: italic;
+    opacity: 0.7;
+    margin-top: 1rem;
+}
