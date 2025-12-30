@@ -16,9 +16,20 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
 
     useEffect(() => {
         if (autoPlay && audioRef.current) {
-            audioRef.current.play().then(() => {
-                setIsPlaying(true);
-            }).catch(err => console.log("Autoplay failed:", err));
+            // Attempt to play
+            audioRef.current.volume = 0.5;
+            const playPromise = audioRef.current.play();
+
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        setIsPlaying(true);
+                    })
+                    .catch((error) => {
+                        console.error("Autoplay prevented:", error);
+                        // We could show a "Click to Play" toast here if needed
+                    });
+            }
         }
     }, [autoPlay]);
 
@@ -47,7 +58,7 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
         <>
             <audio
                 ref={audioRef}
-                src="/music/boda-song.mp3" // Ensure this file exists or use a URL
+                src="/music/boda-song.mp3"
                 loop
             />
 
@@ -94,7 +105,7 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
                                 </button>
                                 <div className={styles.trackInfo}>
                                     <span className={styles.trackTitle}>Perfect Symphony</span>
-                                    <span className={styles.trackArtist}>Ed Sheeran & Andrea Bocelli</span>
+                                    <span className={styles.trackArtist}>Nuestra Canción</span>
                                 </div>
                             </div>
 

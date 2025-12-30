@@ -12,11 +12,13 @@
 
 .envelopeContainer {
     position: relative;
-    width: min(90vw, 600px);
+    width: min(90vw, 800px);
+    /* Increased size */
     aspect-ratio: 1.6/1;
     transform-style: preserve-3d;
     cursor: pointer;
     transition: transform 0.5s ease;
+    margin-top: 2rem;
 }
 
 .envelopeContainer:hover {
@@ -29,59 +31,71 @@
     background-color: #F5F5F4;
     /* Stone 100 */
     position: relative;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+    /* Deeper shadow */
     display: flex;
     justify-content: center;
     align-items: center;
     transform-style: preserve-3d;
-    background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
-    /* Texture */
+    /* Simple CSS pattern fallback or texture */
+    background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.01) 0, rgba(0, 0, 0, 0.01) 1px, transparent 0, transparent 50%);
+    background-size: 10px 10px;
 }
 
-/* Wax Seal */
+/* Wax Seal - More visible */
 .seal {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    /* Larger */
+    height: 100px;
     background: radial-gradient(circle at 30% 30%, #D4AF37, #B4975A);
     border-radius: 50%;
     position: absolute;
     z-index: 20;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--font-serif);
-    font-size: 2rem;
-    color: rgba(255, 255, 255, 0.8);
+    font-size: 2.5rem;
+    /* Larger font */
+    color: white;
+    /* Pure white for contrast */
     font-weight: 700;
     border: 4px solid #9A814C;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .clickHint {
     position: absolute;
-    bottom: -4rem;
+    bottom: -5rem;
     font-family: var(--font-sans);
-    font-size: 0.9rem;
+    font-size: 1rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--foreground);
-    opacity: 0.6;
+    opacity: 0.9;
     animation: pulse 2s infinite;
+    background: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 99px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 @keyframes pulse {
 
     0%,
     100% {
-        opacity: 0.6;
+        transform: scale(1);
     }
 
     50% {
-        opacity: 0.3;
+        transform: scale(1.05);
     }
 }
 
-/* Flaps (Simulated via clip-path or simple divs for now) */
+/* Flaps */
 .flapTop {
     position: absolute;
     top: 0;
@@ -89,12 +103,11 @@
     width: 100%;
     height: 55%;
     background-color: #E7E5E4;
-    /* Slightly darker */
     clip-path: polygon(0 0, 50% 100%, 100% 0);
     transform-origin: top;
     z-index: 10;
     transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-    background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .flapBottom {
@@ -106,6 +119,7 @@
     background-color: #F5F5F4;
     clip-path: polygon(0 100%, 50% 0, 100% 100%);
     z-index: 5;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .flapLeft {
@@ -113,7 +127,7 @@
     left: 0;
     top: 0;
     height: 100%;
-    width: 40%;
+    width: 45%;
     background-color: #E7E5E4;
     clip-path: polygon(0 0, 100% 50%, 0 100%);
     z-index: 5;
@@ -124,7 +138,7 @@
     right: 0;
     top: 0;
     height: 100%;
-    width: 40%;
+    width: 45%;
     background-color: #E7E5E4;
     clip-path: polygon(100% 0, 0 50%, 100% 100%);
     z-index: 5;
@@ -134,9 +148,40 @@
 .envelopeText {
     z-index: 6;
     font-family: var(--font-serif);
-    font-size: 2rem;
-    color: var(--foreground);
-    opacity: 0.8;
-    margin-top: 4rem;
-    /* Push down to not be covered by top flap initially */
+    font-size: 3.5rem;
+    /* Much larger */
+    color: #2D2926;
+    /* Dark strong color */
+    opacity: 1;
+    /* Full opacity */
+    margin-top: 6rem;
+    font-weight: 600;
+    position: absolute;
+    bottom: 15%;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 600px) {
+    .envelopeContainer {
+        width: 90vw;
+        aspect-ratio: 1.4/1;
+        /* Taller on mobile */
+    }
+
+    .seal {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+    }
+
+    .envelopeText {
+        font-size: 2.25rem;
+        bottom: 10%;
+    }
+
+    .clickHint {
+        bottom: -6rem;
+        /* Give more space */
+        font-size: 0.8rem;
+    }
 }
