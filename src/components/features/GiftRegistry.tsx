@@ -12,7 +12,7 @@ export default function GiftRegistry() {
   const [msgStatus, setMsgStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [songStatus, setSongStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
-  const iban = "ES98 0000 0000 0000 0000 0000"; // Placeholder
+  const iban = "ES13 2085 8024 9103 3048 5312";
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(iban);
@@ -112,8 +112,9 @@ export default function GiftRegistry() {
               <Gift size={32} className={styles.bankIconMain} />
               <h3>Tu Regalo</h3>
               <p className={styles.stepDesc}>
-                Un viaje al Sudeste Asiático es una aventura que requiere un gran esfuerzo.
-                Cada aportación, por pequeña o grande que sea, nos ayuda a vivir esta experiencia inolvidable.
+                Para nosotros, lo más importante es vivir este día con vosotros.
+                Si deseáis ayudarnos a cumplir el sueño de nuestro viaje de novios, podéis hacerlo aquí.
+                ¡Gracias por ser parte de nuestra historia!
               </p>
 
               <div className={styles.ibanContainer}>
