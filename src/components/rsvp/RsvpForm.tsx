@@ -24,37 +24,25 @@ export default function RsvpForm() {
   const attending = watch("attending");
   const menuChoice = watch("menuChoice");
 
-  // Effect: Confetti for YES, Rain for NO
+  // Effect: Immediate visual feedback on selection
   useEffect(() => {
-    if (submitStatus === "success") {
-      if (attending === "yes") {
-        import("canvas-confetti").then((confetti) => {
-          // Party canon!
-          const duration = 3000;
-          const animationEnd = Date.now() + duration;
-          const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
-
-          const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
-
-          const interval: any = setInterval(function () {
-            const timeLeft = animationEnd - Date.now();
-
-            if (timeLeft <= 0) {
-              return clearInterval(interval);
-            }
-
-            const particleCount = 50 * (timeLeft / duration);
-            confetti.default({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#c5a059', '#D4AF37', '#ffffff'] });
-            confetti.default({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#c5a059', '#D4AF37', '#ffffff'] });
-          }, 250);
+    if (attending === "yes") {
+      import("canvas-confetti").then((confetti) => {
+        // Short concentrated burst for selection
+        confetti.default({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.7 }, // Start from lower down
+          colors: ['#c5a059', '#D4AF37', '#ffffff']
         });
-      } else {
-        // Rain effect
-        setRainEffect(true);
-        setTimeout(() => setRainEffect(false), 5000); // 5 seconds of sadness
-      }
+      });
+      setRainEffect(false); // Stop rain if they switch
+    } else if (attending === "no") {
+      // Rain effect
+      setRainEffect(true);
+      setTimeout(() => setRainEffect(false), 3000); // 3 seconds of sadness is enough for selection
     }
-  }, [submitStatus, attending]);
+  }, [attending]);
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
@@ -136,7 +124,28 @@ export default function RsvpForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+    <form onSubmit={handleSubmit(onSubmit)} className={styles.form} style={{ position: 'relative', overflow: 'hidden' }}>
+      {/* Rain Overlay for "No" selection */}
+      <AnimatePresence>
+        {rainEffect && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={styles.rainOverlay}
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }}
+          >
+            {Array.from({ length: 30 }).map((_, i) => (
+              <div key={i} className={styles.drop} style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${0.5 + Math.random()}s`
+              }} />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Name Fields */}
       <div className={styles.row}>
         <div className={styles.fieldGroup}>
