@@ -2,99 +2,98 @@
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background-color: var(--background);
+    background: linear-gradient(135deg, #fdfbf7 0%, #f5f5f4 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
     perspective: 2000px;
+    height: 100dvh;
+    /* Dynamic viewport height for mobile */
 }
 
 .envelopeContainer {
     position: relative;
-    width: min(90vw, 800px);
-    /* Increased size */
-    aspect-ratio: 1.6/1;
+    width: min(90vw, 500px);
+    max-width: 95%;
+    aspect-ratio: 1.4/1;
     transform-style: preserve-3d;
     cursor: pointer;
-    transition: transform 0.5s ease;
-    margin-top: 2rem;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .envelopeContainer:hover {
-    transform: scale(1.02);
+    transform: scale(1.03) translateY(-5px);
 }
 
 .envelope {
     width: 100%;
     height: 100%;
     background-color: #F5F5F4;
-    /* Stone 100 */
     position: relative;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
-    /* Deeper shadow */
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
     display: flex;
     justify-content: center;
     align-items: center;
     transform-style: preserve-3d;
-    transform-style: preserve-3d;
-    /* Simple CSS pattern fallback or texture */
     background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.01) 0, rgba(0, 0, 0, 0.01) 1px, transparent 0, transparent 50%);
     background-size: 10px 10px;
     background-color: #E5E5E5;
-    /* Darker inside to show depth when open */
+    border-radius: 4px;
 }
 
-/* Inner Paper / Letter */
-.letter {
-    position: absolute;
-    width: 90%;
-    height: 90%;
-    background: white;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    z-index: 2;
-    /* Behind flaps but inside */
-}
-
-/* Wax Seal - More visible */
+/* Wax Seal - Center of envelope */
 .seal {
-    width: 100px;
-    /* Larger */
-    height: 100px;
+    width: 90px;
+    height: 90px;
     background: radial-gradient(circle at 30% 30%, #D4AF37, #B4975A);
     border-radius: 50%;
     position: absolute;
     z-index: 20;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-serif);
-    font-size: 2.5rem;
-    /* Larger font */
+    font-family: var(--font-script);
+    font-size: 2rem;
     color: white;
-    /* Pure white for contrast */
-    font-weight: 700;
+    font-weight: 500;
     border: 4px solid #9A814C;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* "Para Ti" text - ON TOP FLAP */
+.envelopeText {
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 11;
+    font-family: var(--font-script);
+    font-size: 2.5rem;
+    color: #5c5450;
+    font-weight: 400;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.05em;
 }
 
 .clickHint {
     position: absolute;
-    bottom: -5rem;
+    bottom: -4rem;
     font-family: var(--font-sans);
-    font-size: 1rem;
-    letter-spacing: 0.2em;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--foreground);
-    opacity: 0.9;
-    animation: pulse 2s infinite;
+    color: var(--color-accent);
+    opacity: 1;
+    animation: pulse 2s infinite ease-in-out;
     background: white;
     padding: 0.75rem 1.5rem;
     border-radius: 99px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     font-weight: 600;
     white-space: nowrap;
+    border: 1px solid var(--color-accent);
 }
 
 @keyframes pulse {
@@ -102,10 +101,12 @@
     0%,
     100% {
         transform: scale(1);
+        opacity: 1;
     }
 
     50% {
-        transform: scale(1.05);
+        transform: scale(1.08);
+        opacity: 0.9;
     }
 }
 
@@ -116,12 +117,12 @@
     left: 0;
     width: 100%;
     height: 55%;
-    background-color: #E7E5E4;
+    background: linear-gradient(to bottom, #E7E5E4 0%, #D6D3D1 100%);
     clip-path: polygon(0 0, 50% 100%, 100% 0);
-    transform-origin: top;
+    transform-origin: top center;
     z-index: 10;
-    transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    /* Dramatic 3D opening animation applied via framer-motion */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .flapBottom {
@@ -129,7 +130,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 50%;
+    height: 52%;
     background-color: #F5F5F4;
     clip-path: polygon(0 100%, 50% 0, 100% 100%);
     z-index: 5;
@@ -158,44 +159,63 @@
     z-index: 5;
 }
 
-/* Names on Envelope */
-.envelopeText {
-    z-index: 6;
-    font-family: var(--font-serif);
-    font-size: 3.5rem;
-    /* Much larger */
-    color: #2D2926;
-    /* Dark strong color */
-    opacity: 1;
-    /* Full opacity */
-    margin-top: 6rem;
-    font-weight: 600;
+/* EMERGING CARD behind envelope */
+.innerCard {
     position: absolute;
-    bottom: 15%;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+    width: 85%;
+    height: 80%;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.innerCardText {
+    font-family: var(--font-script);
+    font-size: 2.5rem;
+    color: var(--color-accent);
+}
+
+.innerCardSubtext {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: #666;
 }
 
 @media (max-width: 600px) {
     .envelopeContainer {
-        width: 90vw;
-        aspect-ratio: 1.4/1;
-        /* Taller on mobile */
+        width: 92vw;
+        max-width: 100%;
+        aspect-ratio: 1.3/1;
     }
 
     .seal {
-        width: 80px;
-        height: 80px;
-        font-size: 2rem;
+        width: 70px;
+        height: 70px;
+        font-size: 1.6rem;
     }
 
     .envelopeText {
-        font-size: 2.25rem;
-        bottom: 10%;
+        font-size: 1.8rem;
+        top: 6%;
     }
 
     .clickHint {
-        bottom: -6rem;
-        /* Give more space */
-        font-size: 0.8rem;
+        bottom: -3.5rem;
+        font-size: 0.7rem;
+        padding: 0.6rem 1.2rem;
+    }
+
+    .innerCardText {
+        font-size: 1.8rem;
+    }
+
+    .innerCardSubtext {
+        font-size: 0.95rem;
     }
 }
