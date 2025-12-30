@@ -59,54 +59,73 @@
   margin-top: 1rem;
 }
 
-/* PHOTO BLOCK */
-.photoBlock {
-  flex: 1;
-}
-
+/* ScatteredPhotoStrip - Organic Polaroid Spread */
 .miniGrid {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  flex-direction: row;
+  flex-wrap: nowrap;
   justify-content: center;
-  padding: 2rem;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.miniGrid::-webkit-scrollbar {
+  display: none;
 }
 
 .miniPhotoItem {
   position: relative;
-  width: 160px;
-  /* Fixed width for polaroid feel */
-  aspect-ratio: 4/5;
-  border-radius: 4px;
+  flex: 0 0 auto;
+  width: 140px;
+  aspect-ratio: 3/4;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.4s ease, z-index 0s;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease-in-out, z-index 0s;
   background: white;
   padding: 4px;
-  /* White border effect like polaroid */
 }
 
-.miniPhotoItem:nth-child(3n+1) {
-  transform: rotate(-3deg) translateY(10px);
+/* 5-card rotation cycle matching JSON spec */
+.miniPhotoItem:nth-child(5n+1) {
+  transform: rotate(-5deg) translateY(0px);
+  z-index: 1;
 }
 
-.miniPhotoItem:nth-child(3n+2) {
-  transform: rotate(2deg) translateY(-5px);
+.miniPhotoItem:nth-child(5n+2) {
+  transform: rotate(3deg) translateY(-5px);
+  z-index: 2;
 }
 
-.miniPhotoItem:nth-child(3n+3) {
-  transform: rotate(4deg) translateY(5px);
+.miniPhotoItem:nth-child(5n+3) {
+  transform: rotate(-2deg) translateY(0px);
+  z-index: 3;
+}
+
+.miniPhotoItem:nth-child(5n+4) {
+  transform: rotate(6deg) translateY(-2px);
+  z-index: 2;
+}
+
+.miniPhotoItem:nth-child(5n+5) {
+  transform: rotate(-4deg) translateY(0px);
+  z-index: 1;
 }
 
 .miniPhotoItem:hover {
-  transform: scale(1.1) rotate(0deg) !important;
-  z-index: 20;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05) rotate(0deg) !important;
+  z-index: 10 !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
 }
 
 .storyImage {
   object-fit: cover;
-  border-radius: 2px;
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
 }
 
 @media (max-width: 900px) {
