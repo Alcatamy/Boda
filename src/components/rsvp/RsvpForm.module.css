@@ -81,56 +81,153 @@
   gap: 1rem;
 }
 
-.radioLabel {
+/* Custom YES Option - Party/Neon */
+.optionYes {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  padding: 1.25rem;
-  border: 1px solid var(--color-primary-gold);
-  border-radius: 8px;
+  padding: 1.5rem;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: var(--color-text-charcoal);
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.optionYes:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.optionYes.selected {
+  background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%);
+  color: white;
+  border-color: #FFD700;
+  box-shadow:
+    0 0 15px rgba(255, 215, 0, 0.6),
+    0 0 30px rgba(255, 140, 0, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Custom NO Option - Rain/Sad */
+.optionNo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 2px solid transparent;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  /* Default Gold State */
-  background-color: var(--color-primary-gold);
-  color: white;
-  font-weight: 600;
-  box-shadow: 0 4px 6px rgba(180, 151, 90, 0.2);
+  font-weight: 700;
+  color: var(--color-text-charcoal);
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
-.radioLabel:hover {
-  background-color: var(--color-primary-gold-hover);
-  border-color: var(--color-primary-gold-hover);
+.optionNo:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 15px rgba(180, 151, 90, 0.3);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
-.radioLabel.selected {
-  background-color: white;
-  color: var(--color-primary-gold);
-  border-color: var(--color-primary-gold);
-}
-
-.radioInput {
-  display: none;
-}
-
-.radioLabel:hover {
-  border-color: var(--color-accent);
-  background-color: rgba(180, 151, 90, 0.02);
-}
-
-.radioLabel.selected {
-  background-color: var(--color-accent);
+.optionNo.selected {
+  background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
   color: white;
-  border-color: var(--color-accent);
-  box-shadow: 0 4px 12px rgba(180, 151, 90, 0.3);
+  border-color: #cbd5e1;
+  box-shadow:
+    inset 0 0 20px rgba(0, 0, 0, 0.2),
+    0 4px 10px rgba(71, 85, 105, 0.4);
+}
+
+/* Emoji animation for YES */
+.optionYes.selected::after {
+  content: "🎉";
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 3rem;
+  opacity: 0.3;
+  transform: rotate(15deg);
+}
+
+/* Emoji animation for NO */
+.optionNo.selected::after {
+  content: "🌧️";
+  position: absolute;
+  bottom: -5px;
+  right: 5px;
+  font-size: 3rem;
+  opacity: 0.2;
+  transform: rotate(-10deg);
+}
+
+/* Menu Grid Restoration */
+.menuGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.menuCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: white;
+  border: 2px solid transparent;
+  /* No border initially */
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.menuCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(180, 151, 90, 0.15);
+}
+
+.menuCard.menuSelected {
+  border-color: var(--color-primary-gold);
+  background-color: rgba(180, 151, 90, 0.05);
+  box-shadow: 0 0 0 4px rgba(180, 151, 90, 0.1);
+}
+
+.menuEmoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.menuCard:hover .menuEmoji {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.menuTitle {
   font-weight: 600;
+  color: var(--foreground);
+  font-size: 1rem;
 }
 
 /* Checkbox */

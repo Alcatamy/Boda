@@ -163,19 +163,21 @@ export default function RsvpForm() {
       <div className={styles.fieldGroup}>
         <label>¿Podrás acompañarnos? *</label>
         <div className={styles.radioGroup}>
-          <label className={`${styles.radioOption} ${attending === "yes" ? styles.selected : ""}`}>
+          <label className={`${styles.optionYes} ${attending === "yes" ? styles.selected : ""}`}>
             <input
               type="radio"
               value="yes"
               {...register("attending", { required: true })}
+              className={styles.radioInput}
             />
             <span>¡Sí, allí estaré!</span>
           </label>
-          <label className={`${styles.radioOption} ${attending === "no" ? styles.selected : ""}`}>
+          <label className={`${styles.optionNo} ${attending === "no" ? styles.selected : ""}`}>
             <input
               type="radio"
               value="no"
               {...register("attending", { required: true })}
+              className={styles.radioInput}
             />
             <span>Lo siento, no podré ir</span>
           </label>
@@ -194,22 +196,26 @@ export default function RsvpForm() {
             {/* Menu Choice */}
             <div className={styles.fieldGroup}>
               <label><Utensils size={16} /> Preferencia de Menú</label>
-              <div className={styles.radioGroup}>
-                <label className={`${styles.radioOption} ${menuChoice === "meat" ? styles.selected : ""}`}>
+              <div className={styles.menuGrid}>
+                <label className={`${styles.menuCard} ${menuChoice === "meat" ? styles.menuSelected : ""}`}>
                   <input
                     type="radio"
                     value="meat"
                     {...register("menuChoice")}
+                    className={styles.radioInput}
                   />
-                  <span>🥩 Carne</span>
+                  <div className={styles.menuEmoji}>🥩</div>
+                  <span className={styles.menuTitle}>Carne</span>
                 </label>
-                <label className={`${styles.radioOption} ${menuChoice === "fish" ? styles.selected : ""}`}>
+                <label className={`${styles.menuCard} ${menuChoice === "fish" ? styles.menuSelected : ""}`}>
                   <input
                     type="radio"
                     value="fish"
                     {...register("menuChoice")}
+                    className={styles.radioInput}
                   />
-                  <span>🐟 Pescado</span>
+                  <div className={styles.menuEmoji}>🐟</div>
+                  <span className={styles.menuTitle}>Pescado</span>
                 </label>
               </div>
             </div>
