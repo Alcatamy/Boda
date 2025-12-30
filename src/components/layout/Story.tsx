@@ -49,7 +49,7 @@ export default function Story() {
     },
     {
       id: 3,
-      text: `Desde el colegio hasta hoy, hemos crecido juntos en todos los sentidos. No solo en edad, 
+      text: `Desde la adolescencia hasta hoy, hemos crecido juntos en todos los sentidos. No solo en años, 
              sino como personas. Nos hemos apoyado en cada etapa, celebrando logros y superando retos, 
              siempre de la mano. Construyendo día a día lo que somos hoy.`,
       photos: storyPhotos.slice(7, 13) // Next 6 photos
