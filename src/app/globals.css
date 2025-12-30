@@ -10,6 +10,9 @@
 
   --color-base-white: #ffffff;
   --color-base-black: #000000;
+
+  --font-heading: var(--font-script);
+  /* Mapping headings to Parisienne */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,6 +39,18 @@ body {
   font-family: var(--font-sans), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), var(--font-serif);
+  /* Fallback to Cormorant if needed */
+  font-weight: 400;
+  /* Script fonts usually look best at normal weight */
 }
 
 * {

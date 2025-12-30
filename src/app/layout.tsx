@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Cormorant_Garamond } from "next/font/google"; // Import fonts
+import { Montserrat, Cormorant_Garamond, Parisienne } from "next/font/google"; // Import fonts
 import "@/styles/globals.css";
 
 // Configure fonts
@@ -12,6 +12,12 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
   variable: "--font-serif",
+});
+
+const parisienne = Parisienne({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-script", // New variable for Titles
 });
 
 export const metadata: Metadata = {
@@ -47,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${montserrat.variable} ${cormorant.variable}`}>
+    <html lang="en" className={`${montserrat.variable} ${cormorant.variable} ${parisienne.variable}`}>
       <body>
         <Preloader />
         <NoiseOverlay />
