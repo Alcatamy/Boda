@@ -38,6 +38,12 @@ export const metadata: Metadata = {
     locale: "es_ES",
     type: "website",
   },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 };
 
 import Header from "@/components/layout/Header";
