@@ -6,38 +6,46 @@ import styles from "./EnvelopeIntro.module.css";
 
 export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
     const [isOpen, setIsOpen] = useState(false);
-    const [isVanishing, setIsVanishing] = useState(false);
+    const [isZooming, setIsZooming] = useState(false);
 
     const handleOpen = () => {
         if (isOpen) return;
         setIsOpen(true);
 
-        // Trigger the actual site reveal after dramatic animation
+        // Phase 2: Start zoom after flap opens
         setTimeout(() => {
-            setIsVanishing(true);
-            setTimeout(() => {
-                onOpen();
-            }, 1000); // Longer fade out
-        }, 2000); // Wait for full animation
-    };
+            setIsZooming(true);
+        }, 800);
 
-    if (isVanishing) return null;
+        // Phase 3: Reveal site after zoom completes
+        setTimeout(() => {
+            onOpen();
+        }, 2200);
+    };
 
     return (
         <motion.div
             className={styles.overlay}
-            exit={{ opacity: 0, scale: 1.2, pointerEvents: "none" }}
-            transition={{ duration: 1.2, ease: "easeInOut" }}
+            animate={isZooming ? {
+                opacity: 0
+            } : { opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            style={{ pointerEvents: isZooming ? "none" : "auto" }}
         >
-            <div className={styles.envelopeContainer} onClick={handleOpen}>
+            <motion.div
+                className={styles.envelopeContainer}
+                onClick={handleOpen}
+                animate={isZooming ? {
+                    scale: 25,
+                    opacity: 0
+                } : { scale: 1 }}
+                transition={{
+                    duration: 1.2,
+                    ease: [0.22, 1, 0.36, 1]
+                }}
+            >
                 <motion.div
                     className={styles.envelope}
-                    animate={isOpen ? {
-                        translateY: 50,
-                        opacity: 0,
-                        scale: 0.9
-                    } : {}}
-                    transition={{ delay: 1.2, duration: 0.8, ease: "easeInOut" }}
                 >
                     {/* FLAPS */}
                     <div className={styles.flapLeft} />
@@ -51,8 +59,8 @@ export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
                             rotateX: 180
                         } : { rotateX: 0 }}
                         transition={{
-                            duration: 1.2,
-                            ease: [0.34, 1.56, 0.64, 1] // Spring/bouncy physics
+                            duration: 1,
+                            ease: [0.34, 1.56, 0.64, 1]
                         }}
                         style={{ transformStyle: "preserve-3d" }}
                     />
@@ -61,7 +69,7 @@ export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
                     <motion.div
                         className={styles.envelopeText}
                         animate={isOpen ? { opacity: 0, y: -20 } : { opacity: 1 }}
-                        transition={{ duration: 0.4 }}
+                        transition={{ duration: 0.3 }}
                     >
                         Para Ti
                     </motion.div>
@@ -74,23 +82,22 @@ export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
                             scale: 0.3,
                             rotate: 45
                         } : { opacity: 1 }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
                     >
                         N&A
                     </motion.div>
 
-                    {/* INNER CARD - Emerges with scale effect */}
+                    {/* INNER CARD - Visible through the opening */}
                     <motion.div
                         className={styles.innerCard}
-                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        initial={{ opacity: 0, scale: 0.9 }}
                         animate={isOpen ? {
                             opacity: 1,
-                            scale: 1.1,
-                            y: -30
-                        } : { opacity: 0, scale: 0.8, y: 20 }}
+                            scale: 1
+                        } : { opacity: 0, scale: 0.9 }}
                         transition={{
-                            delay: 0.6,
-                            duration: 0.8,
+                            delay: 0.4,
+                            duration: 0.6,
                             ease: [0.22, 1, 0.36, 1]
                         }}
                     >
@@ -109,7 +116,7 @@ export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
                         Toca para abrir
                     </motion.div>
                 )}
-            </div>
+            </motion.div>
         </motion.div>
     );
 }

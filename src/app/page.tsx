@@ -4,21 +4,21 @@ import Logistics from "@/components/layout/Logistics";
 import RsvpSection from "@/components/rsvp/RsvpSection";
 import GiftRegistry from "@/components/features/GiftRegistry";
 import GallerySection from "@/components/gallery/GallerySection";
-import AnimatedSeparator from "@/components/ui/AnimatedSeparator";
+import WaveDivider from "@/components/ui/WaveDivider";
 
 export default function Home() {
   return (
     <main>
       <Hero />
-      <AnimatedSeparator />
+      <WaveDivider />
       <Story />
-      <AnimatedSeparator inverted />
+      <WaveDivider flip />
       <Logistics />
-      <AnimatedSeparator />
+      <WaveDivider />
       <RsvpSection />
-      <AnimatedSeparator inverted />
+      <WaveDivider flip />
       <GiftRegistry />
-      <AnimatedSeparator />
+      <WaveDivider />
       <GallerySection />
     </main>
   );

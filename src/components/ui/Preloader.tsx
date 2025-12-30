@@ -35,9 +35,9 @@ export default function Preloader() {
             transition={{ duration: 1, delay: 0.2 }}
             className={styles.content}
           >
-            <h1 className={styles.initials} style={{ fontFamily: 'var(--font-heading)' }}>N & A</h1>
+            <h1 className={styles.initials} style={{ fontFamily: 'var(--font-script)' }}>N & A</h1>
             <div className={styles.line} />
-            <p className={styles.date} style={{ fontFamily: 'var(--font-heading)' }}>25 . 07 . 2026</p>
+            <p className={styles.date} style={{ fontFamily: 'var(--font-script)' }}>25 . 07 . 2026</p>
           </motion.div>
         </motion.div>
       )}
