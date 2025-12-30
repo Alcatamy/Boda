@@ -9,17 +9,22 @@
     overflow: hidden;
     perspective: 2000px;
     height: 100dvh;
-    /* Dynamic viewport height for mobile */
+    width: 100vw;
+    /* Prevent elastic scrolling / rubber-banding */
+    overscroll-behavior: none;
+    touch-action: manipulation;
+    -webkit-overflow-scrolling: auto;
 }
 
 .envelopeContainer {
     position: relative;
-    width: min(90vw, 500px);
-    max-width: 95%;
+    width: min(85vw, 380px);
+    max-width: 90%;
     aspect-ratio: 1.4/1;
     transform-style: preserve-3d;
     cursor: pointer;
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    touch-action: manipulation;
 }
 
 .envelopeContainer:hover {
