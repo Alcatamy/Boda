@@ -101,7 +101,7 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
 
                             <div className={styles.nowPlaying}>
                                 <button onClick={togglePlay} className={styles.playBtn}>
-                                    {isPlaying ? <Pause size={20} /> : <Play size={20} fill="currentColor" />}
+                                    {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
                                 </button>
                                 <div className={styles.trackInfo}>
                                     <span className={styles.trackTitle}>Adventure of a Lifetime</span>
