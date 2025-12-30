@@ -27,10 +27,10 @@
 }
 
 .logo {
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
-  letter-spacing: 0.1em;
-  font-weight: 600;
+  font-family: var(--font-script);
+  font-size: 2.5rem;
+  letter-spacing: -0.02em;
+  font-weight: 500;
 }
 
 .desktopNav {

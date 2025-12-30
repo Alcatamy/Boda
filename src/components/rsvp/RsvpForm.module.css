@@ -126,6 +126,7 @@
   color: white;
   border-color: var(--color-accent);
   box-shadow: 0 4px 12px rgba(180, 151, 90, 0.3);
+  font-weight: 600;
 }
 
 /* Checkbox */

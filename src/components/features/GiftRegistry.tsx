@@ -113,7 +113,7 @@ export default function GiftRegistry() {
           <div className={styles.interactionGrid}>
 
             {/* GUEST BOOK */}
-            <div className={styles.interactionCard} style={{ gridColumn: "1 / -1", maxWidth: "800px", margin: "0 auto" }}>
+            <div className={styles.interactionCard} style={{ gridColumn: "1 / -1", maxWidth: "600px", margin: "0 auto" }}>
               <h3>Déjanos un Mensaje</h3>
               <p className={styles.cardDesc}>Tus palabras saldrán reflejadas en la web para que todo el mundo las pueda ver.</p>
 
