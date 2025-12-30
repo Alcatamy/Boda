@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
-import confetti from "canvas-confetti";
 import { supabase } from "@/lib/supabase";
 import { Loader2, CheckCircle, AlertCircle, Utensils } from "lucide-react";
 import styles from "./RsvpForm.module.css";
@@ -27,11 +26,13 @@ export default function RsvpForm() {
 
   useEffect(() => {
     if (submitStatus === "success") {
-      confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#c5a059', '#e7e5e4', '#ffffff']
+      import("canvas-confetti").then((confetti) => {
+        confetti.default({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#c5a059', '#e7e5e4', '#ffffff']
+        });
       });
     }
   }, [submitStatus]);
