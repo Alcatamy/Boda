@@ -41,7 +41,11 @@ export default function Header() {
         {/* Desktop Nav */}
         <nav className={styles.desktopNav}>
           {navLinks.map((link) => (
-            <Link key={link.name} href={link.href} className={styles.navLink}>
+            <Link
+              key={link.name}
+              href={link.href}
+              className={link.name === "RSVP" ? `${styles.navLink} ${styles.ctaLink}` : styles.navLink}
+            >
               {link.name}
             </Link>
           ))}

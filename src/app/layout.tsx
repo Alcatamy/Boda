@@ -44,6 +44,7 @@ import Header from "@/components/layout/Header";
 import ChatWidget from "@/components/features/ChatWidget";
 import NoiseOverlay from "@/components/ui/NoiseOverlay";
 import Preloader from "@/components/ui/Preloader";
+import MobileActionBar from "@/components/layout/MobileActionBar";
 
 import ClientLayout from "@/components/layout/ClientLayout";
 
@@ -61,6 +62,7 @@ export default function RootLayout({
           <Header />
           {children}
           <ChatWidget />
+          <MobileActionBar />
         </ClientLayout>
       </body>
     </html>

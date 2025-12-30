@@ -1,12 +1,18 @@
 :root {
   /* Calm UX Custom Color Palette - Refined */
-  --color-base-white: #fafaf9; /* Warm off-white (Stone-50) */
-  --color-base-ivory: #f5f5f4; /* Stone-100 */
-  --color-primary-gold: #c5a059; /* Elegant Muted Gold */
+  --color-base-white: #fafaf9;
+  /* Warm off-white (Stone-50) */
+  --color-base-ivory: #f5f5f4;
+  /* Stone-100 */
+  --color-primary-gold: #c5a059;
+  /* Elegant Muted Gold */
   --color-primary-gold-hover: #b08d4b;
-  --color-text-charcoal: #1c1917; /* Stone-900 (Darker than 800) */
-  --color-text-muted: #57534e; /* Stone-600 (Darker than 500) */
-  --color-border: #e7e5e4; /* Stone-200 */
+  --color-text-charcoal: #1c1917;
+  /* Stone-900 (Darker than 800) */
+  --color-text-muted: #44403c;
+  /* Stone-700 (Darker than 600 for accessibility) */
+  --color-border: #e7e5e4;
+  /* Stone-200 */
 
   /* Semantic Colors */
   --bg-primary: var(--color-base-white);
@@ -23,7 +29,8 @@
   /* Spacing & Layout */
   --container-width: 1200px;
   --header-height: 80px;
-  --section-spacing: 8rem; /* More breathing room */
+  --section-spacing: 8rem;
+  /* More breathing room */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
@@ -46,14 +53,17 @@
 ::-webkit-scrollbar {
   width: 10px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--bg-primary);
 }
+
 ::-webkit-scrollbar-thumb {
   background: #d6d3d1;
   border-radius: 5px;
   border: 2px solid var(--bg-primary);
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a29e;
 }
@@ -64,20 +74,37 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   line-height: 1.7;
-  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+  overflow-x: hidden;
+  /* Prevent horizontal scroll on mobile */
 }
 
-h1,h2,h3,h4,h5,h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-serif);
   font-weight: 400;
   line-height: 1.1;
-  letter-spacing: -0.02em; /* Tighter, more elegant headings */
+  letter-spacing: -0.02em;
+  /* Tighter, more elegant headings */
   color: var(--text-primary);
 }
 
-h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); }
-h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1rem; }
-p { margin-bottom: 1.5rem; max-width: 65ch; }
+h1 {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 1.5rem;
+  max-width: 65ch;
+}
 
 a {
   color: inherit;
@@ -100,5 +127,8 @@ a {
 }
 
 @keyframes fadeUp {
-  to { opacity: 1; transform: translateY(0); }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
