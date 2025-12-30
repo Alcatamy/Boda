@@ -142,7 +142,7 @@ a {
 button,
 a.button,
 .btn {
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
 }
 
 button:hover,
@@ -151,4 +151,12 @@ a.button:hover,
   background-color: var(--color-primary-gold) !important;
   color: #FFFFFF !important;
   border-color: var(--color-primary-gold) !important;
+}
+
+/* Tactile press animation */
+button:active,
+a.button:active,
+.btn:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
 }
