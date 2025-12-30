@@ -13,8 +13,14 @@ type Photo = {
   caption: string;
 };
 
+// Wedding date: July 25, 2026
+const WEDDING_DATE = new Date("2026-07-25T00:00:00");
+
 export default function GallerySection() {
   const [photos, setPhotos] = useState<Photo[]>([]);
+
+  // Hide section until wedding day
+  const isWeddingDay = new Date() >= WEDDING_DATE;
 
   const fetchPhotos = useCallback(async () => {
     // Only approved photos
@@ -28,6 +34,8 @@ export default function GallerySection() {
   }, []);
 
   useEffect(() => {
+    if (!isWeddingDay) return; // Don't fetch if hidden
+
     // eslint-disable-next-line
     fetchPhotos();
 
@@ -38,7 +46,12 @@ export default function GallerySection() {
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [fetchPhotos]);
+  }, [fetchPhotos, isWeddingDay]);
+
+  // Don't render until wedding day
+  if (!isWeddingDay) {
+    return null;
+  }
 
   const getImageUrl = (path: string) => {
     const { data } = supabase.storage.from('photos').getPublicUrl(path);
@@ -69,9 +82,6 @@ export default function GallerySection() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
             >
-              {/* Aspect Ratio Container for Masonry items. 
-                  Since we don't have dimensions, we use 'auto' height but Next.js needs help.
-                  We'll use width/height=0 and sizes="100vw" style trick for auto-height images */}
               <div className={styles.imageWrapper}>
                 <Image
                   src={getImageUrl(photo.storage_path)}
