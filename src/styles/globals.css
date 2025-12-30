@@ -68,7 +68,8 @@
 }
 
 body {
-  background-color: var(--bg-primary);
+  background-color: transparent;
+  /* Allow ScrollBackground component to show */
   color: var(--text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
