@@ -1,8 +1,7 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import EnvelopeIntro from "@/components/features/EnvelopeIntro/EnvelopeIntro";
 import MusicPlayer from "@/components/features/MusicPlayer/MusicPlayer";
+import SpotlightCursor from "@/components/ui/SpotlightCursor";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const [hasOpenedEnvelope, setHasOpenedEnvelope] = useState(false);
@@ -23,6 +22,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
             {/* Music Player starts when envelope opens */}
             <MusicPlayer autoPlay={hasOpenedEnvelope} />
+
+            {/* Global Effects */}
+            {showContent && <SpotlightCursor />}
 
             {/* Main Content */}
             <main style={{

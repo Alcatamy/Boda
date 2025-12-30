@@ -1,6 +1,6 @@
 .section {
   padding: var(--section-spacing) 0;
-  background-color: var(--color-base-ivory);
+  background-color: var(--background-alt);
 }
 
 .header {
@@ -32,7 +32,7 @@
   margin-bottom: 1.5rem;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s;
 }
 

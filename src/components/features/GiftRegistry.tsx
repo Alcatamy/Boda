@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, Plane, Gift } from "lucide-react";
 import Image from "next/image";
 import styles from "./GiftRegistry.module.css";
+import MessagesTicker from "@/components/features/Guestbook/MessagesTicker";
 
 export default function GiftRegistry() {
   const [copied, setCopied] = useState(false);
@@ -24,7 +25,7 @@ export default function GiftRegistry() {
           <div className={styles.heroContent}>
             <div className={styles.tag}>
               <Plane size={14} />
-              <span>DESTINO: VIETNAM Y BALI</span>
+              <span>DESTINO: VIETNAM, BALI E ISLAS GILI</span>
             </div>
 
             <h2 className={styles.heroTitle}>
@@ -33,7 +34,7 @@ export default function GiftRegistry() {
             </h2>
 
             <p className={styles.heroText}>
-              Vuestra compañía es el regalo más valioso. Sin embargo, para aquellos que deseéis tener un detalle, hemos creado este fondo destinado a hacer realidad nuestra <strong>Gran Aventura</strong> por el Sudeste Asiático.
+              Vuestra compañía es el regalo más valioso. Sin embargo, para aquellos que deseéis tener un detalle, hemos creado este fondo destinado a hacer realidad nuestra <strong>Gran Aventura</strong> por el Sudeste Asiático e Islas Paradisíacas.
             </p>
           </div>
 
@@ -41,7 +42,7 @@ export default function GiftRegistry() {
             <div className={styles.imageWrapper}>
               <Image
                 src="/images/registry/banner.png"
-                alt="Vietnam y Bali"
+                alt="Vietnam, Bali e Islas Gili"
                 fill
                 className={styles.heroImage}
                 placeholder="blur"
@@ -108,6 +109,11 @@ export default function GiftRegistry() {
                     <Check size={18} /> Enviar Mensaje
                   </button>
                 </form>
+
+                <div style={{ marginTop: '2rem' }}>
+                  <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem', color: 'var(--color-accent)' }}>Mensajes Recientes</h4>
+                  <MessagesTicker />
+                </div>
               </div>
 
             </div>

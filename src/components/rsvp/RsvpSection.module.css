@@ -1,6 +1,7 @@
 .section {
   padding: var(--section-spacing) 0;
-  background-color: var(--color-base-ivory); /* Slight contrast background */
+  background-color: var(--background-alt);
+  /* Stone 200 */
 }
 
 .header {

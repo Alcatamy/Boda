@@ -1,0 +1,70 @@
+.tickerContainer {
+    padding: 4rem 0;
+    background: var(--background);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-top: 2rem;
+}
+
+.wrapper {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.wrapper::before,
+.wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 150px;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, var(--background), transparent);
+}
+
+.wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, var(--background), transparent);
+}
+
+.track {
+    display: flex;
+    gap: 4rem;
+    width: max-content;
+}
+
+.ticketItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 300px;
+    padding: 1.5rem;
+    background: var(--color-surface);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.message {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--foreground);
+}
+
+.author {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: right;
+}

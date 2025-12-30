@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import styles from "./Story.module.css";
+import TiltWrapper from "@/components/ui/TiltWrapper";
 
 // All photos provided by user, ordered chronologically from oldest to newest
 const storyPhotos = [
@@ -93,7 +94,7 @@ export default function Story() {
               <div className={styles.photoBlock}>
                 <div className={styles.miniGrid}>
                   {block.photos.map((src, i) => (
-                    <div key={i} className={styles.miniPhotoItem}>
+                    <TiltWrapper key={i} className={styles.miniPhotoItem}>
                       <Image
                         src={src}
                         alt={`Historia ${block.id}-${i}`}
@@ -101,7 +102,7 @@ export default function Story() {
                         className={styles.storyImage}
                         sizes="(max-width: 768px) 50vw, 25vw"
                       />
-                    </div>
+                    </TiltWrapper>
                   ))}
                 </div>
               </div>
