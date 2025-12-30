@@ -243,9 +243,10 @@ export default function RsvpForm() {
         disabled={isSubmitting}
         className={styles.submitButton}
       >
-        <><Loader2 className={styles.spinner} size={20} /> Enviando...</>
+        {isSubmitting ? (
+          <><Loader2 className={styles.spinner} size={20} /> Enviando...</>
         ) : (
-        "Confirmar Asistencia"
+          "Confirmar Asistencia"
         )}
       </button>
     </form>
