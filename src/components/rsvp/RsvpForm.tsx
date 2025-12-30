@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/lib/supabase";
-import { Loader2, CheckCircle, AlertCircle, Utensils } from "lucide-react";
+import { CheckCircle, AlertCircle, Utensils, CloudRain, Loader2 } from "lucide-react";
 import styles from "./RsvpForm.module.css";
 
 type FormData = {
@@ -13,29 +13,48 @@ type FormData = {
   attending: string; // "yes" | "no"
   dietaryRestrictions: string;
   menuChoice: string; // "meat" | "fish"
-  message: string;
 };
 
 export default function RsvpForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [rainEffect, setRainEffect] = useState(false);
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
   const attending = watch("attending");
   const menuChoice = watch("menuChoice");
 
+  // Effect: Confetti for YES, Rain for NO
   useEffect(() => {
     if (submitStatus === "success") {
-      import("canvas-confetti").then((confetti) => {
-        confetti.default({
-          particleCount: 150,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#c5a059', '#e7e5e4', '#ffffff']
+      if (attending === "yes") {
+        import("canvas-confetti").then((confetti) => {
+          // Party canon!
+          const duration = 3000;
+          const animationEnd = Date.now() + duration;
+          const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+          const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+          const interval: any = setInterval(function () {
+            const timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+              return clearInterval(interval);
+            }
+
+            const particleCount = 50 * (timeLeft / duration);
+            confetti.default({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#c5a059', '#D4AF37', '#ffffff'] });
+            confetti.default({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#c5a059', '#D4AF37', '#ffffff'] });
+          }, 250);
         });
-      });
+      } else {
+        // Rain effect
+        setRainEffect(true);
+        setTimeout(() => setRainEffect(false), 5000); // 5 seconds of sadness
+      }
     }
-  }, [submitStatus]);
+  }, [submitStatus, attending]);
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
@@ -51,8 +70,7 @@ export default function RsvpForm() {
             attending: data.attending === "yes",
             dietary_restrictions: data.dietaryRestrictions,
             menu_choice: data.menuChoice,
-            message: data.message,
-            // has_plus_one and plus_one_name removed
+            // message removed per request
           },
         ]);
 
@@ -68,21 +86,52 @@ export default function RsvpForm() {
 
   if (submitStatus === "success") {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className={styles.successMessage}
-      >
-        <CheckCircle size={64} className={styles.successIcon} />
-        <h3>¡Gracias por confirmar!</h3>
-        <p>Hemos recibido tu respuesta y selección de menú correctamente.</p>
-        <button
-          onClick={() => setSubmitStatus("idle")}
-          className={styles.resetButton}
+      <div className={styles.successWrapper}>
+        {/* Rain Overlay */}
+        {rainEffect && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={styles.rainOverlay}
+          >
+            {Array.from({ length: 20 }).map((_, i) => (
+              <div key={i} className={styles.drop} style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${0.5 + Math.random()}s`
+              }} />
+            ))}
+          </motion.div>
+        )}
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className={styles.successMessage}
         >
-          Enviar otra respuesta
-        </button>
-      </motion.div>
+          {attending === "yes" ? (
+            <>
+              <CheckCircle size={64} className={styles.successIcon} color="#D4AF37" />
+              <h3>¡Qué alegría!</h3>
+              <p>Contamos contigo para el gran día. ¡Nos vemos en la fiesta!</p>
+            </>
+          ) : (
+            <>
+              <CloudRain size={64} className={styles.successIcon} color="#64748b" />
+              <h3>¡Oh, qué pena!</h3>
+              <p>Te echaremos mucho de menos, pero entendemos que no puedas venir.</p>
+            </>
+          )}
+
+          <button
+            onClick={() => setSubmitStatus("idle")}
+            className={styles.resetButton}
+          >
+            Enviar otra respuesta
+          </button>
+        </motion.div>
+      </div>
     );
   }
 
@@ -100,35 +149,33 @@ export default function RsvpForm() {
           {errors.firstName && <span className={styles.error}>Requerido</span>}
         </div>
         <div className={styles.fieldGroup}>
-          <label htmlFor="lastName">Apellido *</label>
+          <label htmlFor="lastName">Apellidos *</label>
           <input
             {...register("lastName", { required: true })}
-            placeholder="Tu apellido"
+            placeholder="Tus apellidos"
             className={styles.input}
           />
           {errors.lastName && <span className={styles.error}>Requerido</span>}
         </div>
       </div>
 
-      {/* Attendance */}
+      {/* Attendance Radio */}
       <div className={styles.fieldGroup}>
         <label>¿Podrás acompañarnos? *</label>
         <div className={styles.radioGroup}>
-          <label className={`${styles.radioLabel} ${attending === "yes" ? styles.selected : ""}`}>
+          <label className={`${styles.radioOption} ${attending === "yes" ? styles.selected : ""}`}>
             <input
               type="radio"
               value="yes"
               {...register("attending", { required: true })}
-              className={styles.radioInput}
             />
             <span>¡Sí, allí estaré!</span>
           </label>
-          <label className={`${styles.radioLabel} ${attending === "no" ? styles.selected : ""}`}>
+          <label className={`${styles.radioOption} ${attending === "no" ? styles.selected : ""}`}>
             <input
               type="radio"
               value="no"
               {...register("attending", { required: true })}
-              className={styles.radioInput}
             />
             <span>Lo siento, no podré ir</span>
           </label>
@@ -136,68 +183,52 @@ export default function RsvpForm() {
         {errors.attending && <span className={styles.error}>Por favor selecciona una opción</span>}
       </div>
 
-      {/* Conditional Fields */}
       <AnimatePresence>
         {attending === "yes" && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className={styles.conditionalSection}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className={styles.conditionalFields}
           >
-            {/* Menu Selection */}
+            {/* Menu Choice */}
             <div className={styles.fieldGroup}>
-              <label>Elección de Menú Principal <Utensils size={14} style={{ marginLeft: 8, opacity: 0.7 }} /></label>
-              <div className={styles.menuGrid}>
-                <label className={`${styles.menuCard} ${menuChoice === "meat" ? styles.menuSelected : ""}`}>
+              <label><Utensils size={16} /> Preferencia de Menú</label>
+              <div className={styles.radioGroup}>
+                <label className={`${styles.radioOption} ${menuChoice === "meat" ? styles.selected : ""}`}>
                   <input
                     type="radio"
                     value="meat"
-                    {...register("menuChoice", { required: true })}
-                    className={styles.hiddenRadio}
+                    {...register("menuChoice")}
                   />
-                  <div className={styles.menuEmoji}>🥩</div>
-                  <span className={styles.menuTitle}>Carne</span>
+                  <span>🥩 Carne</span>
                 </label>
-
-                <label className={`${styles.menuCard} ${menuChoice === "fish" ? styles.menuSelected : ""}`}>
+                <label className={`${styles.radioOption} ${menuChoice === "fish" ? styles.selected : ""}`}>
                   <input
                     type="radio"
                     value="fish"
-                    {...register("menuChoice", { required: true })}
-                    className={styles.hiddenRadio}
+                    {...register("menuChoice")}
                   />
-                  <div className={styles.menuEmoji}>🐟</div>
-                  <span className={styles.menuTitle}>Pescado</span>
+                  <span>🐟 Pescado</span>
                 </label>
               </div>
-              {errors.menuChoice && <span className={styles.error}>Elige tu plato principal</span>}
             </div>
 
+            {/* Dietary Restrictions */}
             <div className={styles.fieldGroup}>
-              <label htmlFor="dietaryRestrictions">Alergias, Intolerancias o Especificaciones</label>
+              <label htmlFor="dietaryRestrictions">Alergias o Restricciones (Opcional)</label>
               <textarea
                 {...register("dietaryRestrictions")}
-                placeholder="Ej: Sin gluten, Vegano, Alergia a nueces..."
+                placeholder="Ej: Sin gluten, vegetariano, alergia a frutos secos..."
                 className={styles.textarea}
                 rows={2}
               />
             </div>
-            {/* Removed Plus One Checkbox and Logic */}
+
+            {/* REMOVED MESSAGE FIELD */}
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Message */}
-      <div className={styles.fieldGroup}>
-        <label htmlFor="message">Mensaje para los novios (Opcional)</label>
-        <textarea
-          {...register("message")}
-          placeholder="Déjanos un mensaje..."
-          className={styles.textarea}
-          rows={3}
-        />
-      </div>
 
       {/* Submit Error */}
       {submitStatus === "error" && (
@@ -212,10 +243,9 @@ export default function RsvpForm() {
         disabled={isSubmitting}
         className={styles.submitButton}
       >
-        {isSubmitting ? (
-          <><Loader2 className={styles.spinner} size={20} /> Enviando...</>
+        <><Loader2 className={styles.spinner} size={20} /> Enviando...</>
         ) : (
-          "Confirmar Asistencia"
+        "Confirmar Asistencia"
         )}
       </button>
     </form>

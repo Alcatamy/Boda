@@ -87,16 +87,34 @@
 
 /* PANEL */
 .panel {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    padding: 1.5rem;
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 320px;
+    background: var(--color-surface);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
+    padding: 1.5rem;
     box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
-    width: 300px;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    gap: 1.5rem;
+    transform-origin: bottom right;
+    max-width: calc(100vw - 40px);
+    /* Prevent overflow on small screens */
+}
+
+@media (max-width: 480px) {
+    .panel {
+        width: 280px;
+        right: -10px;
+        /* Slight adjustment for mobile margins */
+    }
+
+    .floater {
+        right: 1rem;
+        bottom: 1rem;
+    }
 }
 
 .panelHeader {
