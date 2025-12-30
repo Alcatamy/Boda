@@ -133,13 +133,24 @@ export default function RsvpForm() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className={styles.rainOverlay}
-            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              pointerEvents: 'none',
+              zIndex: 9999
+            }}
           >
-            {Array.from({ length: 30 }).map((_, i) => (
+            {Array.from({ length: 50 }).map((_, i) => (
               <div key={i} className={styles.drop} style={{
                 left: `${Math.random() * 100}%`,
                 animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${0.5 + Math.random()}s`
+                animationDuration: `${0.4 + Math.random() * 0.3}s`,
+                background: 'linear-gradient(to bottom, transparent, rgba(50, 80, 120, 0.8))',
+                width: '2px',
+                height: '25px'
               }} />
             ))}
           </motion.div>
