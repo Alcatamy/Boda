@@ -10,7 +10,6 @@ import MessagesTicker from "@/components/features/Guestbook/MessagesTicker";
 export default function GiftRegistry() {
   const [copied, setCopied] = useState(false);
   const [msgStatus, setMsgStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [songStatus, setSongStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const iban = "ES13 2085 8024 9103 3048 5312";
 
@@ -36,26 +35,6 @@ export default function GiftRegistry() {
       setMsgStatus("error");
     } else {
       setMsgStatus("success");
-      (e.target as HTMLFormElement).reset();
-    }
-  };
-
-  const handleSongSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSongStatus("loading");
-    const formData = new FormData(e.currentTarget);
-    const sender = formData.get("sender") as string;
-    const song = formData.get("song") as string;
-
-    const { error } = await supabase
-      .from("song_requests")
-      .insert({ sender_name: sender, song_artist: song });
-
-    if (error) {
-      console.error(error);
-      setSongStatus("error");
-    } else {
-      setSongStatus("success");
       (e.target as HTMLFormElement).reset();
     }
   };
@@ -130,11 +109,11 @@ export default function GiftRegistry() {
             </div>
           </div>
 
-          {/* 2. INTERACTION GRID (Messages & Music) */}
+          {/* 2. INTERACTION GRID (Messages Only) */}
           <div className={styles.interactionGrid}>
 
             {/* GUEST BOOK */}
-            <div className={styles.interactionCard}>
+            <div className={styles.interactionCard} style={{ gridColumn: "1 / -1", maxWidth: "800px", margin: "0 auto" }}>
               <h3>Déjanos un Mensaje</h3>
               <p className={styles.cardDesc}>¡Queremos leer tus palabras el día de la boda!</p>
 
@@ -149,20 +128,6 @@ export default function GiftRegistry() {
               <div className={styles.tickerWrapper}>
                 <MessagesTicker />
               </div>
-            </div>
-
-            {/* MUSIC REQUEST */}
-            <div className={styles.interactionCard}>
-              <h3>🎵 Pon tu Canción</h3>
-              <p className={styles.cardDesc}>¡Cuéntanos qué no puede faltar en la pista!</p>
-
-              <form className={styles.cleanForm} onSubmit={handleSongSubmit}>
-                <input name="sender" type="text" placeholder="Tu Nombre" required className={styles.cleanInput} />
-                <input name="song" type="text" placeholder="Canción / Artista" required className={styles.cleanInput} />
-                <button type="submit" className={styles.cleanBtn} disabled={songStatus === "loading" || songStatus === "success"}>
-                  {songStatus === "loading" ? <Loader2 className="animate-spin" size={16} /> : songStatus === "success" ? "¡Anotada!" : "Enviar Sugerencia"}
-                </button>
-              </form>
             </div>
 
           </div>

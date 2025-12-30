@@ -119,11 +119,9 @@ export default function Logistics() {
             transition={{ delay: 0.6 }}
           >
             <div className={styles.cardContent}>
-              <div className={styles.iconBox}>
-                <Phone size={32} />
-              </div>
-              <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle}>Información</h3>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem", marginBottom: "1.5rem" }}>
+                <Phone size={28} className={styles.accentIcon} />
+                <h3 className={styles.cardTitle} style={{ margin: 0 }}>Información</h3>
               </div>
 
               <div className={styles.infoList}>
