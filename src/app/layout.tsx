@@ -50,6 +50,7 @@ import Header from "@/components/layout/Header";
 import ChatWidget from "@/components/features/ChatWidget";
 import NoiseOverlay from "@/components/ui/NoiseOverlay";
 import Preloader from "@/components/ui/Preloader";
+import ScrollBackground from "@/components/ui/ScrollBackground";
 
 import ClientLayout from "@/components/layout/ClientLayout";
 
@@ -64,6 +65,7 @@ export default function RootLayout({
         <Preloader />
         <NoiseOverlay />
         <ClientLayout>
+          <ScrollBackground />
           <Header />
           {children}
           <ChatWidget />
