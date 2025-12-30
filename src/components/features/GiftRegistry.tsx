@@ -1,19 +1,63 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Plane, Gift } from "lucide-react";
+import { Check, Plane, Gift, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { supabase } from "@/lib/supabase";
 import styles from "./GiftRegistry.module.css";
 import MessagesTicker from "@/components/features/Guestbook/MessagesTicker";
 
 export default function GiftRegistry() {
   const [copied, setCopied] = useState(false);
+  const [msgStatus, setMsgStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [songStatus, setSongStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
   const iban = "ES98 0000 0000 0000 0000 0000"; // Placeholder
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(iban);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleMessageSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setMsgStatus("loading");
+    const formData = new FormData(e.currentTarget);
+    const sender = formData.get("sender") as string;
+    const message = formData.get("message") as string;
+
+    const { error } = await supabase
+      .from("messages")
+      .insert({ sender_name: sender, content: message });
+
+    if (error) {
+      console.error(error);
+      setMsgStatus("error");
+    } else {
+      setMsgStatus("success");
+      (e.target as HTMLFormElement).reset();
+    }
+  };
+
+  const handleSongSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSongStatus("loading");
+    const formData = new FormData(e.currentTarget);
+    const sender = formData.get("sender") as string;
+    const song = formData.get("song") as string;
+
+    const { error } = await supabase
+      .from("song_requests")
+      .insert({ sender_name: sender, song_artist: song });
+
+    if (error) {
+      console.error(error);
+      setSongStatus("error");
+    } else {
+      setSongStatus("success");
+      (e.target as HTMLFormElement).reset();
+    }
   };
 
   return (
@@ -93,10 +137,12 @@ export default function GiftRegistry() {
               <h3>Déjanos un Mensaje</h3>
               <p className={styles.cardDesc}>¡Queremos leer tus palabras el día de la boda!</p>
 
-              <form className={styles.cleanForm} onSubmit={(e) => { e.preventDefault(); alert("¡Gracias! Tu mensaje ha sido guardado con mucho cariño."); }}>
-                <input type="text" placeholder="Tu Nombre (Ej: Tía Paqui)" required className={styles.cleanInput} />
-                <textarea placeholder="Tu mensaje..." rows={3} className={styles.cleanTextarea} />
-                <button type="submit" className={styles.cleanBtn}>Enviar Mensaje</button>
+              <form className={styles.cleanForm} onSubmit={handleMessageSubmit}>
+                <input name="sender" type="text" placeholder="Tu Nombre (Ej: Tía Paqui)" required className={styles.cleanInput} />
+                <textarea name="message" placeholder="Tu mensaje..." rows={3} required className={styles.cleanTextarea} />
+                <button type="submit" className={styles.cleanBtn} disabled={msgStatus === "loading" || msgStatus === "success"}>
+                  {msgStatus === "loading" ? <Loader2 className="animate-spin" size={16} /> : msgStatus === "success" ? "¡Enviado!" : "Enviar Mensaje"}
+                </button>
               </form>
 
               <div className={styles.tickerWrapper}>
@@ -109,10 +155,12 @@ export default function GiftRegistry() {
               <h3>🎵 Pon tu Canción</h3>
               <p className={styles.cardDesc}>¡Cuéntanos qué no puede faltar en la pista!</p>
 
-              <form className={styles.cleanForm} onSubmit={(e) => { e.preventDefault(); alert("¡Anotada! La pondremos para bailar."); }}>
-                <input type="text" placeholder="Tu Nombre" required className={styles.cleanInput} />
-                <input type="text" placeholder="Canción / Artista" required className={styles.cleanInput} />
-                <button type="submit" className={styles.cleanBtn}>Enviar Sugerencia</button>
+              <form className={styles.cleanForm} onSubmit={handleSongSubmit}>
+                <input name="sender" type="text" placeholder="Tu Nombre" required className={styles.cleanInput} />
+                <input name="song" type="text" placeholder="Canción / Artista" required className={styles.cleanInput} />
+                <button type="submit" className={styles.cleanBtn} disabled={songStatus === "loading" || songStatus === "success"}>
+                  {songStatus === "loading" ? <Loader2 className="animate-spin" size={16} /> : songStatus === "success" ? "¡Anotada!" : "Enviar Sugerencia"}
+                </button>
               </form>
             </div>
 
