@@ -38,27 +38,27 @@ export default function Story() {
       id: 1,
       text: `Todo comenzó en una entrega de premios de bádminton, el deporte que nos vio crecer. 
              Fue una coincidencia que sembró la semilla de lo que vendría después.`,
-      photos: storyPhotos.slice(0, 3) // First 3 photos
+      photos: storyPhotos.slice(0, 5) // 5 photos (3+2 grid)
     },
     {
       id: 2,
       text: `Dos años después, el pabellón volvió a cruzar nuestros caminos. Aunque una hora de distancia 
              separaba nuestras casas, decidimos apostar por lo que sentíamos. Fueron muchos kilómetros 
              recorridos, pero cada viaje mereció la pena.`,
-      photos: storyPhotos.slice(3, 7) // Next 4 photos
+      photos: storyPhotos.slice(5, 11) // 6 photos (3+3 grid)
     },
     {
       id: 3,
       text: `Desde la adolescencia hasta hoy, hemos crecido juntos en todos los sentidos. No solo en años, 
              sino como personas. Nos hemos apoyado en cada etapa, celebrando logros y superando retos, 
              siempre de la mano. Construyendo día a día lo que somos hoy.`,
-      photos: storyPhotos.slice(7, 13) // Next 6 photos
+      photos: storyPhotos.slice(11, 17) // 6 photos (3+3 grid)
     },
     {
       id: 4,
       text: `En 2024 dimos un paso importante: estrenamos nuestro primer hogar juntos. Y ahora, tras 11 años de camino, 
              el 25 de Julio de 2026 daremos el paso de unirnos para siempre, rodeados de toda la gente que nos quiere.`,
-      photos: storyPhotos.slice(13, 22) // Remaining photos
+      photos: storyPhotos.slice(17) // Remaining photos (flex wrap)
     }
   ];
 
