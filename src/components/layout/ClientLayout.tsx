@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import EnvelopeIntro from "@/components/features/EnvelopeIntro/EnvelopeIntro";
 import MusicPlayer from "@/components/features/MusicPlayer/MusicPlayer";

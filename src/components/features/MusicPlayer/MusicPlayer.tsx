@@ -58,7 +58,7 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
         <>
             <audio
                 ref={audioRef}
-                src="/music/boda-song.mp3"
+                src="/music/Coldplay - Adventure of a Lifetime.mp3"
                 loop
             />
 

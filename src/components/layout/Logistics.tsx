@@ -57,7 +57,7 @@ export default function Logistics() {
 
               <div className={styles.actions}>
                 <a
-                  href="https://maps.app.goo.gl/example" // TODO: Add real link
+                  href="https://www.google.com/maps/place/Ermita+de+Nuestra+Se%C3%B1ora+de+los+Remedios/@40.702771,-3.770035,17z"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.mapButton}
@@ -99,7 +99,7 @@ export default function Logistics() {
 
               <div className={styles.actions}>
                 <a
-                  href="https://maps.app.goo.gl/example2"
+                  href="https://www.google.com/maps/search/Hacienda+Mityana+Colmenar+Viejo+Carretera+M-607+Km+37.800"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.mapButton}
