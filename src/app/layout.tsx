@@ -68,7 +68,6 @@ export default function RootLayout({
           <ScrollBackground />
           <Header />
           {children}
-          <ChatWidget />
         </ClientLayout>
       </body>
     </html>

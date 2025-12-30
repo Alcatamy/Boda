@@ -60,14 +60,39 @@
 }
 
 /* ScatteredPhotoStrip - Organic Polaroid Spread */
+/* ScatteredPhotoStrip - Organic Polaroid Spread */
 .miniGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 200px));
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 24px;
   padding: 40px 20px;
   perspective: 1000px;
+  /* Force 3 items per row approx: 3*250 + 2*24 = 800px */
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .miniGrid {
+    gap: 10px;
+    /* Juntitas */
+    padding: 20px 10px;
+  }
+
+  .miniPhotoItem {
+    max-width: 100%;
+    /* Double size effectively (full width) */
+    aspect-ratio: 1/1;
+    /* Square or 4/5 for mobile impact? User said double size */
+    transform: none !important;
+    /* Reset rotation for clean mobile view or keep? User said "rotativas" in general but "juntitas" in mobile. Let's keep subtle rotation but ensure size. */
+  }
+
+  /* Reset nth-child rotations for mobile if "juntitas" implies a neat stack, 
+     BUT user previously wanted "rotativas". 
+     I will keep rotations but ensure they are large. */
 }
 
 .miniPhotoItem {

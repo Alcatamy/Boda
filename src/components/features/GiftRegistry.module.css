@@ -316,13 +316,24 @@
 
 .cleanInput,
 .cleanTextarea {
-  padding: 1rem;
-  border: 1px solid var(--border-color);
-  background: var(--color-surface);
-  border-radius: 4px;
-  font-family: var(--font-sans);
-  font-size: 1rem;
+  padding: 1rem 0;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border-radius: 0;
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
   width: 100%;
+  transition: all 0.3s ease;
+  color: var(--foreground);
+}
+
+.cleanInput::placeholder,
+.cleanTextarea::placeholder {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: var(--foreground);
+  opacity: 0.5;
 }
 
 .cleanInput:focus,
