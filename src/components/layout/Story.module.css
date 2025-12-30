@@ -153,32 +153,39 @@
     margin: 1rem auto 0;
   }
 
-  /* Mobile: Full-width wrapped grid */
+  /* Mobile: Single Row - Photos shrink to fit screen width */
   .miniGrid {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     overflow-x: visible;
+    overflow: hidden;
     justify-content: center;
+    align-items: center;
     padding: 1.5rem 0.5rem;
-    gap: 12px;
+    gap: 8px;
     width: 100%;
+    max-width: 100vw;
     margin-left: 0;
   }
 
   .miniPhotoItem {
-    flex: 0 0 auto;
-    width: calc(50% - 8px);
-    /* Two columns on mobile */
-    max-width: 160px;
+    flex: 1 1 0;
+    /* Shrink equally to fit */
+    min-width: 0;
+    /* Allow shrinking below content size */
+    width: auto;
+    max-width: 100px;
     aspect-ratio: 3/4;
+    padding: 2px;
+    border-radius: 8px;
   }
 
   /* Keep rotations for scattered effect */
   .miniPhotoItem:nth-child(5n+1) {
-    transform: rotate(-3deg) translateY(2px);
+    transform: rotate(-4deg) translateY(3px);
   }
 
   .miniPhotoItem:nth-child(5n+2) {
-    transform: rotate(2deg) translateY(-3px);
+    transform: rotate(2deg) translateY(-4px);
   }
 
   .miniPhotoItem:nth-child(5n+3) {
@@ -186,10 +193,10 @@
   }
 
   .miniPhotoItem:nth-child(5n+4) {
-    transform: rotate(3deg) translateY(-1px);
+    transform: rotate(3deg) translateY(-2px);
   }
 
   .miniPhotoItem:nth-child(5n+5) {
-    transform: rotate(-2deg) translateY(1px);
+    transform: rotate(-3deg) translateY(2px);
   }
 }
