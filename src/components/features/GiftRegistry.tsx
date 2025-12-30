@@ -53,93 +53,71 @@ export default function GiftRegistry() {
           </div>
         </div>
 
-        {/* GIFT SECTION */}
+        {/* GIFT SECTION - RESTRUCTURED */}
         <div className={styles.crowdSection}>
+
           <div className={styles.headerCentered}>
             <span className={styles.smallTag}>DÉJANOS TU HUELLA</span>
             <h2 className={styles.titleLarge}>Únete a la Aventura</h2>
             <p className={styles.textMuted}>Cada aportación nos acerca un poco más a hacer realidad este viaje único.</p>
           </div>
 
-          <div className={styles.dashboardCard}>
+          {/* 1. BANK INFO - CENTERED & PROMINENT */}
+          <div className={styles.bankSection}>
+            <div className={styles.bankContent}>
+              <Gift size={32} className={styles.bankIconMain} />
+              <h3>Tu Regalo</h3>
+              <p className={styles.stepDesc}>
+                Un viaje al Sudeste Asiático es una aventura que requiere un gran esfuerzo.
+                Cada aportación, por pequeña o grande que sea, nos ayuda a vivir esta experiencia inolvidable.
+              </p>
 
-            {/* ACTION GRID */}
-            <div className={styles.actionGrid}>
-
-              {/* LEFT: BANK DETAILS (Passive) */}
-              <div className={styles.bankColumn}>
-                <h3>Tu Regalo</h3>
-                <p className={styles.stepDesc}>
-                  Un viaje al Sudeste Asiático es una aventura que requiere un gran esfuerzo.
-                  Cada aportación, por pequeña o grande que sea, nos ayuda a vivir esta experiencia inolvidable.
-                </p>
-
-                <div className={styles.ibanCard}>
-                  <div className={styles.ibanHeader}>
-                    <div className={styles.bankIcon}><Gift size={20} /></div>
-                    <span>Cuenta de Boda</span>
-                  </div>
+              <div className={styles.ibanContainer}>
+                <div className={styles.ibanBox}>
+                  <span className={styles.ibanLabel}>Cuenta de Boda (Nadia & Adrián)</span>
                   <code className={styles.ibanCode}>{iban}</code>
-                  <button onClick={copyToClipboard} className={styles.copyBtnText}>
-                    {copied ? "¡Copiado!" : "Copiar IBAN"}
-                  </button>
-                  <div className={styles.bankMeta}>
-                    <span>Titulares: Nadia & Adrián</span>
-                  </div>
                 </div>
+                <button onClick={copyToClipboard} className={styles.copyBtnPrimary}>
+                  {copied ? <Check size={18} /> : null}
+                  {copied ? "¡Copiado!" : "Copiar IBAN"}
+                </button>
               </div>
-
-              {/* RIGHT: GUEST BOOK */}
-              <div className={styles.pledgeColumn}>
-                <h3>Déjanos un Mensaje</h3>
-                <p className={styles.stepDesc}>¡Queremos leer tus palabras el día de la boda!</p>
-
-                <form className={styles.pledgeForm} onSubmit={(e) => { e.preventDefault(); alert("¡Gracias! Tu mensaje ha sido guardado con mucho cariño."); }}>
-                  <div className={styles.inputGroup}>
-                    <label>Tu Nombre</label>
-                    <input type="text" placeholder="Ej: Tía Paqui" required className={styles.input} />
-                  </div>
-
-                  <div className={styles.inputGroup}>
-                    <label>Tu Mensaje para los Novios</label>
-                    <textarea placeholder="¡Que seáis muy felices! Os queremos mucho..." rows={3} className={styles.textarea} />
-                  </div>
-
-                  <button type="submit" className={styles.pledgeBtn}>
-                    <Check size={18} /> Enviar Mensaje
-                  </button>
-                </form>
-
-                <div style={{ marginTop: '2rem' }}>
-                  <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem', color: 'var(--color-accent)' }}>Mensajes Recientes</h4>
-                  <MessagesTicker />
-                </div>
-              </div>
-
-              {/* THIRD: MUSIC REQUEST */}
-              <div className={styles.pledgeColumn}>
-                <h3>🎵 Pon tu Canción</h3>
-                <p className={styles.stepDesc}>No existe fiesta sin buena música. ¡Cuéntanos qué no puede faltar!</p>
-
-                <form className={styles.pledgeForm} onSubmit={(e) => { e.preventDefault(); alert("¡Anotada! La pondremos para bailar."); }}>
-                  <div className={styles.inputGroup}>
-                    <label>Tu Nombre</label>
-                    <input type="text" placeholder="Ej: Primo Javi" required className={styles.input} />
-                  </div>
-
-                  <div className={styles.inputGroup}>
-                    <label>Canción / Artista</label>
-                    <input type="text" placeholder="Ej: Coldplay - Adventure of a Lifetime" required className={styles.input} />
-                  </div>
-
-                  <button type="submit" className={styles.pledgeBtn}>
-                    <Check size={18} /> Enviar Sugerencia
-                  </button>
-                </form>
-              </div>
-
             </div>
           </div>
+
+          {/* 2. INTERACTION GRID (Messages & Music) */}
+          <div className={styles.interactionGrid}>
+
+            {/* GUEST BOOK */}
+            <div className={styles.interactionCard}>
+              <h3>Déjanos un Mensaje</h3>
+              <p className={styles.cardDesc}>¡Queremos leer tus palabras el día de la boda!</p>
+
+              <form className={styles.cleanForm} onSubmit={(e) => { e.preventDefault(); alert("¡Gracias! Tu mensaje ha sido guardado con mucho cariño."); }}>
+                <input type="text" placeholder="Tu Nombre (Ej: Tía Paqui)" required className={styles.cleanInput} />
+                <textarea placeholder="Tu mensaje..." rows={3} className={styles.cleanTextarea} />
+                <button type="submit" className={styles.cleanBtn}>Enviar Mensaje</button>
+              </form>
+
+              <div className={styles.tickerWrapper}>
+                <MessagesTicker />
+              </div>
+            </div>
+
+            {/* MUSIC REQUEST */}
+            <div className={styles.interactionCard}>
+              <h3>🎵 Pon tu Canción</h3>
+              <p className={styles.cardDesc}>¡Cuéntanos qué no puede faltar en la pista!</p>
+
+              <form className={styles.cleanForm} onSubmit={(e) => { e.preventDefault(); alert("¡Anotada! La pondremos para bailar."); }}>
+                <input type="text" placeholder="Tu Nombre" required className={styles.cleanInput} />
+                <input type="text" placeholder="Canción / Artista" required className={styles.cleanInput} />
+                <button type="submit" className={styles.cleanBtn}>Enviar Sugerencia</button>
+              </form>
+            </div>
+
+          </div>
+
         </div>
 
       </div>

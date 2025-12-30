@@ -73,30 +73,29 @@
 
 /* Make images look like scattered Polaroids or organized chaos */
 /* REDUCED SIZE: Width from ~50% to roughly 30-33% */
+/* Clean Grid Style - No Frames */
 .miniPhotoItem {
   position: relative;
   width: calc(33% - 0.5rem);
   aspect-ratio: 4/5;
-  border-radius: 4px;
+  border-radius: 2px;
+  /* Minimal radius */
   overflow: hidden;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  background-color: var(--color-surface);
+  /* Removed shadow and background frame */
   transition: transform 0.4s ease;
 }
 
-/* Add subtle rotation to alternate images for "cool" effect */
-.miniPhotoItem:nth-child(odd) {
-  transform: translateY(10px) rotate(-2deg);
-}
-
+/* Remove rotations */
+.miniPhotoItem:nth-child(odd),
 .miniPhotoItem:nth-child(even) {
-  transform: translateY(-10px) rotate(2deg);
+  transform: none;
 }
 
 .miniPhotoItem:hover {
-  transform: scale(1.05) rotate(0deg);
+  transform: scale(1.02);
+  /* Slight zoom only */
   z-index: 10;
-  box-shadow: 0 20px 40px rgba(180, 151, 90, 0.2);
+  /* Removed shadow */
 }
 
 .storyImage {
