@@ -44,7 +44,7 @@ export default function Header() {
             <Link
               key={link.name}
               href={link.href}
-              className={link.name === "RSVP" ? `${styles.navLink} ${styles.ctaLink}` : styles.navLink}
+              className={styles.navLink}
             >
               {link.name}
             </Link>
