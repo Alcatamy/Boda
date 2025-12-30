@@ -1,24 +1,24 @@
 export const eventDetails = {
-  title: "Boda de Adriana y Adrián",
-  description: "¡Nos casamos! Acompáñanos en este día tan especial.",
-  location: "Finca El Gasco, Torrelodones, Madrid",
-  startDate: "2025-09-20T17:30:00",
-  endDate: "2025-09-21T04:00:00",
+  title: "Boda de Nadia y Adrián",
+  description: "¡Nos casamos! Estamos deseando celebrar este día contigo. Todos los detalles en: https://boda-nadia-adrian.vercel.app/",
+  location: "Hacienda Mityana, Ctra. M-607, Km 37.8, 28770 Colmenar Viejo, Madrid",
+  startDate: "2026-07-25T18:00:00",
+  endDate: "2026-07-26T05:00:00",
 };
 
 export const googleCalendarUrl = () => {
   const { title, description, location, startDate, endDate } = eventDetails;
   const start = startDate.replace(/[-:]/g, "").split(".")[0] + "Z";
   const end = endDate.replace(/[-:]/g, "").split(".")[0] + "Z";
-  
+
   return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&details=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}&dates=${start}/${end}`;
 };
 
 export const downloadIcs = () => {
   const { title, description, location, startDate, endDate } = eventDetails;
-  const start = startDate.replace(/[-:]/g, "").replace("T", "T").split(".")[0].replace(/-/g,"");
-  const end = endDate.replace(/[-:]/g, "").replace("T", "T").split(".")[0].replace(/-/g,"");
-  
+  const start = startDate.replace(/[-:]/g, "").replace("T", "T").split(".")[0].replace(/-/g, "");
+  const end = endDate.replace(/[-:]/g, "").replace("T", "T").split(".")[0].replace(/-/g, "");
+
   const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
 BEGIN:VEVENT
