@@ -21,9 +21,11 @@
     "openai": "^6.15.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-hook-form": "^7.69.0"
+    "react-hook-form": "^7.69.0",
+    "canvas-confetti": "^1.9.3"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.6.4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
