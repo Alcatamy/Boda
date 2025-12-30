@@ -36,7 +36,7 @@
 
 .track {
     display: flex;
-    gap: 4rem;
+    gap: 1.5rem;
     width: max-content;
 }
 
@@ -44,29 +44,36 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    min-width: 300px;
-    padding: 1.5rem;
+    width: 280px;
+    max-width: 280px;
+    flex: 0 0 280px;
+    padding: 1.25rem;
     background: var(--color-surface);
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .message {
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--foreground);
+    line-height: 1.5;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .author {
     font-family: var(--font-sans);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--color-accent);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     text-align: right;
+    margin-top: auto;
 }
 
 .empty {

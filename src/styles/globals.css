@@ -137,3 +137,18 @@ a {
     transform: translateY(0);
   }
 }
+
+/* Global Hover States - Gold background + White text for accessibility */
+button,
+a.button,
+.btn {
+  transition: all 0.3s ease;
+}
+
+button:hover,
+a.button:hover,
+.btn:hover {
+  background-color: var(--color-primary-gold) !important;
+  color: #FFFFFF !important;
+  border-color: var(--color-primary-gold) !important;
+}
