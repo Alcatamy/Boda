@@ -57,7 +57,7 @@ export default function Logistics() {
 
               <div className={styles.actions}>
                 <a
-                  href="https://www.google.com/maps/place/Ermita+de+Nuestra+Se%C3%B1ora+de+los+Remedios/@40.702771,-3.770035,17z"
+                  href="https://www.google.com/maps/place/Ermita+de+Nuestra+Se%C3%B1ora+de+los+Remedios/@40.702771,-3.770035,843m/data=!3m1!1e3!4m6!3m5!1s0xd417ddb04c76de3:0xc5ece120765f6c35!8m2!3d40.7027937!4d-3.7697878!16s%2Fg%2F120n2v1_?entry=ttu"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.mapButton}

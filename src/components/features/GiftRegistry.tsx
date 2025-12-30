@@ -116,6 +116,28 @@ export default function GiftRegistry() {
                 </div>
               </div>
 
+              {/* THIRD: MUSIC REQUEST */}
+              <div className={styles.pledgeColumn}>
+                <h3>🎵 Pon tu Canción</h3>
+                <p className={styles.stepDesc}>No existe fiesta sin buena música. ¡Cuéntanos qué no puede faltar!</p>
+
+                <form className={styles.pledgeForm} onSubmit={(e) => { e.preventDefault(); alert("¡Anotada! La pondremos para bailar."); }}>
+                  <div className={styles.inputGroup}>
+                    <label>Tu Nombre</label>
+                    <input type="text" placeholder="Ej: Primo Javi" required className={styles.input} />
+                  </div>
+
+                  <div className={styles.inputGroup}>
+                    <label>Canción / Artista</label>
+                    <input type="text" placeholder="Ej: Coldplay - Adventure of a Lifetime" required className={styles.input} />
+                  </div>
+
+                  <button type="submit" className={styles.pledgeBtn}>
+                    <Check size={18} /> Enviar Sugerencia
+                  </button>
+                </form>
+              </div>
+
             </div>
           </div>
         </div>

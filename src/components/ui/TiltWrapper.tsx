@@ -53,10 +53,12 @@ export default function TiltWrapper({ children, className, intensity = 15 }: Til
                 rotateY,
                 rotateX,
                 transformStyle: "preserve-3d",
+                height: "100%",
+                width: "100%",
             }}
             className={className}
         >
-            <div style={{ transform: "translateZ(30px)" }}>
+            <div style={{ transform: "translateZ(30px)", height: "100%", width: "100%", position: "relative" }}>
                 {children}
             </div>
         </motion.div>

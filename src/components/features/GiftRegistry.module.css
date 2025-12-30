@@ -166,16 +166,22 @@
 
 @media (min-width: 900px) {
   .actionGrid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    /* 3 columns */
   }
 }
 
 .bankColumn,
 .pledgeColumn {
-  padding: 4rem 3rem;
+  padding: 4rem 4rem;
+  /* Increased horizontal padding */
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  max-width: 700px;
+  /* Allow more width */
+  margin: 0 auto;
+  /* Center content */
 }
 
 .bankColumn {
