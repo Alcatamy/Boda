@@ -228,9 +228,9 @@
 }
 
 .copyBtnPrimary {
-  background: var(--color-accent);
-  color: white;
-  border: none;
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
   padding: 1rem;
   border-radius: 8px;
   font-weight: 600;
@@ -239,11 +239,12 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
 }
 
 .copyBtnPrimary:hover {
-  opacity: 0.9;
+  background: var(--color-accent);
+  color: white;
 }
 
 /* 2. INTERACTION GRID */

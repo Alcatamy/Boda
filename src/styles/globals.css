@@ -97,8 +97,12 @@ h1 {
 }
 
 h2 {
-  font-size: clamp(2rem, 4vw, 3rem);
-  margin-bottom: 1rem;
+  font-family: var(--font-script);
+  /* User requested Script font for titles */
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  /* Larger */
+  margin-bottom: 1.5rem;
+  font-weight: 400;
 }
 
 p {

@@ -115,7 +115,7 @@ export default function GiftRegistry() {
             {/* GUEST BOOK */}
             <div className={styles.interactionCard} style={{ gridColumn: "1 / -1", maxWidth: "800px", margin: "0 auto" }}>
               <h3>Déjanos un Mensaje</h3>
-              <p className={styles.cardDesc}>¡Queremos leer tus palabras el día de la boda!</p>
+              <p className={styles.cardDesc}>Tus palabras saldrán reflejadas en la web para que todo el mundo las pueda ver.</p>
 
               <form className={styles.cleanForm} onSubmit={handleMessageSubmit}>
                 <input name="sender" type="text" placeholder="Tu Nombre (Ej: Tía Paqui)" required className={styles.cleanInput} />

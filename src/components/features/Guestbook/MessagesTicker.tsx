@@ -1,30 +1,65 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { supabase } from "@/lib/supabase";
 import styles from "./MessagesTicker.module.css";
 
-const messages = [
-    { text: "¡Qué seáis muy felices pareja!", author: "Tía Paqui" },
-    { text: "No me pierdo este fiestón por nada.", author: "Primo Javi" },
-    { text: "Os deseamos todo el amor del mundo. ❤️", author: "Familia García" },
-    { text: "¡Vivan los novios!", author: "Tus amigos del gym" },
-    { text: "Deseando veros en el altar.", author: "Carmen y Luis" },
-    { text: "Va a ser un día inolvidable.", author: "Marta" },
-];
+type Message = {
+    sender_name: string;
+    content: string;
+};
 
 export default function MessagesTicker() {
+    const [messages, setMessages] = useState<Message[]>([]);
+
+    useEffect(() => {
+        // Fetch initial
+        const fetchMessages = async () => {
+            const { data } = await supabase
+                .from("messages")
+                .select("sender_name, content")
+                .order("created_at", { ascending: false })
+                .limit(20);
+
+            if (data) setMessages(data);
+        };
+
+        fetchMessages();
+
+        // Subscribe
+        const channel = supabase
+            .channel("realtime messages")
+            .on(
+                "postgres_changes",
+                { event: "INSERT", schema: "public", table: "messages" },
+                (payload) => {
+                    setMessages((prev) => [payload.new as Message, ...prev]);
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, []);
+
+    if (messages.length === 0) {
+        return <p className={styles.empty}>Sé el primero en dejarnos un mensaje ❤️</p>;
+    }
+
     return (
         <div className={styles.tickerContainer}>
             <div className={styles.wrapper}>
                 <motion.div
                     className={styles.track}
                     animate={{ x: ["0%", "-50%"] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    transition={{ duration: Math.max(20, messages.length * 5), repeat: Infinity, ease: "linear" }}
                 >
-                    {[...messages, ...messages, ...messages].map((msg, idx) => (
+                    {[...messages, ...messages].map((msg, idx) => (
                         <div key={idx} className={styles.ticketItem}>
-                            <p className={styles.message}>"{msg.text}"</p>
-                            <span className={styles.author}>— {msg.author}</span>
+                            <p className={styles.message}>"{msg.content}"</p>
+                            <span className={styles.author}>— {msg.sender_name}</span>
                         </div>
                     ))}
                 </motion.div>
