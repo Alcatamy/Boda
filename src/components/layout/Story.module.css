@@ -121,25 +121,56 @@
 
   .heading {
     font-size: 2.5rem;
+    margin-bottom: 3rem;
   }
 
   .paragraph {
     font-size: 1.1rem;
     text-align: center;
+    padding: 0 1rem;
   }
 
   .decorativeLine {
     margin: 1rem auto 0;
   }
 
-  .miniPhotoItem {
-    width: calc(50% - 0.5rem);
-    /* Slightly larger on mobile but still a grid */
+  /* Mobile: Horizontal Scroll "Single Row" */
+  .miniGrid {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 2rem 1.5rem;
+    gap: 1rem;
+    -webkit-overflow-scrolling: touch;
+    width: 100vw;
+    margin-left: -1.5rem;
+    /* Counteract container padding */
+    padding-left: 2rem;
+    /* Start with some space */
+    scrollbar-width: none;
   }
 
-  .miniPhotoItem:nth-child(odd),
-  .miniPhotoItem:nth-child(even) {
-    transform: none;
-    /* Remove fancy transforms on mobile for stability */
+  .miniGrid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .miniPhotoItem {
+    flex: 0 0 auto;
+    width: 130px;
+    /* Fixed width for mobile */
+    aspect-ratio: 4/5;
+  }
+
+  /* Re-enable rotations for mobile */
+  .miniPhotoItem:nth-child(3n+1) {
+    transform: rotate(-3deg) translateY(5px);
+  }
+
+  .miniPhotoItem:nth-child(3n+2) {
+    transform: rotate(2deg) translateY(-2px);
+  }
+
+  .miniPhotoItem:nth-child(3n+3) {
+    transform: rotate(4deg) translateY(2px);
   }
 }
