@@ -51,18 +51,14 @@ export default function MessagesTicker() {
     return (
         <div className={styles.tickerContainer}>
             <div className={styles.wrapper}>
-                <motion.div
-                    className={styles.track}
-                    animate={{ x: ["0%", "-50%"] }}
-                    transition={{ duration: Math.max(20, messages.length * 5), repeat: Infinity, ease: "linear" }}
-                >
-                    {[...messages, ...messages].map((msg, idx) => (
+                <div className={styles.scrollTrack}>
+                    {[...messages].map((msg, idx) => (
                         <div key={idx} className={styles.ticketItem}>
                             <p className={styles.message}>"{msg.content}"</p>
                             <span className={styles.author}>— {msg.sender_name}</span>
                         </div>
                     ))}
-                </motion.div>
+                </div>
             </div>
         </div>
     );
