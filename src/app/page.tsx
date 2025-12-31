@@ -13,9 +13,9 @@ export default function Home() {
       <WaveDivider />
       <Story />
       <WaveDivider flip />
-      <Logistics />
-      <WaveDivider />
       <RsvpSection />
+      <WaveDivider />
+      <Logistics />
       <WaveDivider flip />
       <GiftRegistry />
       <WaveDivider />
