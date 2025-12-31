@@ -60,21 +60,24 @@
 }
 
 .heroTitle {
-  font-family: var(--font-script);
-  font-size: 4.5rem;
-  /* Larger for script */
+  font-family: var(--font-serif);
+  font-size: 4rem;
   line-height: 1.1;
   color: var(--foreground);
-  letter-spacing: 0;
-  /* Script usually doesn't need tight tracking */
+  letter-spacing: -0.03em;
   margin-bottom: 1rem;
 }
 
 .gradientText {
-  color: var(--color-accent);
-  font-family: var(--font-script);
-  font-style: normal;
-  font-weight: 400;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #d4af37 50%, var(--color-accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: var(--font-serif);
+  /* Keep serif consistency */
+  font-style: italic;
+  font-weight: 300;
+  /* Make it special with a subtle shimmer animation if desired, or just high-quality gradient */
 }
 
 .heroText {
