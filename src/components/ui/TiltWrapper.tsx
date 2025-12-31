@@ -53,8 +53,6 @@ export default function TiltWrapper({ children, className, intensity = 15 }: Til
                 rotateY,
                 rotateX,
                 transformStyle: "preserve-3d",
-                height: "100%",
-                width: "100%",
             }}
             className={className}
         >
