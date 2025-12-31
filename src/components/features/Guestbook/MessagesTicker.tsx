@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import styles from "./MessagesTicker.module.css";
