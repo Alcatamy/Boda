@@ -74,24 +74,24 @@ export default function Story() {
           Nuestra Historia
         </motion.h2>
 
-        <div className={styles.zigzagWrapper}>
-          {blocks.map((block, index) => (
+        <div className={styles.storyStack}>
+          {blocks.map((block) => (
             <motion.div
               key={block.id}
-              className={`${styles.row} ${index % 2 === 1 ? styles.rowReverse : ''}`}
+              className={styles.storyBlock}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8 }}
             >
-              {/* Text Side */}
-              <div className={styles.textBlock}>
+              {/* Text Top */}
+              <div className={styles.textWrapper}>
                 <p className={styles.paragraph}>{block.text}</p>
                 <div className={styles.decorativeLine} />
               </div>
 
-              {/* Photo Side (Mini Grid) */}
-              <div className={styles.photoBlock}>
+              {/* Photos Bottom - Grid */}
+              <div className={styles.gridWrapper}>
                 <div className={styles.miniGrid}>
                   {block.photos.map((src, i) => (
                     <TiltWrapper key={i} className={styles.miniPhotoItem}>
@@ -100,7 +100,7 @@ export default function Story() {
                         alt={`Historia ${block.id}-${i}`}
                         fill
                         className={styles.storyImage}
-                        sizes="(max-width: 768px) 50vw, 25vw"
+                        sizes="(max-width: 768px) 33vw, 250px"
                       />
                     </TiltWrapper>
                   ))}
