@@ -10,8 +10,6 @@ import styles from "./RsvpForm.module.css";
 type FormData = {
   firstName: string;
   lastName: string;
-  email: string;
-  phone: string;
   attending: string; // "yes" | "no"
   dietaryRestrictions: string;
   menuChoice: string; // "meat" | "fish"
@@ -31,18 +29,13 @@ export default function RsvpForm() {
   const menuChoice = watch("menuChoice");
   const hasPlusOne = watch("hasPlusOne");
 
-  // Email validation regex
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  // Phone validation regex (Spanish format)
-  const phoneRegex = /^[6-9]\d{8}$/;
-
   // Check for duplicate guest
-  const checkDuplicate = async (firstName: string, lastName: string, email: string) => {
+  const checkDuplicate = async (firstName: string, lastName: string) => {
     try {
       const { data, error } = await supabase
         .from('guests')
-        .select('id, email')
-        .or(`first_name.ilike.${firstName},last_name.ilike.${lastName}${email ? `,email.ilike.${email}` : ''}`)
+        .select('id')
+        .or(`first_name.ilike.${firstName},last_name.ilike.${lastName}`)
         .limit(1);
 
       if (error) throw error;
@@ -65,23 +58,13 @@ export default function RsvpForm() {
       errors.lastName = "Los apellidos deben tener al menos 2 caracteres";
     }
 
-    // Email validation
-    if (data.email && !emailRegex.test(data.email)) {
-      errors.email = "Por favor introduce un email válido";
-    }
-
-    // Phone validation
-    if (data.phone && !phoneRegex.test(data.phone.replace(/\s/g, ''))) {
-      errors.phone = "Por favor introduce un teléfono válido (9 dígitos que empiecen por 6, 7, 8 o 9)";
-    }
-
     // Plus one validation
     if (hasPlusOne && !data.plusOneName.trim()) {
       errors.plusOneName = "Por favor introduce el nombre de tu acompañante";
     }
 
     // Check for duplicates
-    const isDuplicate = await checkDuplicate(data.firstName, data.lastName, data.email);
+    const isDuplicate = await checkDuplicate(data.firstName, data.lastName);
     if (isDuplicate) {
       errors.duplicate = "Ya hemos recibido una confirmación con estos datos. ¿Quieres modificar tu respuesta?";
     }
@@ -129,8 +112,6 @@ export default function RsvpForm() {
           {
             first_name: data.firstName,
             last_name: data.lastName,
-            email: data.email || null,
-            phone: data.phone || null,
             attending: data.attending === "yes",
             dietary_restrictions: data.dietaryRestrictions || null,
             menu_choice: data.menuChoice || null,
@@ -290,42 +271,6 @@ export default function RsvpForm() {
           />
           {(errors.lastName || validationErrors.lastName) && (
             <span className={styles.error}>{validationErrors.lastName || "Requerido"}</span>
-          )}
-        </div>
-      </div>
-
-      {/* Contact Fields */}
-      <div className={styles.row}>
-        <div className={styles.fieldGroup}>
-          <label htmlFor="email">Email (Opcional)</label>
-          <input
-            {...register("email", { 
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Email inválido"
-              }
-            })}
-            placeholder="tu@email.com"
-            className={`${styles.input} ${errors.email || validationErrors.email ? styles.inputError : ''}`}
-          />
-          {(errors.email || validationErrors.email) && (
-            <span className={styles.error}>{validationErrors.email || errors.email?.message}</span>
-          )}
-        </div>
-        <div className={styles.fieldGroup}>
-          <label htmlFor="phone">Teléfono (Opcional)</label>
-          <input
-            {...register("phone", { 
-              pattern: {
-                value: /^[6-9]\d{8}$/,
-                message: "Teléfono inválido"
-              }
-            })}
-            placeholder="600 000 000"
-            className={`${styles.input} ${errors.phone || validationErrors.phone ? styles.inputError : ''}`}
-          />
-          {(errors.phone || validationErrors.phone) && (
-            <span className={styles.error}>{validationErrors.phone || errors.phone?.message}</span>
           )}
         </div>
       </div>
