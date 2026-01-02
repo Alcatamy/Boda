@@ -89,7 +89,7 @@ export default function RsvpForm() {
     } else if (attending === "no") {
       // Rain effect
       setRainEffect(true);
-      setTimeout(() => setRainEffect(false), 3000); // 3 seconds of sadness is enough for selection
+      setTimeout(() => setRainEffect(false), 5000); // 5 seconds of rain for better visibility
     }
   }, [attending]);
 
@@ -235,15 +235,19 @@ export default function RsvpForm() {
               zIndex: 9999
             }}
           >
-            {Array.from({ length: 50 }).map((_, i) => (
-              <div key={i} className={styles.drop} style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${0.4 + Math.random() * 0.3}s`,
-                background: 'linear-gradient(to bottom, transparent, rgba(50, 80, 120, 0.8))',
-                width: '2px',
-                height: '25px'
-              }} />
+            {Array.from({ length: 100 }).map((_, i) => (
+              <div 
+                key={i} 
+                className={styles.drop} 
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 3}s`,
+                  animationDuration: `${1.5 + Math.random() * 1.5}s`,
+                  background: `linear-gradient(to bottom, transparent, ${i % 3 === 0 ? 'rgba(50, 80, 120, 0.8)' : i % 3 === 1 ? 'rgba(70, 100, 140, 0.7)' : 'rgba(30, 60, 100, 0.9)'})`,
+                  width: `${i % 3 === 0 ? '1px' : i % 3 === 1 ? '2px' : '3px'}`,
+                  height: `${i % 3 === 0 ? '20px' : i % 3 === 1 ? '25px' : '30px'}`
+                }} 
+              />
             ))}
           </motion.div>
         )}
