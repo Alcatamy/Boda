@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { Heart, Calendar, MapPin, Home } from "lucide-react";
 import styles from "./Story.module.css";
-import TiltWrapper from "@/components/ui/TiltWrapper";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 // All photos provided by user, ordered chronologically from oldest to newest
 const storyPhotos = [
@@ -32,79 +33,204 @@ const storyPhotos = [
 ];
 
 export default function Story() {
-  // Define content blocks for ZigZag layout
-  const blocks = [
+  // Timeline milestones with photos
+  const timelineMilestones = [
     {
       id: 1,
-      text: `Todo comenzó en una entrega de premios de bádminton, el deporte que nos vio crecer. 
-             Fue una coincidencia que sembró la semilla de lo que vendría después.`,
-      photos: storyPhotos.slice(0, 5) // 5 photos (3+2 grid)
+      year: "2013",
+      title: "El Comienzo",
+      icon: <Heart size={20} />,
+      description: "Todo comenzó en una entrega de premios de bádminton, el deporte que nos vio crecer. Fue una coincidencia que sembró la semilla de lo que vendría después.",
+      photos: storyPhotos.slice(0, 5),
+      color: "#ef4444"
     },
     {
       id: 2,
-      text: `Dos años después, el pabellón volvió a cruzar nuestros caminos. Aunque una hora de distancia 
-             separaba nuestras casas, decidimos apostar por lo que sentíamos. Fueron muchos kilómetros 
-             recorridos, pero cada viaje mereció la pena.`,
-      photos: storyPhotos.slice(5, 11) // 6 photos (3+3 grid)
+      year: "2015",
+      title: "La Decisión",
+      icon: <MapPin size={20} />,
+      description: "Dos años después, el pabellón volvió a cruzar nuestros caminos. Aunque una hora de distancia separaba nuestras casas, decidimos apostar por lo que sentíamos.",
+      photos: storyPhotos.slice(5, 11),
+      color: "#3b82f6"
     },
     {
       id: 3,
-      text: `Desde la adolescencia hasta hoy, hemos crecido juntos en todos los sentidos. No solo en años, 
-             sino como personas. Nos hemos apoyado en cada etapa, celebrando logros y superando retos, 
-             siempre de la mano. Construyendo día a día lo que somos hoy.`,
-      photos: storyPhotos.slice(11, 17) // 6 photos (3+3 grid)
+      year: "2016-2023",
+      title: "Creciendo Juntos",
+      icon: <Calendar size={20} />,
+      description: "Desde la adolescencia hasta hoy, hemos crecido juntos en todos los sentidos. Nos hemos apoyado en cada etapa, celebrando logros y superando retos.",
+      photos: storyPhotos.slice(11, 17),
+      color: "#10b981"
     },
     {
       id: 4,
-      text: `En 2024 dimos un paso importante: estrenamos nuestro primer hogar juntos. Y ahora, tras 11 años de camino, 
-             el 25 de Julio de 2026 daremos el paso de unirnos para siempre, rodeados de toda la gente que nos quiere.`,
-      photos: storyPhotos.slice(17) // Remaining photos (flex wrap)
+      year: "2024-2026",
+      title: "El Futuro",
+      icon: <Home size={20} />,
+      description: "En 2024 dimos un paso importante: estrenamos nuestro primer hogar juntos. Y ahora, tras 11 años de camino, el 25 de Julio de 2026 daremos el paso de unirnos para siempre.",
+      photos: storyPhotos.slice(17),
+      color: "#c5a059"
     }
   ];
 
   return (
     <section className={styles.storySection} id="story">
       <div className={styles.container}>
-        <motion.h2
-          className={styles.heading}
+        <motion.div
+          className={styles.header}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          Nuestra Historia
-        </motion.h2>
+          <h2 className={styles.title}>Nuestra Historia</h2>
+          <p className={styles.subtitle}>11 años de amor que nos llevarán al sí</p>
+          <div className={styles.decorativeLine} />
+        </motion.div>
 
-        <div className={styles.storyStack}>
-          {blocks.map((block) => (
+        {/* Desktop: Two rows layout */}
+        <div className={styles.desktopLayout}>
+          {/* First Row - Timeline with photos */}
+          <div className={styles.timelineRow}>
+            {timelineMilestones.map((milestone, index) => (
+              <motion.div
+                key={milestone.id}
+                className={styles.timelineItem}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <div 
+                  className={styles.timelineDot}
+                  style={{ backgroundColor: milestone.color }}
+                >
+                  <div className={styles.timelineIcon}>
+                    {milestone.icon}
+                  </div>
+                </div>
+                
+                <div className={styles.timelineContent}>
+                  <div className={styles.timelineHeader}>
+                    <span className={styles.timelineYear}>{milestone.year}</span>
+                    <h3 className={styles.timelineTitle}>{milestone.title}</h3>
+                  </div>
+                  
+                  <p className={styles.timelineDescription}>
+                    {milestone.description}
+                  </p>
+                  
+                  <div className={styles.photoStrip}>
+                    {milestone.photos.slice(0, 3).map((photo, photoIndex) => (
+                      <motion.div
+                        key={photoIndex}
+                        className={styles.stripPhoto}
+                        whileHover={{ scale: 1.05, zIndex: 10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <OptimizedImage
+                          src={photo}
+                          alt={`Historia ${milestone.id}-${photoIndex}`}
+                          fill
+                          sizes="100px"
+                          className={styles.stripImage}
+                        />
+                      </motion.div>
+                    ))}
+                    {milestone.photos.length > 3 && (
+                      <div className={styles.morePhotos}>
+                        +{milestone.photos.length - 3}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Second Row - Photo Gallery */}
+          <div className={styles.galleryRow}>
             <motion.div
-              key={block.id}
-              className={styles.storyBlock}
-              initial={{ opacity: 0, y: 50 }}
+              className={styles.galleryGrid}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              {/* Text Top */}
-              <div className={styles.textWrapper}>
-                <p className={styles.paragraph}>{block.text}</p>
-                <div className={styles.decorativeLine} />
-              </div>
+              {storyPhotos.slice(0, 12).map((photo, index) => (
+                <motion.div
+                  key={index}
+                  className={styles.galleryPhoto}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ 
+                    duration: 0.5, 
+                    delay: index * 0.05 
+                  }}
+                  whileHover={{ 
+                    scale: 1.1, 
+                    zIndex: 10,
+                    boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+                  }}
+                >
+                  <OptimizedImage
+                    src={photo}
+                    alt={`Galería ${index}`}
+                    fill
+                    sizes="(max-width: 768px) 25vw, 150px"
+                    className={styles.galleryImage}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
 
-              {/* Photos Bottom - Grid */}
-              <div className={styles.gridWrapper}>
-                <div className={styles.miniGrid}>
-                  {block.photos.map((src, i) => (
-                    <TiltWrapper key={i} className={styles.miniPhotoItem}>
-                      <Image
-                        src={src}
-                        alt={`Historia ${block.id}-${i}`}
-                        fill
-                        className={styles.storyImage}
-                        sizes="(max-width: 768px) 33vw, 250px"
-                      />
-                    </TiltWrapper>
-                  ))}
+        {/* Mobile: Stacked layout */}
+        <div className={styles.mobileLayout}>
+          {timelineMilestones.map((milestone, index) => (
+            <motion.div
+              key={milestone.id}
+              className={styles.mobileMilestone}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+            >
+              <div className={styles.mobileHeader}>
+                <div 
+                  className={styles.mobileDot}
+                  style={{ backgroundColor: milestone.color }}
+                >
+                  {milestone.icon}
                 </div>
+                <div className={styles.mobileTitleSection}>
+                  <span className={styles.mobileYear}>{milestone.year}</span>
+                  <h3 className={styles.mobileTitle}>{milestone.title}</h3>
+                </div>
+              </div>
+              
+              <p className={styles.mobileDescription}>
+                {milestone.description}
+              </p>
+              
+              <div className={styles.mobileGallery}>
+                {milestone.photos.map((photo, photoIndex) => (
+                  <motion.div
+                    key={photoIndex}
+                    className={styles.mobilePhoto}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <OptimizedImage
+                      src={photo}
+                      alt={`Móvil ${milestone.id}-${photoIndex}`}
+                      fill
+                      sizes="80px"
+                      className={styles.mobileImage}
+                    />
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
           ))}
