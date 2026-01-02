@@ -10,19 +10,85 @@ import styles from "./RsvpForm.module.css";
 type FormData = {
   firstName: string;
   lastName: string;
+  email: string;
+  phone: string;
   attending: string; // "yes" | "no"
   dietaryRestrictions: string;
   menuChoice: string; // "meat" | "fish"
+  hasPlusOne: boolean;
+  plusOneName: string;
+  childrenCount: number;
 };
 
 export default function RsvpForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error" | "duplicate">("idle");
   const [rainEffect, setRainEffect] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
+  const { register, handleSubmit, watch, formState: { errors }, setError, clearErrors } = useForm<FormData>();
   const attending = watch("attending");
   const menuChoice = watch("menuChoice");
+  const hasPlusOne = watch("hasPlusOne");
+
+  // Email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // Phone validation regex (Spanish format)
+  const phoneRegex = /^[6-9]\d{8}$/;
+
+  // Check for duplicate guest
+  const checkDuplicate = async (firstName: string, lastName: string, email: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('guests')
+        .select('id, email')
+        .or(`first_name.ilike.${firstName},last_name.ilike.${lastName}${email ? `,email.ilike.${email}` : ''}`)
+        .limit(1);
+
+      if (error) throw error;
+      return data && data.length > 0;
+    } catch (error) {
+      console.error('Error checking duplicate:', error);
+      return false;
+    }
+  };
+
+  // Validate form data
+  const validateForm = async (data: FormData) => {
+    const errors: Record<string, string> = {};
+
+    // Name validation
+    if (!data.firstName.trim() || data.firstName.length < 2) {
+      errors.firstName = "El nombre debe tener al menos 2 caracteres";
+    }
+    if (!data.lastName.trim() || data.lastName.length < 2) {
+      errors.lastName = "Los apellidos deben tener al menos 2 caracteres";
+    }
+
+    // Email validation
+    if (data.email && !emailRegex.test(data.email)) {
+      errors.email = "Por favor introduce un email válido";
+    }
+
+    // Phone validation
+    if (data.phone && !phoneRegex.test(data.phone.replace(/\s/g, ''))) {
+      errors.phone = "Por favor introduce un teléfono válido (9 dígitos que empiecen por 6, 7, 8 o 9)";
+    }
+
+    // Plus one validation
+    if (hasPlusOne && !data.plusOneName.trim()) {
+      errors.plusOneName = "Por favor introduce el nombre de tu acompañante";
+    }
+
+    // Check for duplicates
+    const isDuplicate = await checkDuplicate(data.firstName, data.lastName, data.email);
+    if (isDuplicate) {
+      errors.duplicate = "Ya hemos recibido una confirmación con estos datos. ¿Quieres modificar tu respuesta?";
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   // Effect: Immediate visual feedback on selection
   useEffect(() => {
@@ -47,6 +113,14 @@ export default function RsvpForm() {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setSubmitStatus("idle");
+    setValidationErrors({});
+
+    // Validate form before submission
+    const isValid = await validateForm(data);
+    if (!isValid) {
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const { error } = await supabase
@@ -55,15 +129,26 @@ export default function RsvpForm() {
           {
             first_name: data.firstName,
             last_name: data.lastName,
+            email: data.email || null,
+            phone: data.phone || null,
             attending: data.attending === "yes",
-            dietary_restrictions: data.dietaryRestrictions,
-            menu_choice: data.menuChoice,
-            // message removed per request
+            dietary_restrictions: data.dietaryRestrictions || null,
+            menu_choice: data.menuChoice || null,
+            has_plus_one: data.hasPlusOne || false,
+            plus_one_name: data.hasPlusOne ? data.plusOneName : null,
+            children_count: data.childrenCount || 0,
           },
         ]);
 
-      if (error) throw error;
-      setSubmitStatus("success");
+      if (error) {
+        if (error.code === '23505') { // Unique constraint violation
+          setSubmitStatus("duplicate");
+        } else {
+          throw error;
+        }
+      } else {
+        setSubmitStatus("success");
+      }
     } catch (error) {
       console.error("Error submitting RSVP:", error);
       setSubmitStatus("error");
@@ -71,6 +156,32 @@ export default function RsvpForm() {
       setIsSubmitting(false);
     }
   };
+
+  if (submitStatus === "duplicate") {
+    return (
+      <div className={styles.successWrapper}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className={styles.errorMessage}
+        >
+          <AlertCircle size={64} className={styles.errorIcon} color="#f59e0b" />
+          <h3>Respuesta Duplicada</h3>
+          <p>Ya hemos recibido una confirmación con estos datos. Si necesitas modificar tu respuesta, por favor contáctanos directamente.</p>
+          <div className={styles.contactInfo}>
+            <p>Nadia: 646 46 14 47</p>
+            <p>Adrián: 691 77 22 32</p>
+          </div>
+          <button
+            onClick={() => setSubmitStatus("idle")}
+            className={styles.resetButton}
+          >
+            Intentar con otros datos
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
 
   if (submitStatus === "success") {
     return (
@@ -162,20 +273,60 @@ export default function RsvpForm() {
         <div className={styles.fieldGroup}>
           <label htmlFor="firstName">Nombre *</label>
           <input
-            {...register("firstName", { required: true })}
+            {...register("firstName", { required: true, minLength: 2 })}
             placeholder="Tu nombre"
-            className={styles.input}
+            className={`${styles.input} ${errors.firstName || validationErrors.firstName ? styles.inputError : ''}`}
           />
-          {errors.firstName && <span className={styles.error}>Requerido</span>}
+          {(errors.firstName || validationErrors.firstName) && (
+            <span className={styles.error}>{validationErrors.firstName || "Requerido"}</span>
+          )}
         </div>
         <div className={styles.fieldGroup}>
           <label htmlFor="lastName">Apellidos *</label>
           <input
-            {...register("lastName", { required: true })}
+            {...register("lastName", { required: true, minLength: 2 })}
             placeholder="Tus apellidos"
-            className={styles.input}
+            className={`${styles.input} ${errors.lastName || validationErrors.lastName ? styles.inputError : ''}`}
           />
-          {errors.lastName && <span className={styles.error}>Requerido</span>}
+          {(errors.lastName || validationErrors.lastName) && (
+            <span className={styles.error}>{validationErrors.lastName || "Requerido"}</span>
+          )}
+        </div>
+      </div>
+
+      {/* Contact Fields */}
+      <div className={styles.row}>
+        <div className={styles.fieldGroup}>
+          <label htmlFor="email">Email (Opcional)</label>
+          <input
+            {...register("email", { 
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Email inválido"
+              }
+            })}
+            placeholder="tu@email.com"
+            className={`${styles.input} ${errors.email || validationErrors.email ? styles.inputError : ''}`}
+          />
+          {(errors.email || validationErrors.email) && (
+            <span className={styles.error}>{validationErrors.email || errors.email?.message}</span>
+          )}
+        </div>
+        <div className={styles.fieldGroup}>
+          <label htmlFor="phone">Teléfono (Opcional)</label>
+          <input
+            {...register("phone", { 
+              pattern: {
+                value: /^[6-9]\d{8}$/,
+                message: "Teléfono inválido"
+              }
+            })}
+            placeholder="600 000 000"
+            className={`${styles.input} ${errors.phone || validationErrors.phone ? styles.inputError : ''}`}
+          />
+          {(errors.phone || validationErrors.phone) && (
+            <span className={styles.error}>{validationErrors.phone || errors.phone?.message}</span>
+          )}
         </div>
       </div>
 
@@ -251,12 +402,68 @@ export default function RsvpForm() {
               />
             </div>
 
-            {/* REMOVED MESSAGE FIELD */}
+            {/* Plus One Option */}
+            <div className={styles.fieldGroup}>
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  {...register("hasPlusOne")}
+                  className={styles.checkbox}
+                />
+                <span>Vendrás con acompañante?</span>
+              </label>
+            </div>
+
+            {/* Plus One Name */}
+            <AnimatePresence>
+              {hasPlusOne && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className={styles.conditionalFields}
+                >
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="plusOneName">Nombre del Acompañante *</label>
+                    <input
+                      {...register("plusOneName", { required: hasPlusOne })}
+                      placeholder="Nombre de tu acompañante"
+                      className={`${styles.input} ${errors.plusOneName || validationErrors.plusOneName ? styles.inputError : ''}`}
+                    />
+                    {(errors.plusOneName || validationErrors.plusOneName) && (
+                      <span className={styles.error}>{validationErrors.plusOneName || "Requerido si vienes con acompañante"}</span>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Children Count */}
+            <div className={styles.fieldGroup}>
+              <label htmlFor="childrenCount">¿Cuántos niños vienen?</label>
+              <select
+                {...register("childrenCount", { valueAsNumber: true })}
+                className={styles.select}
+              >
+                <option value={0}>Ninguno</option>
+                <option value={1}>1</option>
+                <option value={2}>2</option>
+                <option value={3}>3</option>
+                <option value={4}>4+</option>
+              </select>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Submit Error */}
+      {validationErrors.duplicate && (
+        <div className={styles.errorMessage}>
+          <AlertCircle size={18} />
+          <span>{validationErrors.duplicate}</span>
+        </div>
+      )}
+
       {submitStatus === "error" && (
         <div className={styles.errorMessage}>
           <AlertCircle size={18} />
