@@ -57,7 +57,7 @@ export default function GiftRegistry() {
             </h2>
 
             <p className={styles.heroText}>
-              Acompañarnos en este día tan especial es el mejor regalo que nos podéis hacer. Sin embargo, si deseáis tener un detalle adicional con nosotros, os dejamos a continuación nuestro número de cuenta para ayudarnos a construir nuestro futuro.
+              Para nosotros, lo más importante es vivir este gran día a vuestro lado y celebrar nuestra historia. Si queréis contribuir y tener un detalle con nosotros, podéis hacerlo cómodamente a través del siguiente número de cuenta. ¡Muchísimas gracias de corazón!
             </p>
           </div>
 
@@ -79,21 +79,13 @@ export default function GiftRegistry() {
         {/* GIFT SECTION - RESTRUCTURED */}
         <div className={styles.crowdSection}>
 
-          <div className={styles.headerCentered}>
-            <span className={styles.smallTag}>DÉJANOS TU HUELLA</span>
-            <h2 className={styles.titleLarge}>Únete a la Aventura</h2>
-            <p className={styles.textMuted}>Cada aportación nos acerca un poco más a hacer realidad este viaje único.</p>
-          </div>
-
           {/* 1. BANK INFO - CENTERED & PROMINENT */}
           <div className={styles.bankSection}>
             <div className={styles.bankContent}>
               <Gift size={32} className={styles.bankIconMain} />
               <h3>El Detalle</h3>
               <p className={styles.stepDesc}>
-                Para nosotros, lo más importante es vivir este gran día a vuestro lado y celebrar nuestra historia.
-                Si queréis contribuir y tener un detalle con nosotros, podéis hacerlo cómodamente a través del siguiente número de cuenta.
-                ¡Muchísimas gracias de corazón!
+                Acompañarnos en este día tan especial es el mejor regalo que nos podéis hacer. Sin embargo, si deseáis tener un detalle adicional con nosotros, os dejamos a continuación nuestro número de cuenta.
               </p>
 
               <div className={styles.ibanContainer}>
@@ -113,9 +105,9 @@ export default function GiftRegistry() {
           <div className={styles.interactionGrid}>
 
             {/* GUEST BOOK */}
-            <div className={styles.interactionCard}>
-              <h3>Déjanos un Mensaje</h3>
-              <p className={styles.cardDesc}>Tus palabras saldrán reflejadas en la web para que todo el mundo las pueda ver.</p>
+            <div className={styles.interactionCard} style={{ textAlign: "center" }}>
+              <h3 style={{ marginBottom: "0.5rem" }}>Déjanos un Mensaje</h3>
+              <p className={styles.cardDesc} style={{ margin: "0 auto 2rem auto", maxWidth: "400px" }}>Tus palabras saldrán reflejadas en la web para que todo el mundo las pueda ver.</p>
 
               <form className={styles.cleanForm} onSubmit={handleMessageSubmit}>
                 <input name="sender" type="text" placeholder="Tu Nombre (Ej: Tía Paqui)" required className={styles.cleanInput} />

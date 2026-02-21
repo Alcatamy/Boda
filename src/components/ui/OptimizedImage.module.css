@@ -4,6 +4,12 @@
   display: inline-block;
 }
 
+.fillContainer {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .image {
   transition: opacity 0.3s ease;
 }

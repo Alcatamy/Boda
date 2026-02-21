@@ -100,11 +100,11 @@ export default function RsvpForm() {
     if (menuChoice === "meat") {
       setAnimalEffect("cow");
       if (animalTimeoutRef.current) clearTimeout(animalTimeoutRef.current);
-      animalTimeoutRef.current = setTimeout(() => setAnimalEffect(null), 3000);
+      animalTimeoutRef.current = setTimeout(() => setAnimalEffect(null), 4000);
     } else if (menuChoice === "fish") {
       setAnimalEffect("fish");
       if (animalTimeoutRef.current) clearTimeout(animalTimeoutRef.current);
-      animalTimeoutRef.current = setTimeout(() => setAnimalEffect(null), 4000); // 4 seconds to cross
+      animalTimeoutRef.current = setTimeout(() => setAnimalEffect(null), 5000); // 5 seconds to cross
     }
   }, [menuChoice]);
 
@@ -250,17 +250,32 @@ export default function RsvpForm() {
               zIndex: 9999
             }}
           >
-            {Array.from({ length: 100 }).map((_, i) => (
+            {/* Water pooling at the bottom */}
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: '15vh', opacity: 0.6 }}
+              transition={{ duration: 4, ease: "easeOut" }}
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                width: '100vw',
+                background: 'linear-gradient(to top, rgba(30, 60, 100, 0.9), transparent)',
+                zIndex: 1
+              }}
+            />
+            {Array.from({ length: 120 }).map((_, i) => (
               <div 
                 key={i} 
                 className={styles.drop} 
                 style={{
                   left: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 3}s`,
-                  animationDuration: `${1.5 + Math.random() * 1.5}s`,
+                  animationDelay: `${Math.random() * 2}s`,
+                  animationDuration: `${0.8 + Math.random() * 1}s`,
                   background: `linear-gradient(to bottom, transparent, ${i % 3 === 0 ? 'rgba(50, 80, 120, 0.8)' : i % 3 === 1 ? 'rgba(70, 100, 140, 0.7)' : 'rgba(30, 60, 100, 0.9)'})`,
                   width: `${i % 3 === 0 ? '1px' : i % 3 === 1 ? '2px' : '3px'}`,
-                  height: `${i % 3 === 0 ? '20px' : i % 3 === 1 ? '25px' : '30px'}`
+                  height: `${i % 3 === 0 ? '20px' : i % 3 === 1 ? '30px' : '40px'}`,
+                  zIndex: 2
                 }} 
               />
             ))}
@@ -270,55 +285,68 @@ export default function RsvpForm() {
         {/* Cow effect */}
         {animalEffect === "cow" && (
           <motion.div
-            initial={{ y: 200, opacity: 0, rotate: -20 }}
-            animate={{ y: 0, opacity: 1, rotate: [0, 15, -15, 10, -5, 0] }}
-            exit={{ y: 200, opacity: 0 }}
-            transition={{ duration: 1.5, type: "spring", bounce: 0.6 }}
+            initial={{ x: '-20vw', y: '10vh' }}
+            animate={{ 
+              x: '120vw',
+              y: ['10vh', '8vh', '10vh', '7vh', '10vh', '9vh', '10vh'] 
+            }}
+            exit={{ opacity: 0 }}
+            transition={{ 
+              x: { duration: 4, ease: "linear" },
+              y: { duration: 4, ease: "easeInOut", times: [0, 0.15, 0.3, 0.45, 0.6, 0.8, 1] }
+            }}
             style={{
               position: 'fixed',
-              bottom: '10%',
-              left: '50%',
-              marginLeft: '-75px',
-              fontSize: '150px',
+              bottom: '5%',
+              left: 0,
+              fontSize: '120px',
               pointerEvents: 'none',
               zIndex: 9999,
-              filter: 'brightness(0) drop-shadow(2px 4px 6px rgba(0,0,0,0.3))'
+              filter: 'drop-shadow(5px 15px 10px rgba(0,0,0,0.4))'
             }}
           >
-            🐄
+            <motion.div
+              animate={{ rotate: [-5, 5, -5] }}
+              transition={{ repeat: Infinity, duration: 0.5, ease: "easeInOut" }}
+            >
+              🐄
+            </motion.div>
           </motion.div>
         )}
 
         {/* Fish effect */}
         {animalEffect === "fish" && (
           <motion.div
-            initial={{ x: '-10vw', y: '40vh' }}
+            initial={{ x: '110vw', y: '30vh', scaleX: -1 }}
             animate={{ 
-              x: '110vw', 
-              y: ['40vh', '35vh', '45vh', '35vh', '40vh'] 
+              x: '-20vw', 
+              y: ['30vh', '25vh', '35vh', '25vh', '30vh'] 
             }}
             exit={{ opacity: 0 }}
             transition={{ 
-              x: { duration: 3.5, ease: "linear" },
-              y: { duration: 3.5, ease: "easeInOut" }
+              x: { duration: 5, ease: "linear" },
+              y: { duration: 5, ease: "easeInOut" }
             }}
             style={{
               position: 'fixed',
               top: 0,
-              left: '-10%',
-              fontSize: '120px',
+              right: '-10%',
+              fontSize: '130px',
               pointerEvents: 'none',
               zIndex: 9999,
+              filter: 'drop-shadow(0 10px 15px rgba(0,100,255,0.3))'
             }}
           >
             🐟
-            {/* Sub-bubbles for the fish */}
+            {/* Water trail/bubbles behind the fish */}
             <motion.div
-              animate={{ y: [-10, -60], x: [0, 10, -10, 0], opacity: [1, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-              style={{ position: 'absolute', top: '20px', right: '-30px', fontSize: '30px', filter: 'opacity(0.6)' }}
+              animate={{ x: [0, 40, 80], y: [-10, -30, -10], opacity: [1, 0.5, 0], scale: [0.5, 1, 1.5] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "linear", staggerChildren: 0.2 }}
+              style={{ position: 'absolute', top: '40px', left: '100px', fontSize: '40px', filter: 'opacity(0.7)' }}
             >
-              🫧
+              <div style={{ position: 'absolute' }}>🫧</div>
+              <div style={{ position: 'absolute', left: '30px', top: '-20px', fontSize: '20px' }}>🫧</div>
+              <div style={{ position: 'absolute', left: '60px', top: '10px', fontSize: '30px' }}>🫧</div>
             </motion.div>
           </motion.div>
         )}

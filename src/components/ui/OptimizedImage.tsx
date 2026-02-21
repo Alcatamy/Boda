@@ -69,13 +69,16 @@ export default function OptimizedImage({
     return canvas.toDataURL();
   };
 
+  const finalBlurDataURL = blurDataURL || (width && height ? generateBlurDataURL(width, height) : undefined);
+  const finalPlaceholder = placeholder === "blur" && !finalBlurDataURL ? "empty" : placeholder;
+
   const imageProps = {
     src,
     alt,
     priority,
     quality,
-    placeholder: placeholder as "blur" | "empty",
-    blurDataURL: blurDataURL || (width && height ? generateBlurDataURL(width, height) : undefined),
+    placeholder: finalPlaceholder as "blur" | "empty",
+    blurDataURL: finalBlurDataURL,
     sizes,
     onLoad: handleLoad,
     onError: handleError,
@@ -84,7 +87,7 @@ export default function OptimizedImage({
 
   if (fill) {
     return (
-      <div className={`${styles.imageContainer} ${aspectRatio ? styles[aspectRatio] : ''} ${className}`}>
+      <div className={`${styles.imageContainer} ${styles.fillContainer} ${aspectRatio ? styles[aspectRatio] : ''} ${className}`}>
         <Image
           {...imageProps}
           fill

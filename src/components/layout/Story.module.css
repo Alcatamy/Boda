@@ -53,73 +53,53 @@
   border-radius: 2px;
 }
 
-.milestonesList {
-  display: flex;
-  flex-direction: column;
-  gap: 6rem;
-  margin-top: 2rem;
-}
-
-.milestoneBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+.narrativeContainer {
+  margin: 0 auto 4rem auto;
+  max-width: 800px;
   position: relative;
+  z-index: 2;
 }
 
-.milestoneText {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.milestoneYearBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+.narrativeText {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 3rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.05em;
-  padding: 0.4rem 1.2rem;
-  border-radius: 50px;
-  background: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  margin-bottom: 1rem;
-}
-
-.milestoneIconWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  color: white;
-}
-
-.milestoneTitle {
-  font-family: var(--font-serif);
-  font-size: 2rem;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-}
-
-.milestoneDesc {
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.8;
   font-size: 1.1rem;
 }
 
-.milestoneDivider {
-  height: 60px;
-  width: 2px;
-  background: linear-gradient(to bottom, transparent, var(--border-color), transparent);
-  margin: 1rem auto;
+.narrativeText p {
+  margin-bottom: 1.5rem;
+  max-width: none;
 }
+
+.narrativeText p:last-child {
+  margin-bottom: 0;
+}
+
+.narrativeText strong {
+  color: var(--text-primary);
+  font-weight: 600;
+  display: block;
+  margin-top: 1rem;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .narrativeText {
+    padding: 2rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+
 
 .polaroidContainer {
   display: flex;
@@ -138,8 +118,8 @@
   position: relative;
   width: calc(25% - 2rem);
   flex-grow: 1;
-  max-width: 320px;
-  min-width: 220px;
+  max-width: 160px; /* Half of 320 */
+  min-width: 110px; /* Half of 220 */
   cursor: pointer;
   z-index: 1;
 }

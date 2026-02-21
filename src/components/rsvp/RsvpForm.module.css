@@ -434,7 +434,8 @@
 
 .menuSelected .menuTitle,
 .menuSelected .menuDesc {
-  color: white;
+  color: var(--color-text-charcoal);
+  font-weight: 700;
 }
 
 .hiddenRadio {

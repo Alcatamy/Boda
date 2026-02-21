@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
-import { Heart, Pause, Play, ChevronLeft, ChevronRight } from "lucide-react";
+import { Heart } from "lucide-react";
 import styles from "./MessagesTicker.module.css";
 
 type Message = {
@@ -19,8 +19,7 @@ export default function MessagesTicker() {
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
-    const [autoScrollSpeed, setAutoScrollSpeed] = useState(1);
-    const [showControls, setShowControls] = useState(false);
+
     const animationRef = useRef<number>(0);
 
     useEffect(() => {
@@ -75,7 +74,7 @@ export default function MessagesTicker() {
                          // if manually scrolled backwards past 0
                         scrollContainer.scrollLeft += loopWidth;
                     } else {
-                        scrollContainer.scrollLeft += autoScrollSpeed;
+                        scrollContainer.scrollLeft += 1; // Default fixed speed
                     }
                 }
             }
@@ -83,7 +82,7 @@ export default function MessagesTicker() {
         };
 
         animationRef.current = requestAnimationFrame(animate);
-    }, [isPaused, isDragging, autoScrollSpeed, messages.length]);
+    }, [isPaused, isDragging, messages.length]);
 
     useEffect(() => {
         startAutoScroll();
@@ -94,21 +93,7 @@ export default function MessagesTicker() {
         };
     }, [startAutoScroll]);
 
-    // Manual scroll controls
-    const handleManualScroll = (direction: 'left' | 'right') => {
-        const scrollContainer = scrollRef.current;
-        if (!scrollContainer) return;
 
-        const scrollAmount = 300;
-        const newScrollLeft = direction === 'left' 
-            ? Math.max(0, scrollContainer.scrollLeft - scrollAmount)
-            : Math.min(scrollContainer.scrollWidth - scrollContainer.clientWidth, scrollContainer.scrollLeft + scrollAmount);
-
-        scrollContainer.scrollTo({
-            left: newScrollLeft,
-            behavior: 'smooth'
-        });
-    };
 
     // Mouse drag functionality
     const handleMouseDown = (e: React.MouseEvent) => {
@@ -153,10 +138,7 @@ export default function MessagesTicker() {
         setTimeout(() => setIsPaused(false), 2000);
     };
 
-    // Speed control
-    const adjustSpeed = (delta: number) => {
-        setAutoScrollSpeed(prev => Math.max(0.5, Math.min(5, prev + delta)));
-    };
+
 
     if (messages.length === 0) {
         return (
@@ -172,69 +154,12 @@ export default function MessagesTicker() {
     const displayMessages = [...messages, ...messages, ...messages, ...messages];
 
     return (
-        <div 
-            className={styles.tickerContainer}
-            onMouseEnter={() => setShowControls(true)}
-            onMouseLeave={() => setShowControls(false)}
-        >
+        <div className={styles.tickerContainer}>
             <div className={styles.header}>
                 <div className={styles.titleSection}>
                     <Heart size={20} className={styles.titleIcon} />
                     <h3 className={styles.title}>Mensajes de Nuestros Invitados</h3>
                 </div>
-                
-                <AnimatePresence>
-                    {showControls && (
-                        <motion.div
-                            className={styles.controls}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                        >
-                            <button
-                                className={styles.controlBtn}
-                                onClick={() => setIsPaused(!isPaused)}
-                                title={isPaused ? "Reanudar" : "Pausar"}
-                            >
-                                {isPaused ? <Play size={16} /> : <Pause size={16} />}
-                            </button>
-                            
-                            <div className={styles.speedControls}>
-                                <button
-                                    className={styles.speedBtn}
-                                    onClick={() => adjustSpeed(-0.5)}
-                                    title="Disminuir velocidad"
-                                >
-                                    -
-                                </button>
-                                <span className={styles.speedIndicator}>{autoScrollSpeed.toFixed(1)}x</span>
-                                <button
-                                    className={styles.speedBtn}
-                                    onClick={() => adjustSpeed(0.5)}
-                                    title="Aumentar velocidad"
-                                >
-                                    +
-                                </button>
-                            </div>
-                            
-                            <button
-                                className={styles.controlBtn}
-                                onClick={() => handleManualScroll('left')}
-                                title="Anterior"
-                            >
-                                <ChevronLeft size={16} />
-                            </button>
-                            
-                            <button
-                                className={styles.controlBtn}
-                                onClick={() => handleManualScroll('right')}
-                                title="Siguiente"
-                            >
-                                <ChevronRight size={16} />
-                            </button>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
             </div>
 
             <div className={styles.wrapper}>
@@ -270,13 +195,6 @@ export default function MessagesTicker() {
                 </div>
             </div>
 
-            <div className={styles.footer}>
-                <span className={styles.footerText}>
-                    {isPaused ? "Pausado" : "Desplazamiento automático"} • 
-                    {messages.length} mensajes • 
-                    Arrastra para navegar más rápido
-                </span>
-            </div>
         </div>
     );
 }
