@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import UploadWidget from "./UploadWidget";
 import styles from "./GallerySection.module.css";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -68,10 +67,8 @@ export default function GallerySection() {
           viewport={{ once: true }}
         >
           <h2 className={styles.title}>Galería de Invitados</h2>
-          <p className={styles.subtitle}>Comparte tus fotos del gran día con nosotros</p>
+          <p className={styles.subtitle}>Recuerdos de nuestro gran día</p>
         </motion.div>
-
-        <UploadWidget onUploadComplete={fetchPhotos} />
 
         <div className={styles.grid}>
           {photos.map((photo) => (
@@ -95,7 +92,7 @@ export default function GallerySection() {
             </motion.div>
           ))}
           {photos.length === 0 && (
-            <p className={styles.empty}>Aún no hay fotos. ¡Sé el primero en subir una!</p>
+            <p className={styles.empty}>Aún no hay fotos disponibles.</p>
           )}
         </div>
       </div>

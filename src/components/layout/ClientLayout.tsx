@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { motion, useScroll, useVelocity, useTransform, useSpring } from "framer-motion";
 import EnvelopeIntro from "@/components/features/EnvelopeIntro/EnvelopeIntro";
 import MusicPlayer from "@/components/features/MusicPlayer/MusicPlayer";
 import SpotlightCursor from "@/components/ui/SpotlightCursor";
@@ -9,6 +10,17 @@ import ButterflyEffect from "@/components/ui/ButterflyEffect";
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const [hasOpenedEnvelope, setHasOpenedEnvelope] = useState(false);
     const [showContent, setShowContent] = useState(false);
+
+    // Scroll Velocity Hooks for Dynamic Background
+    const { scrollY } = useScroll();
+    const scrollVelocity = useVelocity(scrollY);
+    const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
+    const velocityOpacity = useTransform(smoothVelocity, [-2000, 0, 2000], [0.5, 0, 0.5]);
+    const backgroundColor = useTransform(
+        smoothVelocity,
+        [-2000, 0, 2000],
+        ["rgba(212, 175, 55, 0.4)", "rgba(255, 255, 255, 0)", "rgba(59, 130, 246, 0.4)"]
+    );
 
     // Allow envelope to signal when to start music and show site
     const handleEnvelopeOpen = () => {
@@ -33,6 +45,21 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                     <ButterflyEffect />
                 </>
             )}
+
+            {/* Dynamic Scroll Background */}
+            <motion.div
+                style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    pointerEvents: "none",
+                    zIndex: -1,
+                    backgroundColor: backgroundColor,
+                    opacity: velocityOpacity,
+                }}
+            />
 
             {/* Main Content */}
             <main style={{

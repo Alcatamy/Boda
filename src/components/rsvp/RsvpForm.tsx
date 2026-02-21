@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/lib/supabase";
@@ -22,9 +22,11 @@ export default function RsvpForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error" | "duplicate">("idle");
   const [rainEffect, setRainEffect] = useState(false);
+  const [animalEffect, setAnimalEffect] = useState<"cow" | "fish" | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const animalTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { register, handleSubmit, watch, formState: { errors }, setError, clearErrors } = useForm<FormData>();
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
   const attending = watch("attending");
   const menuChoice = watch("menuChoice");
   const hasPlusOne = watch("hasPlusOne");
@@ -92,6 +94,19 @@ export default function RsvpForm() {
       setTimeout(() => setRainEffect(false), 5000); // 5 seconds of rain for better visibility
     }
   }, [attending]);
+
+  // Effect: Animal animations based on menu choice
+  useEffect(() => {
+    if (menuChoice === "meat") {
+      setAnimalEffect("cow");
+      if (animalTimeoutRef.current) clearTimeout(animalTimeoutRef.current);
+      animalTimeoutRef.current = setTimeout(() => setAnimalEffect(null), 3000);
+    } else if (menuChoice === "fish") {
+      setAnimalEffect("fish");
+      if (animalTimeoutRef.current) clearTimeout(animalTimeoutRef.current);
+      animalTimeoutRef.current = setTimeout(() => setAnimalEffect(null), 4000); // 4 seconds to cross
+    }
+  }, [menuChoice]);
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
@@ -249,6 +264,62 @@ export default function RsvpForm() {
                 }} 
               />
             ))}
+          </motion.div>
+        )}
+
+        {/* Cow effect */}
+        {animalEffect === "cow" && (
+          <motion.div
+            initial={{ y: 200, opacity: 0, rotate: -20 }}
+            animate={{ y: 0, opacity: 1, rotate: [0, 15, -15, 10, -5, 0] }}
+            exit={{ y: 200, opacity: 0 }}
+            transition={{ duration: 1.5, type: "spring", bounce: 0.6 }}
+            style={{
+              position: 'fixed',
+              bottom: '10%',
+              left: '50%',
+              marginLeft: '-75px',
+              fontSize: '150px',
+              pointerEvents: 'none',
+              zIndex: 9999,
+              filter: 'brightness(0) drop-shadow(2px 4px 6px rgba(0,0,0,0.3))'
+            }}
+          >
+            🐄
+          </motion.div>
+        )}
+
+        {/* Fish effect */}
+        {animalEffect === "fish" && (
+          <motion.div
+            initial={{ x: '-10vw', y: '40vh' }}
+            animate={{ 
+              x: '110vw', 
+              y: ['40vh', '35vh', '45vh', '35vh', '40vh'] 
+            }}
+            exit={{ opacity: 0 }}
+            transition={{ 
+              x: { duration: 3.5, ease: "linear" },
+              y: { duration: 3.5, ease: "easeInOut" }
+            }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: '-10%',
+              fontSize: '120px',
+              pointerEvents: 'none',
+              zIndex: 9999,
+            }}
+          >
+            🐟
+            {/* Sub-bubbles for the fish */}
+            <motion.div
+              animate={{ y: [-10, -60], x: [0, 10, -10, 0], opacity: [1, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+              style={{ position: 'absolute', top: '20px', right: '-30px', fontSize: '30px', filter: 'opacity(0.6)' }}
+            >
+              🫧
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Plane, Gift, Loader2 } from "lucide-react";
+import { Check, Gift, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import styles from "./GiftRegistry.module.css";
@@ -47,25 +47,25 @@ export default function GiftRegistry() {
         <div className={styles.heroRow}>
           <div className={styles.heroContent}>
             <div className={styles.tag}>
-              <Plane size={14} />
-              <span>DESTINO: VIETNAM, BALI E ISLAS GILI</span>
+              <Gift size={14} />
+              <span>NUESTRO MEJOR REGALO ERES TÚ</span>
             </div>
 
             <h2 className={styles.heroTitle}>
-              Nuestro Fondo de <br />
-              <span className={styles.gradientText}>Luna de Miel</span>
+              Tu regalo nos hace <br />
+              <span className={styles.gradientText}>Mucha Ilusión</span>
             </h2>
 
             <p className={styles.heroText}>
-              Vuestra compañía es el regalo más valioso. Sin embargo, para aquellos que deseéis tener un detalle, hemos creado este fondo destinado a hacer realidad nuestra <strong>Gran Aventura</strong> por el Sudeste Asiático e Islas Paradisíacas.
+              Acompañarnos en este día tan especial es el mejor regalo que nos podéis hacer. Sin embargo, si deseáis tener un detalle adicional con nosotros, os dejamos a continuación nuestro número de cuenta para ayudarnos a construir nuestro futuro.
             </p>
           </div>
 
           <div className={styles.imageCard}>
             <div className={styles.imageWrapper}>
               <Image
-                src="/images/registry/banner.png"
-                alt="Vietnam, Bali e Islas Gili"
+                src="/images/story/PXL_20250801_103322546.jpg"
+                alt="Nuestro Regalo"
                 fill
                 className={styles.heroImage}
                 placeholder="blur"
@@ -89,11 +89,11 @@ export default function GiftRegistry() {
           <div className={styles.bankSection}>
             <div className={styles.bankContent}>
               <Gift size={32} className={styles.bankIconMain} />
-              <h3>Tu Regalo</h3>
+              <h3>El Detalle</h3>
               <p className={styles.stepDesc}>
-                Para nosotros, lo más importante es vivir este día con vosotros.
-                Si deseáis ayudarnos a cumplir el sueño de nuestro viaje de novios, podéis hacerlo aquí.
-                ¡Gracias por ser parte de nuestra historia!
+                Para nosotros, lo más importante es vivir este gran día a vuestro lado y celebrar nuestra historia.
+                Si queréis contribuir y tener un detalle con nosotros, podéis hacerlo cómodamente a través del siguiente número de cuenta.
+                ¡Muchísimas gracias de corazón!
               </p>
 
               <div className={styles.ibanContainer}>

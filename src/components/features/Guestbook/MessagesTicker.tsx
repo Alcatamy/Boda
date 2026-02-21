@@ -21,7 +21,7 @@ export default function MessagesTicker() {
     const [scrollLeft, setScrollLeft] = useState(0);
     const [autoScrollSpeed, setAutoScrollSpeed] = useState(1);
     const [showControls, setShowControls] = useState(false);
-    const animationRef = useRef<number>();
+    const animationRef = useRef<number>(0);
 
     useEffect(() => {
         // Fetch initial messages
@@ -61,16 +61,22 @@ export default function MessagesTicker() {
 
         const animate = () => {
             if (!isPaused && !isDragging && scrollContainer) {
-                const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-                
-                if (scrollContainer.scrollLeft >= maxScroll) {
-                    // Smooth reset to start
-                    scrollContainer.scrollTo({
-                        left: 0,
-                        behavior: 'smooth'
-                    });
-                } else {
-                    scrollContainer.scrollLeft += autoScrollSpeed;
+                const children = scrollContainer.children;
+                if (children.length > 0) {
+                    // Calculate exact width of one full set of messages
+                    const firstItem = children[0] as HTMLElement;
+                    const middleItem = children[Math.floor(children.length / 2)] as HTMLElement;
+                    const loopWidth = middleItem.offsetLeft - firstItem.offsetLeft;
+                    
+                    if (scrollContainer.scrollLeft >= loopWidth) {
+                        // Instant reset to create a seamless loop without smooth-scroll fighting
+                        scrollContainer.scrollLeft -= loopWidth;
+                    } else if (scrollContainer.scrollLeft < 0) {
+                         // if manually scrolled backwards past 0
+                        scrollContainer.scrollLeft += loopWidth;
+                    } else {
+                        scrollContainer.scrollLeft += autoScrollSpeed;
+                    }
                 }
             }
             animationRef.current = requestAnimationFrame(animate);
@@ -161,8 +167,9 @@ export default function MessagesTicker() {
         );
     }
 
-    // Create seamless loop by duplicating messages
-    const displayMessages = [...messages, ...messages];
+    // Create a seamless loop by duplicating messages array multiple times 
+    // to ensure there's enough content to wrap smoothly on very wide screens
+    const displayMessages = [...messages, ...messages, ...messages, ...messages];
 
     return (
         <div 
@@ -252,7 +259,7 @@ export default function MessagesTicker() {
                             transition={{ duration: 0.5, delay: idx * 0.1 }}
                         >
                             <div className={styles.messageContent}>
-                                <p className={styles.message}>"{msg.content}"</p>
+                                <p className={styles.message}>&quot;{msg.content}&quot;</p>
                                 <div className={styles.messageFooter}>
                                     <span className={styles.author}>— {msg.sender_name}</span>
                                     <Heart size={12} className={styles.heartIcon} />
