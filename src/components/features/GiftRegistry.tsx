@@ -57,7 +57,7 @@ export default function GiftRegistry() {
             </h2>
 
             <p className={styles.heroText}>
-              Para nosotros, lo más importante es vivir este gran día a vuestro lado y celebrar nuestra historia. Si queréis contribuir y tener un detalle con nosotros, podéis hacerlo cómodamente a través del siguiente número de cuenta. ¡Muchísimas gracias de corazón!
+              Lo más importante para nosotros es que nos acompañéis a celebrar este día tan especial. ¡Que no faltéis ya es nuestro mejor regalo!
             </p>
           </div>
 
@@ -85,7 +85,7 @@ export default function GiftRegistry() {
               <Gift size={32} className={styles.bankIconMain} />
               <h3>El Detalle</h3>
               <p className={styles.stepDesc}>
-                Acompañarnos en este día tan especial es el mejor regalo que nos podéis hacer. Sin embargo, si deseáis tener un detalle adicional con nosotros, os dejamos a continuación nuestro número de cuenta.
+                Si además queréis tener un detalle extra para ayudarnos a organizar nuestra luna de miel y acompañarnos en nuestra nueva etapa, hemos habilitado el siguiente número de cuenta. ¡Infinitas gracias de corazón!
               </p>
 
               <div className={styles.ibanContainer}>

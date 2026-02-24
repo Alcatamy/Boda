@@ -22,9 +22,7 @@ export default function RsvpForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error" | "duplicate">("idle");
   const [rainEffect, setRainEffect] = useState(false);
-  const [animalEffect, setAnimalEffect] = useState<"cow" | "fish" | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-  const animalTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
   const attending = watch("attending");
@@ -95,19 +93,6 @@ export default function RsvpForm() {
     }
   }, [attending]);
 
-  // Effect: Animal animations based on menu choice
-  useEffect(() => {
-    if (menuChoice === "meat") {
-      setAnimalEffect("cow");
-      if (animalTimeoutRef.current) clearTimeout(animalTimeoutRef.current);
-      animalTimeoutRef.current = setTimeout(() => setAnimalEffect(null), 4000);
-    } else if (menuChoice === "fish") {
-      setAnimalEffect("fish");
-      if (animalTimeoutRef.current) clearTimeout(animalTimeoutRef.current);
-      animalTimeoutRef.current = setTimeout(() => setAnimalEffect(null), 5000); // 5 seconds to cross
-    }
-  }, [menuChoice]);
-
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setSubmitStatus("idle");
@@ -121,26 +106,19 @@ export default function RsvpForm() {
     }
 
     try {
-      const { error } = await supabase
-        .from('guests')
-        .insert([
-          {
-            first_name: data.firstName,
-            last_name: data.lastName,
-            attending: data.attending === "yes",
-            dietary_restrictions: data.dietaryRestrictions || null,
-            menu_choice: data.menuChoice || null,
-            has_plus_one: data.hasPlusOne || false,
-            plus_one_name: data.hasPlusOne ? data.plusOneName : null,
-            children_count: data.childrenCount || 0,
-          },
-        ]);
+      const response = await fetch('/api/rsvp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-      if (error) {
-        if (error.code === '23505') { // Unique constraint violation
+      const result = await response.json();
+
+      if (!response.ok) {
+        if (result.error === 'duplicate') {
           setSubmitStatus("duplicate");
         } else {
-          throw error;
+          throw new Error(result.error || "Error unknown");
         }
       } else {
         setSubmitStatus("success");
@@ -265,9 +243,9 @@ export default function RsvpForm() {
               }}
             />
             {Array.from({ length: 120 }).map((_, i) => (
-              <div 
-                key={i} 
-                className={styles.drop} 
+              <div
+                key={i}
+                className={styles.drop}
                 style={{
                   left: `${Math.random() * 100}%`,
                   animationDelay: `${Math.random() * 2}s`,
@@ -276,109 +254,43 @@ export default function RsvpForm() {
                   width: `${i % 3 === 0 ? '1px' : i % 3 === 1 ? '2px' : '3px'}`,
                   height: `${i % 3 === 0 ? '20px' : i % 3 === 1 ? '30px' : '40px'}`,
                   zIndex: 2
-                }} 
+                }}
               />
             ))}
           </motion.div>
         )}
 
-        {/* Cow effect */}
-        {animalEffect === "cow" && (
-          <motion.div
-            initial={{ x: '-20vw', y: '10vh' }}
-            animate={{ 
-              x: '120vw',
-              y: ['10vh', '8vh', '10vh', '7vh', '10vh', '9vh', '10vh'] 
-            }}
-            exit={{ opacity: 0 }}
-            transition={{ 
-              x: { duration: 4, ease: "linear" },
-              y: { duration: 4, ease: "easeInOut", times: [0, 0.15, 0.3, 0.45, 0.6, 0.8, 1] }
-            }}
-            style={{
-              position: 'fixed',
-              bottom: '5%',
-              left: 0,
-              fontSize: '120px',
-              pointerEvents: 'none',
-              zIndex: 9999,
-              filter: 'drop-shadow(5px 15px 10px rgba(0,0,0,0.4))'
-            }}
-          >
-            <motion.div
-              animate={{ rotate: [-5, 5, -5] }}
-              transition={{ repeat: Infinity, duration: 0.5, ease: "easeInOut" }}
-            >
-              🐄
-            </motion.div>
-          </motion.div>
+      </motion.div>
         )}
+    </AnimatePresence>
 
-        {/* Fish effect */}
-        {animalEffect === "fish" && (
-          <motion.div
-            initial={{ x: '110vw', y: '30vh', scaleX: -1 }}
-            animate={{ 
-              x: '-20vw', 
-              y: ['30vh', '25vh', '35vh', '25vh', '30vh'] 
-            }}
-            exit={{ opacity: 0 }}
-            transition={{ 
-              x: { duration: 5, ease: "linear" },
-              y: { duration: 5, ease: "easeInOut" }
-            }}
-            style={{
-              position: 'fixed',
-              top: 0,
-              right: '-10%',
-              fontSize: '130px',
-              pointerEvents: 'none',
-              zIndex: 9999,
-              filter: 'drop-shadow(0 10px 15px rgba(0,100,255,0.3))'
-            }}
-          >
-            🐟
-            {/* Water trail/bubbles behind the fish */}
-            <motion.div
-              animate={{ x: [0, 40, 80], y: [-10, -30, -10], opacity: [1, 0.5, 0], scale: [0.5, 1, 1.5] }}
-              transition={{ repeat: Infinity, duration: 2, ease: "linear", staggerChildren: 0.2 }}
-              style={{ position: 'absolute', top: '40px', left: '100px', fontSize: '40px', filter: 'opacity(0.7)' }}
-            >
-              <div style={{ position: 'absolute' }}>🫧</div>
-              <div style={{ position: 'absolute', left: '30px', top: '-20px', fontSize: '20px' }}>🫧</div>
-              <div style={{ position: 'absolute', left: '60px', top: '10px', fontSize: '30px' }}>🫧</div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Name Fields */ }
+  <div className={styles.row}>
+    <div className={styles.fieldGroup}>
+      <label htmlFor="firstName">Nombre *</label>
+      <input
+        {...register("firstName", { required: true, minLength: 2 })}
+        placeholder="Tu nombre"
+        className={`${styles.input} ${errors.firstName || validationErrors.firstName ? styles.inputError : ''}`}
+      />
+      {(errors.firstName || validationErrors.firstName) && (
+        <span className={styles.error}>{validationErrors.firstName || "Requerido"}</span>
+      )}
+    </div>
+    <div className={styles.fieldGroup}>
+      <label htmlFor="lastName">Apellidos *</label>
+      <input
+        {...register("lastName", { required: true, minLength: 2 })}
+        placeholder="Tus apellidos"
+        className={`${styles.input} ${errors.lastName || validationErrors.lastName ? styles.inputError : ''}`}
+      />
+      {(errors.lastName || validationErrors.lastName) && (
+        <span className={styles.error}>{validationErrors.lastName || "Requerido"}</span>
+      )}
+    </div>
+  </div>
 
-      {/* Name Fields */}
-      <div className={styles.row}>
-        <div className={styles.fieldGroup}>
-          <label htmlFor="firstName">Nombre *</label>
-          <input
-            {...register("firstName", { required: true, minLength: 2 })}
-            placeholder="Tu nombre"
-            className={`${styles.input} ${errors.firstName || validationErrors.firstName ? styles.inputError : ''}`}
-          />
-          {(errors.firstName || validationErrors.firstName) && (
-            <span className={styles.error}>{validationErrors.firstName || "Requerido"}</span>
-          )}
-        </div>
-        <div className={styles.fieldGroup}>
-          <label htmlFor="lastName">Apellidos *</label>
-          <input
-            {...register("lastName", { required: true, minLength: 2 })}
-            placeholder="Tus apellidos"
-            className={`${styles.input} ${errors.lastName || validationErrors.lastName ? styles.inputError : ''}`}
-          />
-          {(errors.lastName || validationErrors.lastName) && (
-            <span className={styles.error}>{validationErrors.lastName || "Requerido"}</span>
-          )}
-        </div>
-      </div>
-
-      {/* Attendance Radio */}
+  {/* Attendance Radio */ }
       <div className={styles.fieldGroup}>
         <label>¿Podrás acompañarnos? *</label>
         <div className={styles.radioGroup}>
@@ -423,7 +335,13 @@ export default function RsvpForm() {
                     {...register("menuChoice")}
                     className={styles.radioInput}
                   />
-                  <div className={styles.menuEmoji}>🥩</div>
+                  <motion.div 
+                    className={styles.menuEmoji}
+                    animate={menuChoice === "meat" ? { scale: [1, 1.4, 1], y: [0, -10, 0], rotate: [0, -10, 10, 0] } : {}}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                  >
+                    {menuChoice === "meat" ? "🐄" : "🥩"}
+                  </motion.div>
                   <span className={styles.menuTitle}>Carne</span>
                 </label>
                 <label className={`${styles.menuCard} ${menuChoice === "fish" ? styles.menuSelected : ""}`}>
@@ -433,7 +351,13 @@ export default function RsvpForm() {
                     {...register("menuChoice")}
                     className={styles.radioInput}
                   />
-                  <div className={styles.menuEmoji}>🐟</div>
+                  <motion.div 
+                    className={styles.menuEmoji}
+                    animate={menuChoice === "fish" ? { scale: [1, 1.4, 1], y: [0, -10, 0], rotate: [0, 15, -15, 0] } : {}}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                  >
+                    🐟
+                  </motion.div>
                   <span className={styles.menuTitle}>Pescado</span>
                 </label>
               </div>
@@ -504,32 +428,36 @@ export default function RsvpForm() {
         )}
       </AnimatePresence>
 
-      {/* Submit Error */}
-      {validationErrors.duplicate && (
-        <div className={styles.errorMessage}>
-          <AlertCircle size={18} />
-          <span>{validationErrors.duplicate}</span>
-        </div>
-      )}
+  {/* Submit Error */ }
+  {
+    validationErrors.duplicate && (
+      <div className={styles.errorMessage}>
+        <AlertCircle size={18} />
+        <span>{validationErrors.duplicate}</span>
+      </div>
+    )
+  }
 
-      {submitStatus === "error" && (
-        <div className={styles.errorMessage}>
-          <AlertCircle size={18} />
-          <span>Hubo un error al enviar. Por favor intenta de nuevo.</span>
-        </div>
-      )}
+  {
+    submitStatus === "error" && (
+      <div className={styles.errorMessage}>
+        <AlertCircle size={18} />
+        <span>Hubo un error al enviar. Por favor intenta de nuevo.</span>
+      </div>
+    )
+  }
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className={styles.submitButton}
-      >
-        {isSubmitting ? (
-          <><Loader2 className={styles.spinner} size={20} /> Enviando...</>
-        ) : (
-          "Confirmar Asistencia"
-        )}
-      </button>
-    </form>
+  <button
+    type="submit"
+    disabled={isSubmitting}
+    className={styles.submitButton}
+  >
+    {isSubmitting ? (
+      <><Loader2 className={styles.spinner} size={20} /> Enviando...</>
+    ) : (
+      "Confirmar Asistencia"
+    )}
+  </button>
+    </form >
   );
 }

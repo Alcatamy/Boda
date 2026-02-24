@@ -5,67 +5,60 @@ import styles from "./Story.module.css";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 
 const storyPhotos = [
-  // Paragraph 1 (0 to 5)
-  "/images/story/Historia 1-0.jpg",
-  "/images/story/Historia 1-1.jpg",
-  "/images/story/Historia 1-2.jpg",
-  "/images/story/Historia 1-3.jpg",
-  "/images/story/Historia 1-4.jpg",
-  // Paragraph 2 (5 to 11)
-  "/images/story/Historia 2-0.jpg",
-  "/images/story/Historia 2-1.jpg",
-  "/images/story/Historia 2-2.jpg",
-  "/images/story/Historia 2-3.jpg",
-  "/images/story/Historia 2-4.jpg",
-  "/images/story/Historia 2-5.jpg",
-  // Paragraph 3 (11 to 17)
-  "/images/story/Historia 3-0.jpg",
-  "/images/story/Historia 3-1.jpg",
-  "/images/story/Historia 3-2.jpg",
-  "/images/story/Historia 3-3.jpg",
-  "/images/story/Historia 3-4.jpg",
-  "/images/story/Historia 3-5.jpg",
+  "/images/story/2016.jpg",
+  "/images/story/20161015_154819.jpg",
+  "/images/story/2018.jpg",
+  "/images/story/20180128_134305.jpg",
+  "/images/story/20181207_190537.jpg",
+  "/images/story/20190627_141615.jpg",
+  "/images/story/2020.jpg",
+  "/images/story/2023.jpg",
+  "/images/story/2025.jpg",
+  "/images/story/hero-foto.png",
+  "/images/story/nueva-foto-10.jpg",
+  "/images/story/AirBrush_20240529135359.jpg",
+  "/images/story/IMAG0216.jpg",
+  "/images/story/IMG-20251228-WA0020.jpg",
+  "/images/story/IMG20220413173554.jpg",
+  "/images/story/IMG20230820135606.jpg",
+  "/images/story/IMG20230920174425.jpg",
+  "/images/story/IMG20231231233127.jpg",
+  "/images/story/IMG_0876.JPG",
+  "/images/story/IMG_1188.JPG",
+  "/images/story/IMG_20200726_001303.jpg",
+  "/images/story/IMG_20201225_192843.jpg",
+  "/images/story/IMG_20210828_182808.jpg",
+  "/images/story/IMG_20210901_172706.jpg",
+  "/images/story/IMG_2676.JPG",
+  "/images/story/IMG_2677.JPG",
+  "/images/story/PXL_20250801_103322546.jpg",
+  "/images/story/PXL_20250803_100301502.jpg",
+  "/images/story/PXL_20250807_183346256.jpg",
+  "/images/story/PXL_20251004_161539984.jpg",
+  "/images/story/original_a799f9b5-f0d3-48b5-b4a1-f84180b69000_IMG20230724192453.jpg",
 ];
 
-// Deterministic pseudo-random values for design
-const getRotation = (index: number) => {
-  const rotations = [-6, 4, -3, 7, -5, 6, -4, 3, -7, 5];
-  return rotations[index % rotations.length];
-};
-
-const getMarginTop = (index: number) => {
-  const margins = [0, 40, 10, 50, -10, 30, -20, 20, -15, 60];
-  return margins[index % margins.length];
-};
-
 const renderPhotos = (start: number, end: number) => (
-  <div className={styles.polaroidContainer}>
+  <div className={styles.imageGrid}>
     {storyPhotos.slice(start, end).map((photo, i) => {
       const index = start + i;
       return (
         <motion.div
-           key={index}
-           className={styles.polaroid}
-           initial={{ opacity: 0, scale: 0.8, y: 50 }}
-           whileInView={{ opacity: 1, scale: 1, y: 0 }}
-           viewport={{ once: true, margin: "-50px" }}
-           transition={{ duration: 0.6, delay: (index % 4) * 0.1 }}
-           style={{
-             transform: `rotate(${getRotation(index)}deg)`,
-             marginTop: `${getMarginTop(index)}px`
-           }}
-         >
-           <div className={styles.tape} />
-           <div className={styles.polaroidImageWrapper}>
-             <OptimizedImage
-               src={photo}
-               alt={`Historia - ${index}`}
-               fill
-               sizes="(max-width: 768px) 30vw, (max-width: 1200px) 20vw, 15vw"
-               className={styles.polaroidImage}
-             />
-           </div>
-         </motion.div>
+          key={index}
+          className={styles.imageWrapper}
+          initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: (i % 4) * 0.1 }}
+        >
+          <OptimizedImage
+            src={photo}
+            alt={`Historia - ${index}`}
+            fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            className={styles.image}
+          />
+        </motion.div>
       );
     })}
   </div>
@@ -82,7 +75,6 @@ export default function Story() {
           viewport={{ once: true }}
         >
           <h2 className={styles.title}>Nuestra Historia</h2>
-          <p className={styles.subtitle}>11 años de amor que nos llevarán al sí</p>
           <div className={styles.decorativeLine} />
         </motion.div>
 
@@ -100,7 +92,7 @@ export default function Story() {
             </p>
           </motion.div>
 
-          {renderPhotos(0, 5)}
+          {renderPhotos(0, 8)}
 
           <motion.div
             className={styles.narrativeText}
@@ -114,7 +106,7 @@ export default function Story() {
             </p>
           </motion.div>
 
-          {renderPhotos(5, 11)}
+          {renderPhotos(8, 16)}
 
           <motion.div
             className={styles.narrativeText}
@@ -128,7 +120,7 @@ export default function Story() {
             </p>
           </motion.div>
 
-          {renderPhotos(11, 17)}
+          {renderPhotos(16, 24)}
 
           <motion.div
             className={styles.narrativeText}
@@ -142,7 +134,7 @@ export default function Story() {
             </p>
           </motion.div>
 
-          {/* Note: User did not specify photos after paragraph 4, so no renderPhotos(17, X) is needed */}
+          {renderPhotos(24, 31)}
         </div>
       </div>
     </section>
