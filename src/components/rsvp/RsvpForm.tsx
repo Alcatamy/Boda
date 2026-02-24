@@ -259,8 +259,6 @@ export default function RsvpForm() {
             ))}
           </motion.div>
         )}
-
-        )}
       </AnimatePresence>
 
       {/* Name Fields */}
