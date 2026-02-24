@@ -260,37 +260,36 @@ export default function RsvpForm() {
           </motion.div>
         )}
 
-      </motion.div>
         )}
-    </AnimatePresence>
+      </AnimatePresence>
 
-      {/* Name Fields */ }
-  <div className={styles.row}>
-    <div className={styles.fieldGroup}>
-      <label htmlFor="firstName">Nombre *</label>
-      <input
-        {...register("firstName", { required: true, minLength: 2 })}
-        placeholder="Tu nombre"
-        className={`${styles.input} ${errors.firstName || validationErrors.firstName ? styles.inputError : ''}`}
-      />
-      {(errors.firstName || validationErrors.firstName) && (
-        <span className={styles.error}>{validationErrors.firstName || "Requerido"}</span>
-      )}
-    </div>
-    <div className={styles.fieldGroup}>
-      <label htmlFor="lastName">Apellidos *</label>
-      <input
-        {...register("lastName", { required: true, minLength: 2 })}
-        placeholder="Tus apellidos"
-        className={`${styles.input} ${errors.lastName || validationErrors.lastName ? styles.inputError : ''}`}
-      />
-      {(errors.lastName || validationErrors.lastName) && (
-        <span className={styles.error}>{validationErrors.lastName || "Requerido"}</span>
-      )}
-    </div>
-  </div>
+      {/* Name Fields */}
+      <div className={styles.row}>
+        <div className={styles.fieldGroup}>
+          <label htmlFor="firstName">Nombre *</label>
+          <input
+            {...register("firstName", { required: true, minLength: 2 })}
+            placeholder="Tu nombre"
+            className={`${styles.input} ${errors.firstName || validationErrors.firstName ? styles.inputError : ''}`}
+          />
+          {(errors.firstName || validationErrors.firstName) && (
+            <span className={styles.error}>{validationErrors.firstName || "Requerido"}</span>
+          )}
+        </div>
+        <div className={styles.fieldGroup}>
+          <label htmlFor="lastName">Apellidos *</label>
+          <input
+            {...register("lastName", { required: true, minLength: 2 })}
+            placeholder="Tus apellidos"
+            className={`${styles.input} ${errors.lastName || validationErrors.lastName ? styles.inputError : ''}`}
+          />
+          {(errors.lastName || validationErrors.lastName) && (
+            <span className={styles.error}>{validationErrors.lastName || "Requerido"}</span>
+          )}
+        </div>
+      </div>
 
-  {/* Attendance Radio */ }
+      {/* Attendance Radio */}
       <div className={styles.fieldGroup}>
         <label>¿Podrás acompañarnos? *</label>
         <div className={styles.radioGroup}>
@@ -335,7 +334,7 @@ export default function RsvpForm() {
                     {...register("menuChoice")}
                     className={styles.radioInput}
                   />
-                  <motion.div 
+                  <motion.div
                     className={styles.menuEmoji}
                     animate={menuChoice === "meat" ? { scale: [1, 1.4, 1], y: [0, -10, 0], rotate: [0, -10, 10, 0] } : {}}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
@@ -351,7 +350,7 @@ export default function RsvpForm() {
                     {...register("menuChoice")}
                     className={styles.radioInput}
                   />
-                  <motion.div 
+                  <motion.div
                     className={styles.menuEmoji}
                     animate={menuChoice === "fish" ? { scale: [1, 1.4, 1], y: [0, -10, 0], rotate: [0, 15, -15, 0] } : {}}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
@@ -428,36 +427,36 @@ export default function RsvpForm() {
         )}
       </AnimatePresence>
 
-  {/* Submit Error */ }
-  {
-    validationErrors.duplicate && (
-      <div className={styles.errorMessage}>
-        <AlertCircle size={18} />
-        <span>{validationErrors.duplicate}</span>
-      </div>
-    )
-  }
+      {/* Submit Error */}
+      {
+        validationErrors.duplicate && (
+          <div className={styles.errorMessage}>
+            <AlertCircle size={18} />
+            <span>{validationErrors.duplicate}</span>
+          </div>
+        )
+      }
 
-  {
-    submitStatus === "error" && (
-      <div className={styles.errorMessage}>
-        <AlertCircle size={18} />
-        <span>Hubo un error al enviar. Por favor intenta de nuevo.</span>
-      </div>
-    )
-  }
+      {
+        submitStatus === "error" && (
+          <div className={styles.errorMessage}>
+            <AlertCircle size={18} />
+            <span>Hubo un error al enviar. Por favor intenta de nuevo.</span>
+          </div>
+        )
+      }
 
-  <button
-    type="submit"
-    disabled={isSubmitting}
-    className={styles.submitButton}
-  >
-    {isSubmitting ? (
-      <><Loader2 className={styles.spinner} size={20} /> Enviando...</>
-    ) : (
-      "Confirmar Asistencia"
-    )}
-  </button>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className={styles.submitButton}
+      >
+        {isSubmitting ? (
+          <><Loader2 className={styles.spinner} size={20} /> Enviando...</>
+        ) : (
+          "Confirmar Asistencia"
+        )}
+      </button>
     </form >
   );
 }
