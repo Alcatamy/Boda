@@ -35,7 +35,8 @@ export default function RsvpForm() {
       const { data, error } = await supabase
         .from('guests')
         .select('id')
-        .or(`first_name.ilike.${firstName},last_name.ilike.${lastName}`)
+        .ilike('first_name', firstName)
+        .ilike('last_name', lastName)
         .limit(1);
 
       if (error) throw error;

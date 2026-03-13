@@ -83,9 +83,8 @@ export default function GiftRegistry() {
           <div className={styles.bankSection}>
             <div className={styles.bankContent}>
               <Gift size={32} className={styles.bankIconMain} />
-              <h3>El Detalle</h3>
               <p className={styles.stepDesc}>
-                Si además queréis tener un detalle extra para ayudarnos a organizar nuestra luna de miel y acompañarnos en nuestra nueva etapa, hemos habilitado el siguiente número de cuenta. ¡Infinitas gracias de corazón!
+                Si además queréis tener un detalle extra para apoyarnos y acompañarnos en nuestra nueva etapa, hemos habilitado el siguiente número de cuenta. ¡Infinitas gracias de corazón!
               </p>
 
               <div className={styles.ibanContainer}>

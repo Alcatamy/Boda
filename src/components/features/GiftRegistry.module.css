@@ -219,16 +219,14 @@
 
 .ibanCode {
   font-family: "Courier New", monospace;
-  font-size: clamp(0.9rem, 3vw, 1.1rem);
-  /* Responsive font size */
+  font-size: clamp(0.8rem, 3.5vw, 1.1rem);
   color: var(--foreground);
   font-weight: 600;
-  white-space: nowrap;
-  /* Force single line */
-  overflow-x: auto;
-  /* Allow scroll if needed on tiny screens */
+  white-space: normal;
+  word-break: break-all;
   max-width: 100%;
-  padding-bottom: 2px;
+  letter-spacing: 0.05em;
+  line-height: 1.6;
 }
 
 /* Message Form Styling */

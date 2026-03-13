@@ -14,11 +14,12 @@ export async function POST(req: Request) {
     try {
         const data = await req.json();
 
-        // 1. Check for duplicates
+        // 1. Check for duplicates (both first AND last name must match)
         const { data: existingGuest, error: searchError } = await supabase
             .from('guests')
             .select('id')
-            .or(`first_name.ilike.${data.firstName},last_name.ilike.${data.lastName}`)
+            .ilike('first_name', data.firstName)
+            .ilike('last_name', data.lastName)
             .limit(1);
 
         if (searchError) {
