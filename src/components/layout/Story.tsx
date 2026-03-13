@@ -5,37 +5,29 @@ import styles from "./Story.module.css";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 
 const storyPhotos = [
-  "/images/story/2016.jpg",
-  "/images/story/20161015_154819.jpg",
-  "/images/story/2018.jpg",
-  "/images/story/20180128_134305.jpg",
-  "/images/story/20181207_190537.jpg",
-  "/images/story/20190627_141615.jpg",
-  "/images/story/2020.jpg",
-  "/images/story/2023.jpg",
-  "/images/story/2025.jpg",
-  "/images/story/hero-foto.png",
-  "/images/story/nueva-foto-10.jpg",
-  "/images/story/AirBrush_20240529135359.jpg",
-  "/images/story/IMAG0216.jpg",
-  "/images/story/IMG-20251228-WA0020.jpg",
-  "/images/story/IMG20220413173554.jpg",
-  "/images/story/IMG20230820135606.jpg",
-  "/images/story/IMG20230920174425.jpg",
-  "/images/story/IMG20231231233127.jpg",
-  "/images/story/IMG_0876.JPG",
-  "/images/story/IMG_1188.JPG",
-  "/images/story/IMG_20200726_001303.jpg",
-  "/images/story/IMG_20201225_192843.jpg",
-  "/images/story/IMG_20210828_182808.jpg",
-  "/images/story/IMG_20210901_172706.jpg",
-  "/images/story/IMG_2676.JPG",
-  "/images/story/IMG_2677.JPG",
-  "/images/story/PXL_20250801_103322546.jpg",
-  "/images/story/PXL_20250803_100301502.jpg",
-  "/images/story/PXL_20250807_183346256.jpg",
-  "/images/story/PXL_20251004_161539984.jpg",
-  "/images/story/original_a799f9b5-f0d3-48b5-b4a1-f84180b69000_IMG20230724192453.jpg",
+  "/images/story/0-2015.JPG",
+  "/images/story/1-2015.jpg",
+  "/images/story/2-2015.JPG",
+  "/images/story/3-2016.JPG",
+  "/images/story/4-2016.JPG",
+  "/images/story/5-2017.jpg",
+  "/images/story/6-2016.jpg",
+  "/images/story/7-2018.jpg",
+  "/images/story/8-2018.jpg",
+  "/images/story/8.1-2020.jpg",
+  "/images/story/9-2020.jpg",
+  "/images/story/10-2021.jpg",
+  "/images/story/11-2021.jpg",
+  "/images/story/12-2022.jpg",
+  "/images/story/13-2023.jpg",
+  "/images/story/14-2023.jpg",
+  "/images/story/15-2023.jpg",
+  "/images/story/16-2023.jpg",
+  "/images/story/17-2024.jpg",
+  "/images/story/18-2024.jpg",
+  "/images/story/19-2025.jpg",
+  "/images/story/20-2025.jpg",
+  "/images/story/21-2025.jpg",
 ];
 
 const renderPhotos = (start: number, end: number) => (
@@ -46,16 +38,16 @@ const renderPhotos = (start: number, end: number) => (
         <motion.div
           key={index}
           className={styles.imageWrapper}
-          initial={{ opacity: 0, scale: 0.9, y: 30 }}
-          whileInView={{ opacity: 1, scale: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6, delay: (i % 4) * 0.1 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-30px" }}
+          transition={{ duration: 0.5, delay: (i % 5) * 0.08 }}
         >
           <OptimizedImage
             src={photo}
             alt={`Historia - ${index}`}
             fill
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            sizes="(max-width: 768px) 35vw, 150px"
             className={styles.image}
           />
         </motion.div>
@@ -92,7 +84,7 @@ export default function Story() {
             </p>
           </motion.div>
 
-          {renderPhotos(0, 8)}
+          {renderPhotos(0, 6)}
 
           <motion.div
             className={styles.narrativeText}
@@ -106,7 +98,7 @@ export default function Story() {
             </p>
           </motion.div>
 
-          {renderPhotos(8, 16)}
+          {renderPhotos(6, 11)}
 
           <motion.div
             className={styles.narrativeText}
@@ -120,7 +112,7 @@ export default function Story() {
             </p>
           </motion.div>
 
-          {renderPhotos(16, 24)}
+          {renderPhotos(11, 18)}
 
           <motion.div
             className={styles.narrativeText}
@@ -134,7 +126,7 @@ export default function Story() {
             </p>
           </motion.div>
 
-          {renderPhotos(24, 31)}
+          {renderPhotos(18, 23)}
         </div>
       </div>
     </section>
