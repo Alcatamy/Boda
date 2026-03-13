@@ -5,37 +5,44 @@ import styles from "./Story.module.css";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 
 const storyPhotos = [
-  "/images/story/2016.jpg",
-  "/images/story/20161015_154819.jpg",
-  "/images/story/2018.jpg",
-  "/images/story/20180128_134305.jpg",
-  "/images/story/20181207_190537.jpg",
-  "/images/story/20190627_141615.jpg",
-  "/images/story/2020.jpg",
-  "/images/story/2023.jpg",
-  "/images/story/2025.jpg",
-  "/images/story/hero-foto.png",
-  "/images/story/nueva-foto-10.jpg",
-  "/images/story/AirBrush_20240529135359.jpg",
-  "/images/story/IMAG0216.jpg",
-  "/images/story/IMG-20251228-WA0020.jpg",
-  "/images/story/IMG20220413173554.jpg",
-  "/images/story/IMG20230820135606.jpg",
-  "/images/story/IMG20230920174425.jpg",
-  "/images/story/IMG20231231233127.jpg",
-  "/images/story/IMG_0876.JPG",
-  "/images/story/IMG_1188.JPG",
-  "/images/story/IMG_20200726_001303.jpg",
-  "/images/story/IMG_20201225_192843.jpg",
-  "/images/story/IMG_20210828_182808.jpg",
-  "/images/story/IMG_20210901_172706.jpg",
-  "/images/story/IMG_2676.JPG",
-  "/images/story/IMG_2677.JPG",
-  "/images/story/PXL_20250801_103322546.jpg",
-  "/images/story/PXL_20250803_100301502.jpg",
-  "/images/story/PXL_20250807_183346256.jpg",
-  "/images/story/PXL_20251004_161539984.jpg",
-  "/images/story/original_a799f9b5-f0d3-48b5-b4a1-f84180b69000_IMG20230724192453.jpg",
+  // === GROUP 1: Los Comienzos (~2015–2018) ===
+  "/images/story/IMAG0216.jpg",                // ~2015 (HTC low number = earliest)
+  "/images/story/IMG_0876.JPG",                // ~2015-2016 (low DSLR number)
+  "/images/story/2016.jpg",                    // 2016
+  "/images/story/20161015_154819.jpg",         // 2016-10-15
+  "/images/story/IMG_1188.JPG",                // ~2017 (DSLR sequential)
+  "/images/story/2018.jpg",                    // 2018
+  "/images/story/20180128_134305.jpg",         // 2018-01-28
+  "/images/story/20181207_190537.jpg",         // 2018-12-07
+
+  // === GROUP 2: Creciendo Juntos (2019–2021) ===
+  "/images/story/20190627_141615.jpg",         // 2019-06-27
+  "/images/story/2020.jpg",                    // 2020
+  "/images/story/IMG_20200726_001303.jpg",     // 2020-07-26
+  "/images/story/IMG_20201225_192843.jpg",     // 2020-12-25
+  "/images/story/IMG_20210828_182808.jpg",     // 2021-08-28
+  "/images/story/IMG_20210901_172706.jpg",     // 2021-09-01
+  "/images/story/IMG_2676.JPG",                // ~2021 (DSLR sequential)
+  "/images/story/IMG_2677.JPG",                // ~2021 (DSLR sequential)
+
+  // === GROUP 3: Aventuras (2022–2023) ===
+  "/images/story/IMG20220413173554.jpg",       // 2022-04-13
+  "/images/story/2023.jpg",                    // 2023
+  "/images/story/original_a799f9b5-f0d3-48b5-b4a1-f84180b69000_IMG20230724192453.jpg", // 2023-07-24
+  "/images/story/IMG20230820135606.jpg",       // 2023-08-20
+  "/images/story/IMG20230920174425.jpg",       // 2023-09-20
+  "/images/story/IMG20231231233127.jpg",       // 2023-12-31
+  "/images/story/AirBrush_20240529135359.jpg", // 2024-05-29
+  "/images/story/nueva-foto-10.jpg",           // ~2024
+
+  // === GROUP 4: Nuestro Hogar (2025) ===
+  "/images/story/2025.jpg",                    // 2025
+  "/images/story/PXL_20250801_103322546.jpg",  // 2025-08-01
+  "/images/story/PXL_20250803_100301502.jpg",  // 2025-08-03
+  "/images/story/PXL_20250807_183346256.jpg",  // 2025-08-07
+  "/images/story/PXL_20251004_161539984.jpg",  // 2025-10-04
+  "/images/story/hero-foto.png",               // ~2025 (hero shot, recent)
+  "/images/story/IMG-20251228-WA0020.jpg",     // 2025-12-28
 ];
 
 const renderPhotos = (start: number, end: number) => (

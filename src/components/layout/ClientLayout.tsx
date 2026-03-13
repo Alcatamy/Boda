@@ -19,7 +19,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     const backgroundColor = useTransform(
         smoothVelocity,
         [-2000, 0, 2000],
-        ["rgba(212, 175, 55, 0.4)", "rgba(255, 255, 255, 0)", "rgba(59, 130, 246, 0.4)"]
+        ["rgba(212, 175, 55, 0.4)", "rgba(255, 255, 255, 0)", "rgba(180, 151, 90, 0.4)"]
     );
 
     // Allow envelope to signal when to start music and show site

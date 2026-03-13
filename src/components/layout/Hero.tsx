@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import styles from "./Hero.module.css";
 import Countdown from "@/components/features/Countdown/Countdown";
@@ -20,7 +21,14 @@ export default function Hero() {
       {/* Background Image with Overlay */}
       <div className={styles.imageWrapper}>
         <motion.div style={{ y, height: "120%", position: "relative", width: "100%" }} className={styles.parallaxWrapper}>
-          {/* Image removed as per user request */}
+          <Image
+            src="/images/story/hero-foto.png"
+            alt="Nadia y Adrián"
+            fill
+            priority
+            sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: "center 30%" }}
+          />
         </motion.div>
         <div className={styles.overlay} />
       </div>

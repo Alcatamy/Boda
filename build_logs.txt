@@ -1,0 +1,11 @@
+
+> wedding-site@0.1.0 build
+> next build
+
+ÔÜá Attempted to load H:\Otros ordenadores\Mi port├ítil\Documents\Boda\wedding-site\node_modules\next\next-swc-fallback\@next\swc-win32-x64-msvc\next-swc.win32-x64-msvc.node, but it was not installed
+ÔÜá Attempted to load @next/swc-win32-x64-msvc, but it was not installed
+Ô¿» Failed to load next.config.ts, see more info here https://nextjs.org/docs/messages/next-config-error
+
+> Build error occurred
+TypeError: rawBindings.transform is not a function
+    at ignore-listed frames

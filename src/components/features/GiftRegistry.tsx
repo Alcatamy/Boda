@@ -52,12 +52,12 @@ export default function GiftRegistry() {
             </div>
 
             <h2 className={styles.heroTitle}>
-              Tu regalo nos hace <br />
-              <span className={styles.gradientText}>Mucha Ilusión</span>
+              Vuestro Cariño <br />
+              <span className={styles.gradientText}>Vale Más que Todo</span>
             </h2>
 
             <p className={styles.heroText}>
-              Lo más importante para nosotros es que nos acompañéis a celebrar este día tan especial. ¡Que no faltéis ya es nuestro mejor regalo!
+              Que estéis ahí, celebrando con nosotros, es el regalo más bonito que podríamos imaginar. Vuestra presencia llena de sentido este día.
             </p>
           </div>
 
@@ -83,9 +83,9 @@ export default function GiftRegistry() {
           <div className={styles.bankSection}>
             <div className={styles.bankContent}>
               <Gift size={32} className={styles.bankIconMain} />
-              <h3>El Detalle</h3>
+              <h3>Nuestro Viaje Juntos</h3>
               <p className={styles.stepDesc}>
-                Si además queréis tener un detalle extra para ayudarnos a organizar nuestra luna de miel y acompañarnos en nuestra nueva etapa, hemos habilitado el siguiente número de cuenta. ¡Infinitas gracias de corazón!
+                Y si además queréis sumar un poquito de magia a nuestra luna de miel, aquí os dejamos nuestro número de cuenta. Cada granito de arena nos ayuda a vivir esta nueva aventura juntos. ¡Mil gracias por tanto cariño!
               </p>
 
               <div className={styles.ibanContainer}>
