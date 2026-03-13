@@ -111,12 +111,12 @@
 }
 
 /* Varied sizes — half of original ~200px = ~100-130px range */
-.imageWrapper:nth-child(6n+1) { width: 120px; height: 150px; border-radius: 4px 4px 2px 6px; }
-.imageWrapper:nth-child(6n+2) { width: 100px; height: 130px; border-radius: 6px 2px 4px 4px; }
-.imageWrapper:nth-child(6n+3) { width: 140px; height: 120px; border-radius: 2px 6px 6px 2px; }
-.imageWrapper:nth-child(6n+4) { width: 110px; height: 145px; border-radius: 4px 4px 6px 2px; }
-.imageWrapper:nth-child(6n+5) { width: 130px; height: 110px; border-radius: 6px 2px 2px 6px; }
-.imageWrapper:nth-child(6n+6) { width: 105px; height: 140px; border-radius: 2px 4px 4px 6px; }
+.imageWrapper:nth-child(6n+1) { width: 138px; height: 172px; border-radius: 4px 4px 2px 6px; }
+.imageWrapper:nth-child(6n+2) { width: 115px; height: 150px; border-radius: 6px 2px 4px 4px; }
+.imageWrapper:nth-child(6n+3) { width: 161px; height: 138px; border-radius: 2px 6px 6px 2px; }
+.imageWrapper:nth-child(6n+4) { width: 126px; height: 167px; border-radius: 4px 4px 6px 2px; }
+.imageWrapper:nth-child(6n+5) { width: 150px; height: 126px; border-radius: 6px 2px 2px 6px; }
+.imageWrapper:nth-child(6n+6) { width: 121px; height: 161px; border-radius: 2px 4px 4px 6px; }
 
 /* Subtle rotations for "scattered on table" feel */
 .imageWrapper:nth-child(7n+1) { transform: rotate(-2deg);  margin-top: 0; }
@@ -162,12 +162,12 @@
     padding: 1rem 0;
   }
 
-  .imageWrapper:nth-child(6n+1) { width: 90px;  height: 115px; }
-  .imageWrapper:nth-child(6n+2) { width: 75px;  height: 100px; }
-  .imageWrapper:nth-child(6n+3) { width: 105px; height: 90px;  }
-  .imageWrapper:nth-child(6n+4) { width: 85px;  height: 110px; }
-  .imageWrapper:nth-child(6n+5) { width: 100px; height: 85px;  }
-  .imageWrapper:nth-child(6n+6) { width: 80px;  height: 105px; }
+  .imageWrapper:nth-child(6n+1) { width: 103px; height: 132px; }
+  .imageWrapper:nth-child(6n+2) { width: 86px;  height: 115px; }
+  .imageWrapper:nth-child(6n+3) { width: 121px; height: 103px; }
+  .imageWrapper:nth-child(6n+4) { width: 98px;  height: 126px; }
+  .imageWrapper:nth-child(6n+5) { width: 115px; height: 98px;  }
+  .imageWrapper:nth-child(6n+6) { width: 92px;  height: 121px; }
 }
 
 @media (max-width: 480px) {
@@ -175,10 +175,10 @@
     font-size: 2rem;
   }
 
-  .imageWrapper:nth-child(6n+1) { width: 80px;  height: 100px; }
-  .imageWrapper:nth-child(6n+2) { width: 65px;  height: 85px;  }
-  .imageWrapper:nth-child(6n+3) { width: 90px;  height: 75px;  }
-  .imageWrapper:nth-child(6n+4) { width: 72px;  height: 95px;  }
-  .imageWrapper:nth-child(6n+5) { width: 85px;  height: 72px;  }
-  .imageWrapper:nth-child(6n+6) { width: 68px;  height: 90px;  }
+  .imageWrapper:nth-child(6n+1) { width: 92px;  height: 115px; }
+  .imageWrapper:nth-child(6n+2) { width: 75px;  height: 98px;  }
+  .imageWrapper:nth-child(6n+3) { width: 103px; height: 86px;  }
+  .imageWrapper:nth-child(6n+4) { width: 83px;  height: 109px; }
+  .imageWrapper:nth-child(6n+5) { width: 98px;  height: 83px;  }
+  .imageWrapper:nth-child(6n+6) { width: 78px;  height: 103px; }
 }
