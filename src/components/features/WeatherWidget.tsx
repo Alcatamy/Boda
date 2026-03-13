@@ -73,13 +73,13 @@ export default function WeatherWidget() {
   const getWeatherBackground = (condition: string) => {
     switch (condition.toLowerCase()) {
       case "sunny":
-        return "linear-gradient(135deg, #D4AF37 0%, #B87333 100%)";
+        return "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
       case "cloudy":
-        return "linear-gradient(135deg, #B4975A 0%, #9CA3AF 100%)";
+        return "linear-gradient(135deg, #667eea 0%, #94a3b8 100%)";
       case "rainy":
-        return "linear-gradient(135deg, #6B7280 0%, #374151 100%)";
+        return "linear-gradient(135deg, #475569 0%, #1e293b 100%)";
       default:
-        return "linear-gradient(135deg, #D4AF37 0%, #B87333 100%)";
+        return "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
     }
   };
 

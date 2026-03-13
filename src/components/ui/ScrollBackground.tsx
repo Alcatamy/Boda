@@ -16,7 +16,7 @@ export default function ScrollBackground() {
             "#fafaf9", // Base White (Start)
             "#fdfbf7", // Warm Ivory
             "#fefce8", // Very Pale Gold/Yellow
-            "#faf5ef", // Warm Ivory (was Pale Blue)
+            "#f0f9ff", // Very Pale Blue (Sky)
             "#fff1f2", // Very Pale Rose
             "#fafaf9"  // Back to Base White (End)
         ]

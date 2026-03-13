@@ -77,34 +77,19 @@ export default function RsvpForm() {
   useEffect(() => {
     if (attending === "yes") {
       import("canvas-confetti").then((confetti) => {
-        // Big burst for selection
+        // Short concentrated burst for selection
         confetti.default({
-          particleCount: 200,
-          spread: 100,
-          origin: { y: 0.7 },
-          colors: ['#c5a059', '#D4AF37', '#ffffff', '#B87333', '#FFE4B5']
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.7 }, // Start from lower down
+          colors: ['#c5a059', '#D4AF37', '#ffffff']
         });
-        // Second cascading burst
-        setTimeout(() => {
-          confetti.default({
-            particleCount: 150,
-            spread: 120,
-            origin: { y: 0.5, x: 0.3 },
-            colors: ['#D4AF37', '#FFD700', '#ffffff']
-          });
-          confetti.default({
-            particleCount: 150,
-            spread: 120,
-            origin: { y: 0.5, x: 0.7 },
-            colors: ['#D4AF37', '#FFD700', '#ffffff']
-          });
-        }, 400);
       });
       setRainEffect(false); // Stop rain if they switch
     } else if (attending === "no") {
       // Rain effect
       setRainEffect(true);
-      setTimeout(() => setRainEffect(false), 8000); // 8 seconds of dramatic rain
+      setTimeout(() => setRainEffect(false), 5000); // 5 seconds of rain for better visibility
     }
   }, [attending]);
 
@@ -246,8 +231,8 @@ export default function RsvpForm() {
             {/* Water pooling at the bottom */}
             <motion.div
               initial={{ height: 0, opacity: 0 }}
-              animate={{ height: '25vh', opacity: 0.7 }}
-              transition={{ duration: 5, ease: "easeOut" }}
+              animate={{ height: '15vh', opacity: 0.6 }}
+              transition={{ duration: 4, ease: "easeOut" }}
               style={{
                 position: 'absolute',
                 bottom: 0,
@@ -257,7 +242,7 @@ export default function RsvpForm() {
                 zIndex: 1
               }}
             />
-            {Array.from({ length: 200 }).map((_, i) => (
+            {Array.from({ length: 120 }).map((_, i) => (
               <div
                 key={i}
                 className={styles.drop}
@@ -349,10 +334,10 @@ export default function RsvpForm() {
                   />
                   <motion.div
                     className={styles.menuEmoji}
-                    animate={menuChoice === "meat" ? { scale: [1, 1.8, 1.2, 1.6, 1], y: [0, -25, -5, -15, 0], rotate: [0, -20, 20, -10, 0] } : {}}
-                    transition={{ duration: 0.7, ease: "easeInOut" }}
+                    animate={menuChoice === "meat" ? { scale: [1, 1.4, 1], y: [0, -10, 0], rotate: [0, -10, 10, 0] } : {}}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
                   >
-                    {menuChoice === "meat" ? "🥩🔥" : "🥩"}
+                    {menuChoice === "meat" ? "🐄" : "🥩"}
                   </motion.div>
                   <span className={styles.menuTitle}>Carne</span>
                 </label>
@@ -365,10 +350,10 @@ export default function RsvpForm() {
                   />
                   <motion.div
                     className={styles.menuEmoji}
-                    animate={menuChoice === "fish" ? { scale: [1, 1.8, 1.2, 1.6, 1], y: [0, -25, -5, -15, 0], rotate: [0, 25, -25, 10, 0] } : {}}
-                    transition={{ duration: 0.7, ease: "easeInOut" }}
+                    animate={menuChoice === "fish" ? { scale: [1, 1.4, 1], y: [0, -10, 0], rotate: [0, 15, -15, 0] } : {}}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
                   >
-                    {menuChoice === "fish" ? "🐟💦" : "🐟"}
+                    🐟
                   </motion.div>
                   <span className={styles.menuTitle}>Pescado</span>
                 </label>
