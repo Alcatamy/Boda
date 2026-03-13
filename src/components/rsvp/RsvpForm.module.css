@@ -488,50 +488,52 @@
   }
 }
 
-/* Rain Effect Styles */
-.rainOverlay {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  pointer-events: none !important;
-  z-index: 9999 !important;
-  background: transparent !important;
+/* ── Dramatic "No" Overlay ── */
+.sadOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
   overflow: hidden;
 }
 
-.drop {
-  position: absolute !important;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(150, 180, 220, 0.8)) !important;
-  width: 2px !important;
-  height: 40px !important;
-  border-radius: 50% !important;
-  transform: rotate(15deg);
-  animation: rainDrop cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
+.moodLayer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 30, 60, 0.6) 0%,
+    rgba(30, 50, 90, 0.5) 40%,
+    rgba(20, 40, 70, 0.7) 100%
+  );
+  z-index: 1;
 }
 
-@keyframes rainDrop {
-  0% {
-    transform: translateY(-100vh) translateX(0) rotate(15deg);
-    opacity: 0;
-  }
+.sadEmoji {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 5rem;
+  z-index: 10;
+  filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
+}
 
-  10% {
-    opacity: 1;
-  }
+.raindrop {
+  position: absolute;
+  top: 0;
+  background: linear-gradient(to bottom, transparent, rgba(140, 180, 230, 0.7));
+  border-radius: 0 0 2px 2px;
+  z-index: 5;
+}
 
-  80% {
-    opacity: 1;
-  }
-
-  95% {
-    transform: translateY(90vh) translateX(25vh) rotate(15deg) scaleY(1);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translateY(95vh) translateX(26vh) rotate(0deg) scaleY(0.1) scaleX(3);
-    opacity: 0;
-  }
+.lightning {
+  position: absolute;
+  inset: 0;
+  background: white;
+  z-index: 20;
+  pointer-events: none;
 }

@@ -78,19 +78,17 @@ export default function RsvpForm() {
   useEffect(() => {
     if (attending === "yes") {
       import("canvas-confetti").then((confetti) => {
-        // Short concentrated burst for selection
         confetti.default({
           particleCount: 100,
           spread: 70,
-          origin: { y: 0.7 }, // Start from lower down
+          origin: { y: 0.7 },
           colors: ['#c5a059', '#D4AF37', '#ffffff']
         });
       });
-      setRainEffect(false); // Stop rain if they switch
+      setRainEffect(false);
     } else if (attending === "no") {
-      // Rain effect
       setRainEffect(true);
-      setTimeout(() => setRainEffect(false), 5000); // 5 seconds of rain for better visibility
+      setTimeout(() => setRainEffect(false), 4000);
     }
   }, [attending]);
 
@@ -211,53 +209,62 @@ export default function RsvpForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form} style={{ position: 'relative', overflow: 'hidden' }}>
-      {/* Rain Overlay for "No" selection */}
+      {/* Dramatic "No" Effect Overlay */}
       <AnimatePresence>
         {rainEffect && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={styles.rainOverlay}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100vh',
-              pointerEvents: 'none',
-              zIndex: 9999
-            }}
+            exit={{ opacity: 0, transition: { duration: 0.8 } }}
+            className={styles.sadOverlay}
           >
-            {/* Water pooling at the bottom */}
+            {/* Moody gradient film */}
             <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: '15vh', opacity: 0.6 }}
-              transition={{ duration: 4, ease: "easeOut" }}
-              style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                width: '100vw',
-                background: 'linear-gradient(to top, rgba(30, 60, 100, 0.9), transparent)',
-                zIndex: 1
-              }}
+              className={styles.moodLayer}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.7 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6 }}
             />
-            {Array.from({ length: 120 }).map((_, i) => (
-              <div
-                key={i}
-                className={styles.drop}
+
+            {/* Sad emoji that floats up and fades */}
+            <motion.div
+              className={styles.sadEmoji}
+              initial={{ opacity: 0, scale: 0, y: 40 }}
+              animate={{ opacity: [0, 1, 1, 0], scale: [0, 1.5, 1.5, 1], y: [40, -20, -20, -60] }}
+              transition={{ duration: 3, times: [0, 0.2, 0.7, 1] }}
+            >
+              😢
+            </motion.div>
+
+            {/* Rain drops — 3 layers for depth */}
+            {Array.from({ length: 60 }).map((_, i) => (
+              <motion.div
+                key={`drop-${i}`}
+                className={styles.raindrop}
+                initial={{ y: '-10vh', opacity: 0 }}
+                animate={{ y: '110vh', opacity: [0, 0.8, 0.8, 0] }}
+                transition={{
+                  duration: 0.6 + Math.random() * 0.5,
+                  delay: Math.random() * 1.5,
+                  repeat: 3,
+                  ease: 'linear',
+                }}
                 style={{
                   left: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 2}s`,
-                  animationDuration: `${0.8 + Math.random() * 1}s`,
-                  background: `linear-gradient(to bottom, transparent, ${i % 3 === 0 ? 'rgba(50, 80, 120, 0.8)' : i % 3 === 1 ? 'rgba(70, 100, 140, 0.7)' : 'rgba(30, 60, 100, 0.9)'})`,
-                  width: `${i % 3 === 0 ? '1px' : i % 3 === 1 ? '2px' : '3px'}`,
-                  height: `${i % 3 === 0 ? '20px' : i % 3 === 1 ? '30px' : '40px'}`,
-                  zIndex: 2
+                  width: i % 4 === 0 ? '3px' : i % 3 === 0 ? '2px' : '1.5px',
+                  height: i % 4 === 0 ? '24px' : i % 3 === 0 ? '18px' : '14px',
                 }}
               />
             ))}
+
+            {/* Lightning flash */}
+            <motion.div
+              className={styles.lightning}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.9, 0, 0.4, 0] }}
+              transition={{ duration: 0.4, delay: 1.2 }}
+            />
           </motion.div>
         )}
       </AnimatePresence>
