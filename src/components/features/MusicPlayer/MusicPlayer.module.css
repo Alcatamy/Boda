@@ -249,7 +249,7 @@
 .sendBtn {
     margin-top: 0.5rem;
     padding: 0.5rem;
-    background: var(--foreground);
+    background: #B4975A;
     color: white;
     border: none;
     border-radius: 4px;
@@ -257,10 +257,11 @@
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    transition: background 0.2s ease;
 }
 
 .sendBtn:hover {
-    background: black;
+    background: #8B7040;
 }
 
 .successMsg {
