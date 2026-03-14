@@ -139,6 +139,70 @@
   border-radius: 1px;
 }
 
+/* ── Grid layout variants ── */
+.grid3cols .imageWrapper {
+  width: calc(33.33% - 1rem) !important;
+  max-width: 200px;
+}
+
+.grid4cols .imageWrapper {
+  width: calc(25% - 1rem) !important;
+  max-width: 180px;
+}
+
+/* ── Lightbox ── */
+.lightboxOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+
+.lightboxContent {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  cursor: default;
+}
+
+.lightboxImage {
+  display: block;
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.lightboxClose {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  z-index: 10000;
+}
+
+.lightboxClose:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 @media (max-width: 768px) {
   .storySection {
     padding: 4rem 0;
@@ -168,6 +232,12 @@
   .imageWrapper:nth-child(6n+4) { width: 98px;  height: 126px; }
   .imageWrapper:nth-child(6n+5) { width: 115px; height: 98px;  }
   .imageWrapper:nth-child(6n+6) { width: 92px;  height: 121px; }
+
+  .grid3cols .imageWrapper,
+  .grid4cols .imageWrapper {
+    width: auto !important;
+    max-width: none;
+  }
 }
 
 @media (max-width: 480px) {
