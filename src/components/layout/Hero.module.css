@@ -7,7 +7,28 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  overflow: hidden;
   background-color: var(--background);
+}
+
+.bgVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.videoOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
 }
 
 .imageWrapper {
@@ -35,12 +56,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  align-items: center;
   gap: 1.5rem;
-  background: var(--color-surface);
   padding: 3rem 4rem;
-  border-radius: 0.5rem;
-  border: 1px solid rgba(193, 164, 110, 0.3);
-  box-shadow: 0 10px 30px -10px rgba(59, 38, 19, 0.05);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .subtitle {
@@ -49,7 +70,7 @@
   letter-spacing: 0.2em;
   font-size: 0.875rem;
   opacity: 0.9;
-  color: var(--color-accent);
+  color: white;
 }
 
 .title {
@@ -57,7 +78,8 @@
   font-size: 5rem;
   line-height: 1.2;
   font-weight: 400;
-  color: var(--color-accent);
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .date {
@@ -65,7 +87,7 @@
   font-size: 1.25rem;
   margin-top: 1rem;
   letter-spacing: 0.1em;
-  color: var(--foreground);
+  color: white;
 }
 
 .scrollIndicator {
@@ -80,13 +102,13 @@
   letter-spacing: 0.15em;
   opacity: 0.8;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: white;
 }
 
 .line {
   width: 1px;
   height: 40px;
-  background-color: var(--color-accent);
+  background-color: white;
 }
 
 @media (max-width: 768px) {

@@ -17,7 +17,16 @@ export default function Hero() {
 
   return (
     <section ref={containerRef} className={styles.hero}>
-      {/* Background styling applied via CSS */}
+      {/* Background Video */}
+      <video
+        className={styles.bgVideo}
+        src="/videos/hero-background.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+      />
+      <div className={styles.videoOverlay} />
 
       {/* Hero Content */}
       <motion.div
