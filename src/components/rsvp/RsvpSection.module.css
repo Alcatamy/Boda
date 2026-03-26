@@ -1,7 +1,6 @@
 .section {
-  padding: var(--section-spacing) 0;
-  background-color: var(--background-alt);
-  /* Stone 200 */
+  padding: 6rem 0;
+  background-color: var(--color-accent);
 }
 
 .header {
@@ -16,22 +15,22 @@
   text-transform: uppercase;
   letter-spacing: 0.2em;
   font-size: 0.8rem;
-  color: var(--accent);
+  color: var(--background);
   margin-bottom: 1rem;
 }
 
 .title {
   font-family: var(--font-script);
-  font-size: 3.5rem;
-  color: var(--text-primary);
+  font-size: 4rem;
+  color: var(--background);
   margin-bottom: 1.5rem;
   font-weight: 400;
-  /* Script fonts usually don't need bold */
 }
 
 .description {
   font-family: var(--font-sans);
-  color: var(--text-secondary);
+  color: var(--background);
+  opacity: 0.9;
   font-size: 1.125rem;
   line-height: 1.6;
 }

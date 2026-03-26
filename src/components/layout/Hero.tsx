@@ -17,13 +17,7 @@ export default function Hero() {
 
   return (
     <section ref={containerRef} className={styles.hero}>
-      {/* Background Image with Overlay */}
-      <div className={styles.imageWrapper}>
-        <motion.div style={{ y, height: "120%", position: "relative", width: "100%" }} className={styles.parallaxWrapper}>
-          {/* Image removed as per user request */}
-        </motion.div>
-        <div className={styles.overlay} />
-      </div>
+      {/* Background styling applied via CSS */}
 
       {/* Hero Content */}
       <motion.div

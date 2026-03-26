@@ -270,15 +270,15 @@
 .cleanInput:focus,
 .cleanTextarea:focus {
   outline: none;
-  border-color: var(--color-primary-gold);
-  box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(193, 164, 110, 0.1);
   background: white;
 }
 
 .copyBtnPrimary {
-  background-color: var(--color-primary-gold);
+  background-color: var(--color-accent);
   color: white;
-  border: 1px solid var(--color-primary-gold);
+  border: 1px solid var(--color-accent);
   padding: 1rem;
   border-radius: 8px;
   font-weight: 600;
@@ -291,10 +291,11 @@
 }
 
 .copyBtnPrimary:hover {
-  background-color: var(--color-primary-gold-hover);
-  border-color: var(--color-primary-gold-hover);
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  opacity: 0.9;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(180, 151, 90, 0.3);
+  box-shadow: 0 4px 12px rgba(193, 164, 110, 0.3);
 }
 
 /* ... existing styles ... */
@@ -302,8 +303,8 @@
 .cleanBtn {
   margin-top: 1rem;
   padding: 1rem 2rem;
-  background-color: var(--color-primary-gold);
-  border: 1px solid var(--color-primary-gold);
+  background-color: var(--color-accent);
+  border: 1px solid var(--color-accent);
   color: white;
   font-weight: 600;
   text-transform: uppercase;
@@ -316,14 +317,15 @@
   align-self: center;
   width: auto;
   min-width: 200px;
-  box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+  box-shadow: 0 4px 15px rgba(193, 164, 110, 0.3);
 }
 
 .cleanBtn:hover {
-  background-color: var(--color-primary-gold-hover);
-  border-color: var(--color-primary-gold-hover);
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  opacity: 0.9;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(197, 160, 89, 0.4);
+  box-shadow: 0 8px 25px rgba(193, 164, 110, 0.4);
 }
 
 .tickerWrapper {

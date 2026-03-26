@@ -2,46 +2,20 @@
   position: relative;
   height: 100vh;
   height: 100dvh;
-  /* Mobile browser friendly */
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background-color: var(--background);
 }
 
 .imageWrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  /* Cinematic Fade */
-  mask-image: linear-gradient(to bottom,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 1) 60%,
-      rgba(0, 0, 0, 0) 100%);
-  -webkit-mask-image: linear-gradient(to bottom,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 1) 60%,
-      rgba(0, 0, 0, 0) 100%);
+  display: none;
 }
 
 .overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom,
-      rgba(253, 252, 251, 0.4) 0%,
-      /* Soft Linen tint */
-      rgba(253, 252, 251, 0.1) 40%,
-      rgba(45, 41, 38, 0.2) 100%
-      /* Slight dark for text contrast */
-    );
-  z-index: 1;
+  display: none;
 }
 
 .content {
@@ -49,12 +23,12 @@
   z-index: 2;
   text-align: center;
   color: var(--foreground);
-  /* Changed from white to dark */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
+  padding: 2rem;
 }
 
 .titleWrapper {
@@ -62,6 +36,11 @@
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
+  background: var(--color-surface);
+  padding: 3rem 4rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(193, 164, 110, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(59, 38, 19, 0.05);
 }
 
 .subtitle {
@@ -71,48 +50,54 @@
   font-size: 0.875rem;
   opacity: 0.9;
   color: var(--color-accent);
-  /* Gold accent for subtitle */
 }
 
 .title {
   font-family: var(--font-script);
   font-size: 5rem;
-  /* Larger for impact */
-  line-height: 1;
+  line-height: 1.2;
   font-weight: 400;
-  letter-spacing: -0.03em;
+  color: var(--color-accent);
 }
 
 .date {
-  font-family: var(--font-sans);
-  font-size: 1.125rem;
-  margin-top: 1.5rem;
-  opacity: 0.8;
-  letter-spacing: 0.05em;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  margin-top: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--foreground);
 }
 
 .scrollIndicator {
   position: absolute;
-  bottom: 2rem;
+  bottom: 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
   font-family: var(--font-sans);
   font-size: 0.75rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   opacity: 0.8;
   text-transform: uppercase;
-  color: var(--foreground);
+  color: var(--color-accent);
 }
 
 .line {
   width: 1px;
-  height: 60px;
-  /* Longer line */
+  height: 40px;
   background-color: var(--color-accent);
-  /* Gold line */
 }
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 3.5rem;
+  }
+  .titleWrapper {
+    padding: 2rem 1.5rem;
+  }
+}
+
 
 @media (max-width: 768px) {
   .title {
