@@ -43,6 +43,7 @@ export async function POST(req: Request) {
                     menu_choice: data.menuChoice || null,
                     has_plus_one: data.hasPlusOne || false,
                     plus_one_name: data.hasPlusOne ? data.plusOneName : null,
+                    plus_one_menu_choice: data.hasPlusOne ? data.plusOneMenuChoice : null,
                     children_count: data.childrenCount || 0,
                 },
             ]);
@@ -81,7 +82,7 @@ export async function POST(req: Request) {
                 htmlContent += `
           <p><strong>Menú:</strong> ${data.menuChoice === "meat" ? "🥩 Carne" : data.menuChoice === "fish" ? "🐟 Pescado" : "No especificado"}</p>
           <p><strong>Restricciones alimentarias:</strong> ${data.dietaryRestrictions || "Ninguna"}</p>
-          <p><strong>Acompañante:</strong> ${data.hasPlusOne ? `Sí (${data.plusOneName})` : "No"}</p>
+          <p><strong>Acompañante:</strong> ${data.hasPlusOne ? `Sí (${data.plusOneName}) - Menú: ${data.plusOneMenuChoice === "meat" ? "🥩 Carne" : data.plusOneMenuChoice === "fish" ? "🐟 Pescado" : "No especificado"}` : "No"}</p>
           <p><strong>Niños:</strong> ${data.childrenCount}</p>
         `;
             }

@@ -17,7 +17,8 @@ import {
   Filter,
   UserPlus,
   Heart,
-  Baby
+  Baby,
+  Trash2
 } from "lucide-react";
 import styles from "./GuestDashboard.module.css";
 
@@ -32,6 +33,7 @@ interface Guest {
   menu_choice?: string;
   has_plus_one: boolean;
   plus_one_name?: string;
+  plus_one_menu_choice?: string;
   children_count: number;
   created_at: string;
 }
@@ -71,6 +73,19 @@ export default function GuestDashboard() {
   useEffect(() => {
     filterGuests();
   }, [guests, searchTerm, filterStatus]);
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm("¿Seguro que quieres borrar este invitado? Esta acción no se puede deshacer.")) {
+      try {
+        const { error } = await supabase.from('guests').delete().eq('id', id);
+        if (error) throw error;
+        setGuests(guests.filter(g => g.id !== id));
+      } catch (error) {
+        console.error('Error deleting guest:', error);
+        alert('Error al borrar el invitado.');
+      }
+    }
+  };
 
   const fetchGuests = async () => {
     try {
@@ -412,17 +427,30 @@ export default function GuestDashboard() {
                   {guest.menu_choice === 'meat' ? 'Carne' : 'Pescado'}
                 </span>
               )}
-              {guest.dietary_restrictions && (
+              {guest.plus_one_menu_choice && (
                 <span className={styles.detailTag}>
-                  Restricciones
+                  <Utensils size={12} />
+                  +1 {guest.plus_one_menu_choice === 'meat' ? 'Carne' : 'Pescado'}
+                </span>
+              )}
+              {guest.dietary_restrictions && (
+                <span className={styles.detailTag} title={guest.dietary_restrictions}>
+                  Alergias: {guest.dietary_restrictions.substring(0, 15)}{guest.dietary_restrictions.length > 15 ? '...' : ''}
                 </span>
               )}
               {guest.plus_one_name && (
                 <span className={styles.detailTag}>
-                  {guest.plus_one_name}
+                  +1 {guest.plus_one_name}
                 </span>
               )}
             </div>
+            <button 
+              onClick={() => handleDelete(guest.id)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', marginLeft: 'auto', color: '#ff4d4f' }}
+              title="Borrar invitado"
+            >
+              <Trash2 size={18} />
+            </button>
           </motion.div>
         ))}
 
