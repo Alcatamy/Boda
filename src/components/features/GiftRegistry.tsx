@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Check, Gift, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import styles from "./GiftRegistry.module.css";
 import MessagesTicker from "@/components/features/Guestbook/MessagesTicker";
@@ -44,7 +45,13 @@ export default function GiftRegistry() {
       <div className={styles.container}>
 
         {/* HERO: Honeymoon Fund */}
-        <div className={styles.heroRow}>
+        <motion.div 
+          className={styles.heroRow}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
           <div className={styles.heroContent}>
             <div className={styles.tag}>
               <Gift size={14} />
@@ -74,13 +81,19 @@ export default function GiftRegistry() {
               <div className={styles.imageOverlay} />
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* GIFT SECTION - RESTRUCTURED */}
         <div className={styles.crowdSection}>
 
           {/* 1. BANK INFO - CENTERED & PROMINENT */}
-          <div className={styles.bankSection}>
+          <motion.div 
+            className={styles.bankSection}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
             <div className={styles.bankContent}>
               <Gift size={32} className={styles.bankIconMain} />
               <p className={styles.stepDesc}>
@@ -98,13 +111,20 @@ export default function GiftRegistry() {
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* 2. INTERACTION GRID (Messages Only) */}
           <div className={styles.interactionGrid}>
 
             {/* GUEST BOOK */}
-            <div className={styles.interactionCard} style={{ textAlign: "center" }}>
+            <motion.div 
+              className={styles.interactionCard} 
+              style={{ textAlign: "center" }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
               <h3 style={{ marginBottom: "0.5rem" }}>Déjanos un Mensaje</h3>
               <p className={styles.cardDesc} style={{ margin: "0 auto 2rem auto", maxWidth: "400px" }}>Tus palabras saldrán reflejadas en la web para que todo el mundo las pueda ver.</p>
 
@@ -119,7 +139,7 @@ export default function GiftRegistry() {
               <div className={styles.tickerWrapper}>
                 <MessagesTicker />
               </div>
-            </div>
+            </motion.div>
 
           </div>
 

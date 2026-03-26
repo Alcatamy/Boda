@@ -5,11 +5,7 @@ import RsvpSection from "@/components/rsvp/RsvpSection";
 import GiftRegistry from "@/components/features/GiftRegistry";
 import GallerySection from "@/components/gallery/GallerySection";
 import WaveDivider from "@/components/ui/WaveDivider";
-const SectionIcon = ({ src }: { src: string }) => (
-  <div style={{ display: "flex", justifyContent: "center", position: "relative", zIndex: 10, marginTop: "2rem", marginBottom: "-3rem" }}>
-    <img src={src} alt="Decoración elegante" style={{ width: "90px", height: "auto", objectFit: "contain" }} />
-  </div>
-);
+import SectionIcon from "@/components/ui/SectionIcon";
 
 export default function Home() {
   return (
@@ -35,6 +31,20 @@ export default function Home() {
         <WaveDivider />
         <SectionIcon src="https://premiumelegante.thedigitalyes.com/assets/swans-framed-ByH4RE7t.png" />
         <GallerySection />
+        
+        <footer style={{
+          padding: "4rem 1rem",
+          textAlign: "center",
+          backgroundColor: "var(--background)",
+          color: "var(--color-accent)",
+          fontFamily: "var(--font-sans)",
+          fontSize: "0.75rem",
+          letterSpacing: "0.15em",
+          textTransform: "uppercase",
+          opacity: 0.8
+        }}>
+          <p>Diseñada y desarrollada con mucho amor por<br/><span style={{fontFamily: "var(--font-script)", fontSize: "1.5rem", textTransform: "none", display: "inline-block", marginTop: "0.5rem"}}>Adrián y Nadia</span></p>
+        </footer>
       </main>
   );
 }
