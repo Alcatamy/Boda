@@ -4,7 +4,12 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./EnvelopeIntro.module.css";
 
-export default function EnvelopeIntro({ children }: { children: React.ReactNode }) {
+interface EnvelopeIntroProps {
+  onOpen?: () => void;
+  onComplete?: () => void;
+}
+
+export default function EnvelopeIntro({ onOpen, onComplete }: EnvelopeIntroProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isVideoFinished, setIsVideoFinished] = useState(false);
   const [showPrompt, setShowPrompt] = useState(true);
@@ -20,18 +25,19 @@ export default function EnvelopeIntro({ children }: { children: React.ReactNode 
     if (!isOpen && videoRef.current) {
       setIsOpen(true);
       setShowPrompt(false);
+      if (onOpen) onOpen();
       videoRef.current.play().catch(err => {
         console.error("Video play failed", err);
-        // Fallback if video fails to play
         setIsVideoFinished(true);
+        if (onComplete) onComplete();
       });
     }
   };
 
   const handleVideoEnded = () => {
-    // Wait a tiny bit on the white frame, then fade out the intro layer
     setTimeout(() => {
       setIsVideoFinished(true);
+      if (onComplete) onComplete();
     }, 500);
   };
 
@@ -77,11 +83,6 @@ export default function EnvelopeIntro({ children }: { children: React.ReactNode 
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Render main site content below */}
-      <div className={styles.mainContent} style={{ opacity: isVideoFinished ? 1 : 0, transition: "opacity 1s ease-in-out", visibility: isVideoFinished ? "visible" : "hidden", height: isVideoFinished ? "auto" : "100vh", overflow: isVideoFinished ? "auto" : "hidden" }}>
-        {children}
-      </div>
     </>
   );
 }

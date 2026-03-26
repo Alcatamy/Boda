@@ -22,18 +22,19 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         ["rgba(212, 175, 55, 0.4)", "rgba(255, 255, 255, 0)", "rgba(59, 130, 246, 0.4)"]
     );
 
-    // Allow envelope to signal when to start music and show site
+    // Play music as soon as envelope opens
     const handleEnvelopeOpen = () => {
         setHasOpenedEnvelope(true);
-        // Slight delay to allow animation to clear before setting full interactivity if needed
-        setTimeout(() => {
-            setShowContent(true);
-        }, 500);
+    };
+
+    // Show content only after video finishes fading to white
+    const handleEnvelopeComplete = () => {
+        setShowContent(true);
     };
 
     return (
         <>
-            <EnvelopeIntro onOpen={handleEnvelopeOpen} />
+            <EnvelopeIntro onOpen={handleEnvelopeOpen} onComplete={handleEnvelopeComplete} />
 
             {/* Music Player starts when envelope opens */}
             <MusicPlayer autoPlay={hasOpenedEnvelope} />
