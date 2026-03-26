@@ -54,7 +54,10 @@
 }
 
 .narrativeText {
-  background: var(--color-surface);
+  background-color: var(--color-surface);
+  background-image: url('/images/textures/white-textured-paper.png');
+  background-size: cover;
+  background-position: center;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 3rem;
