@@ -51,6 +51,7 @@ export default function EnvelopeIntro({ children }: { children: React.ReactNode 
               className={`${styles.video} ${isOpen ? styles.zooming : ""}`}
               src="/videos/envelope.mp4"
               playsInline
+              preload="auto"
               muted // Muted helps with mobile constraints even on click
               onEnded={handleVideoEnded}
             />
