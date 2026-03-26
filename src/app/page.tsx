@@ -33,6 +33,11 @@ export default function Home() {
         <GallerySection />
         
         <footer style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
           padding: "4rem 1rem",
           textAlign: "center",
           backgroundColor: "var(--background)",
@@ -43,7 +48,7 @@ export default function Home() {
           textTransform: "uppercase",
           opacity: 0.8
         }}>
-          <p>Diseñada y desarrollada con mucho amor por<br/><span style={{fontFamily: "var(--font-script)", fontSize: "1.5rem", textTransform: "none", display: "inline-block", marginTop: "0.5rem"}}>Adrián y Nadia</span></p>
+          <p style={{ margin: 0, textAlign: "center" }}>Diseñada y desarrollada con mucho amor por<br /><span style={{fontFamily: "var(--font-script)", fontSize: "1.5rem", textTransform: "none", display: "block", marginTop: "0.5rem"}}>Adrián y Nadia</span></p>
         </footer>
       </main>
   );
