@@ -34,11 +34,22 @@ export default function EnvelopeIntro({ onOpen, onComplete }: EnvelopeIntroProps
     }
   };
 
+  const handleTimeUpdate = () => {
+    if (videoRef.current && !isVideoFinished) {
+      const timeRemaining = videoRef.current.duration - videoRef.current.currentTime;
+      // Start fade out 1 second before it perfectly ends for a smoother transition
+      if (timeRemaining < 1.0) {
+        setIsVideoFinished(true);
+        if (onComplete) onComplete();
+      }
+    }
+  };
+
   const handleVideoEnded = () => {
-    setTimeout(() => {
+    if (!isVideoFinished) {
       setIsVideoFinished(true);
       if (onComplete) onComplete();
-    }, 500);
+    }
   };
 
   return (
@@ -59,6 +70,7 @@ export default function EnvelopeIntro({ onOpen, onComplete }: EnvelopeIntroProps
               playsInline
               preload="auto"
               muted // Muted helps with mobile constraints even on click
+              onTimeUpdate={handleTimeUpdate}
               onEnded={handleVideoEnded}
             />
 
