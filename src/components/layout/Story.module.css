@@ -31,11 +31,11 @@
 }
 
 .title {
-  font-size: 3rem;
+  font-family: var(--font-script);
+  font-size: 4rem;
   font-weight: 400;
   color: var(--color-accent);
-  margin-bottom: 1rem;
-  font-family: var(--font-script);
+  margin-bottom: 1.5rem;
 }
 
 .decorativeLine {
