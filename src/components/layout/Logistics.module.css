@@ -1,6 +1,10 @@
 .section {
   padding: 8rem 0;
   background-color: var(--background);
+  background-image: url('/images/textures/white-textured-paper.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat-y;
   border-top: 1px solid rgba(193, 164, 110, 0.2);
 }
 
@@ -47,9 +51,6 @@
 
 .card {
   background-color: var(--color-surface);
-  background-image: url('/images/textures/white-textured-paper.png');
-  background-size: cover;
-  background-position: center;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(193, 164, 110, 0.4);

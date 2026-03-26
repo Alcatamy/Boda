@@ -5,9 +5,6 @@
   max-width: 650px;
   margin: 0 auto;
   background-color: var(--color-surface);
-  background-image: url('/images/textures/white-textured-paper.png');
-  background-size: cover;
-  background-position: center;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   padding: 4rem;

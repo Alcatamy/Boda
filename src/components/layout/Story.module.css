@@ -1,6 +1,10 @@
 .storySection {
   padding: 6rem 0;
-  background: var(--background);
+  background-color: var(--background);
+  background-image: url('/images/textures/white-textured-paper.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat-y;
   position: relative;
   overflow: hidden;
 }
@@ -55,9 +59,6 @@
 
 .narrativeText {
   background-color: var(--color-surface);
-  background-image: url('/images/textures/white-textured-paper.png');
-  background-size: cover;
-  background-position: center;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 3rem;

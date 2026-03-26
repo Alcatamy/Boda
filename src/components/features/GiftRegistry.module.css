@@ -1,6 +1,10 @@
 .section {
   padding: 8rem 0;
   background-color: var(--background);
+  background-image: url('/images/textures/white-textured-paper.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat-y;
   border-top: 1px solid rgba(180, 151, 90, 0.1);
 }
 
@@ -158,9 +162,6 @@
 /* 1. BANK SECTION - CENTERED */
 .bankSection {
   background-color: var(--color-surface);
-  background-image: url('/images/textures/white-textured-paper.png');
-  background-size: cover;
-  background-position: center;
   border: 1px solid var(--border-color);
   padding: 4rem 2rem;
   border-radius: 12px;
@@ -243,9 +244,6 @@
   margin: 0 auto;
   padding: 2rem;
   background-color: var(--color-surface);
-  background-image: url('/images/textures/white-textured-paper.png');
-  background-size: cover;
-  background-position: center;
   border-radius: 12px;
   border: 1px solid rgba(197, 160, 89, 0.4);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
