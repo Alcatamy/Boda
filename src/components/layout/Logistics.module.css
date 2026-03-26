@@ -1,10 +1,6 @@
 .section {
   padding: 8rem 0;
   background-color: var(--background);
-  background-image: url('/images/textures/white-textured-paper.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: repeat-y;
   border-top: 1px solid rgba(193, 164, 110, 0.2);
 }
 
@@ -51,6 +47,9 @@
 
 .card {
   background-color: var(--color-surface);
+  background-image: url('/images/textures/white-textured-paper.png');
+  background-size: cover;
+  background-position: center;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(193, 164, 110, 0.4);
@@ -151,9 +150,9 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.875rem 1.5rem;
-  background-color: var(--color-accent);
-  color: white;
-  border: 1px solid var(--color-accent);
+  background-color: #C1A46E !important;
+  color: white !important;
+  border: 1px solid #C1A46E !important;
   border-radius: 4px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -165,8 +164,8 @@
 }
 
 .mapButton:hover {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
+  background-color: #a88b50 !important;
+  border-color: #a88b50 !important;
   opacity: 0.9;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(180, 151, 90, 0.3);

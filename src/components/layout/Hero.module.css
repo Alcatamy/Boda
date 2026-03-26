@@ -82,12 +82,21 @@
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-.date {
+.dateLocationContainer {
   font-family: var(--font-serif);
   font-size: 1.25rem;
   margin-top: 1rem;
   letter-spacing: 0.1em;
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dateText, .locationText {
+  text-align: center;
 }
 
 .scrollIndicator {
@@ -117,6 +126,13 @@
   }
   .titleWrapper {
     padding: 2rem 1.5rem;
+  }
+  .dateLocationContainer {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .separator {
+    display: none;
   }
 }
 

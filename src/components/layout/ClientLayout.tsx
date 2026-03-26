@@ -36,8 +36,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         <>
             <EnvelopeIntro onOpen={handleEnvelopeOpen} onComplete={handleEnvelopeComplete} />
 
-            {/* Music Player starts when envelope opens */}
-            <MusicPlayer autoPlay={hasOpenedEnvelope} />
+            {/* Music Player starts when intro video finishes and content shows */}
+            <MusicPlayer autoPlay={showContent} />
 
             {/* Global Effects */}
             {showContent && (

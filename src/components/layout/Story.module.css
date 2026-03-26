@@ -1,10 +1,6 @@
 .storySection {
   padding: 6rem 0;
-  background-color: var(--background);
-  background-image: url('/images/textures/white-textured-paper.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: repeat-y;
+  background: var(--background);
   position: relative;
   overflow: hidden;
 }
@@ -59,6 +55,9 @@
 
 .narrativeText {
   background-color: var(--color-surface);
+  background-image: url('/images/textures/white-textured-paper.png');
+  background-size: cover;
+  background-position: center;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 3rem;
@@ -143,16 +142,7 @@
   border-radius: 1px;
 }
 
-/* ── Grid layout variants ── */
-.grid3cols .imageWrapper {
-  width: calc(33.33% - 1rem) !important;
-  max-width: 200px;
-}
 
-.grid4cols .imageWrapper {
-  width: calc(25% - 1rem) !important;
-  max-width: 180px;
-}
 
 /* ── Lightbox ── */
 .lightboxOverlay {
@@ -237,11 +227,6 @@
   .imageWrapper:nth-child(6n+5) { width: 115px; height: 98px;  }
   .imageWrapper:nth-child(6n+6) { width: 92px;  height: 121px; }
 
-  .grid3cols .imageWrapper,
-  .grid4cols .imageWrapper {
-    width: auto !important;
-    max-width: none;
-  }
 }
 
 @media (max-width: 480px) {
