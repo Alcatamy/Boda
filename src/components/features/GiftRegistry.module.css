@@ -276,9 +276,9 @@
 }
 
 .copyBtnPrimary {
-  background-color: var(--color-accent);
-  color: white;
-  border: 1px solid var(--color-accent);
+  background-color: var(--color-accent) !important;
+  color: white !important;
+  border: 1px solid var(--color-accent) !important;
   padding: 1rem;
   border-radius: 8px;
   font-weight: 600;
@@ -291,8 +291,8 @@
 }
 
 .copyBtnPrimary:hover {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
   opacity: 0.9;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(193, 164, 110, 0.3);
@@ -303,9 +303,9 @@
 .cleanBtn {
   margin-top: 1rem;
   padding: 1rem 2rem;
-  background-color: var(--color-accent);
-  border: 1px solid var(--color-accent);
-  color: white;
+  background-color: var(--color-accent) !important;
+  border: 1px solid var(--color-accent) !important;
+  color: white !important;
   font-weight: 600;
   text-transform: uppercase;
   font-size: 0.85rem;
@@ -321,8 +321,8 @@
 }
 
 .cleanBtn:hover {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
   opacity: 0.9;
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(193, 164, 110, 0.4);
