@@ -23,27 +23,44 @@ export default function MessagesTicker() {
     const animationRef = useRef<number>(0);
 
     useEffect(() => {
-        // Fetch initial messages
+        // Fetch initial messages from the RSVPs (guests table)
         const fetchMessages = async () => {
             const { data } = await supabase
-                .from("messages")
-                .select("sender_name, content, created_at")
+                .from("guests")
+                .select("first_name, message, created_at")
+                .not("message", "is", null)
                 .order("created_at", { ascending: false })
                 .limit(15);
 
-            if (data) setMessages(data);
+            if (data) {
+                const formatted = data.map(g => ({
+                    sender_name: g.first_name,
+                    content: g.message as string,
+                    created_at: g.created_at
+                }));
+                // Filter out empty strings just in case
+                setMessages(formatted.filter(m => m.content && m.content.trim() !== ""));
+            }
         };
 
         fetchMessages();
 
-        // Subscribe to new messages
+        // Subscribe to new RSVP messages
         const channel = supabase
             .channel("realtime messages")
             .on(
                 "postgres_changes",
-                { event: "INSERT", schema: "public", table: "messages" },
+                { event: "INSERT", schema: "public", table: "guests" },
                 (payload) => {
-                    setMessages((prev) => [payload.new as Message, ...prev.slice(0, 14)]);
+                    const newGuest = payload.new;
+                    if (newGuest.message && newGuest.message.trim() !== "") {
+                        const newMessage: Message = {
+                            sender_name: newGuest.first_name,
+                            content: newGuest.message,
+                            created_at: newGuest.created_at
+                        };
+                        setMessages((prev) => [newMessage, ...prev.slice(0, 14)]);
+                    }
                 }
             )
             .subscribe();

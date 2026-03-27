@@ -20,12 +20,22 @@ export default function MessagesPanel() {
     const fetchMessages = async () => {
       try {
         const { data, error } = await supabase
-          .from("messages")
-          .select("*")
+          .from("guests")
+          .select("id, first_name, message, created_at")
+          .not("message", "is", null)
           .order("created_at", { ascending: false });
 
         if (error) throw error;
-        setMessages(data || []);
+        
+        // Map guests schema to Message interface
+        const formattedMessages = (data || []).map(g => ({
+            id: g.id,
+            sender_name: g.first_name,
+            content: g.message as string,
+            created_at: g.created_at
+        }));
+        
+        setMessages(formattedMessages);
       } catch (error) {
         console.error("Error fetching messages:", error);
       } finally {
