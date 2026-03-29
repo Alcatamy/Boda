@@ -23,20 +23,19 @@ export default function MessagesTicker() {
     const animationRef = useRef<number>(0);
 
     useEffect(() => {
-        // Fetch initial messages from the RSVPs (guests table)
+        // Fetch initial messages from the messages table
         const fetchMessages = async () => {
             const { data } = await supabase
-                .from("guests")
-                .select("first_name, message, created_at")
-                .not("message", "is", null)
+                .from("messages")
+                .select("sender_name, content, created_at")
                 .order("created_at", { ascending: false })
                 .limit(15);
 
             if (data) {
-                const formatted = data.map(g => ({
-                    sender_name: g.first_name,
-                    content: g.message as string,
-                    created_at: g.created_at
+                const formatted = data.map(m => ({
+                    sender_name: m.sender_name,
+                    content: m.content as string,
+                    created_at: m.created_at
                 }));
                 // Filter out empty strings just in case
                 setMessages(formatted.filter(m => m.content && m.content.trim() !== ""));
@@ -45,19 +44,19 @@ export default function MessagesTicker() {
 
         fetchMessages();
 
-        // Subscribe to new RSVP messages
+        // Subscribe to new messages
         const channel = supabase
             .channel("realtime messages")
             .on(
                 "postgres_changes",
-                { event: "INSERT", schema: "public", table: "guests" },
+                { event: "INSERT", schema: "public", table: "messages" },
                 (payload) => {
-                    const newGuest = payload.new;
-                    if (newGuest.message && newGuest.message.trim() !== "") {
+                    const newMsg = payload.new;
+                    if (newMsg.content && newMsg.content.trim() !== "") {
                         const newMessage: Message = {
-                            sender_name: newGuest.first_name,
-                            content: newGuest.message,
-                            created_at: newGuest.created_at
+                            sender_name: newMsg.sender_name,
+                            content: newMsg.content,
+                            created_at: newMsg.created_at
                         };
                         setMessages((prev) => [newMessage, ...prev.slice(0, 14)]);
                     }

@@ -28,11 +28,10 @@ export default function GiftRegistry() {
     const message = formData.get("message") as string;
 
     const { error } = await supabase
-      .from("guests")
+      .from("messages")
       .insert({ 
-        first_name: sender,
-        last_name: "", // Required by schema
-        message: message 
+        sender_name: sender,
+        content: message
       });
 
     if (error) {

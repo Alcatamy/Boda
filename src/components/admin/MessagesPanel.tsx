@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Trash2 } from "lucide-react";
 import styles from "./MessagesPanel.module.css";
 
 interface Message {
@@ -20,22 +20,13 @@ export default function MessagesPanel() {
     const fetchMessages = async () => {
       try {
         const { data, error } = await supabase
-          .from("guests")
-          .select("id, first_name, message, created_at")
-          .not("message", "is", null)
+          .from("messages")
+          .select("id, sender_name, content, created_at")
           .order("created_at", { ascending: false });
 
         if (error) throw error;
         
-        // Map guests schema to Message interface
-        const formattedMessages = (data || []).map(g => ({
-            id: g.id,
-            sender_name: g.first_name,
-            content: g.message as string,
-            created_at: g.created_at
-        }));
-        
-        setMessages(formattedMessages);
+        setMessages(data || []);
       } catch (error) {
         console.error("Error fetching messages:", error);
       } finally {
@@ -45,6 +36,19 @@ export default function MessagesPanel() {
 
     fetchMessages();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm("¿Seguro que quieres borrar este mensaje? Esta acción no se puede deshacer.")) {
+      try {
+        const { error } = await supabase.from('messages').delete().eq('id', id);
+        if (error) throw error;
+        setMessages(messages.filter(m => m.id !== id));
+      } catch (error) {
+        console.error('Error deleting message:', error);
+        alert('Error al borrar el mensaje.');
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -88,6 +92,13 @@ export default function MessagesPanel() {
                     year: "numeric",
                   })}
                 </span>
+                <button
+                  onClick={() => handleDelete(msg.id)}
+                  className={styles.deleteButton}
+                  title="Borrar mensaje"
+                >
+                  <Trash2 size={16} />
+                </button>
               </div>
             </div>
           ))}
