@@ -10,6 +10,7 @@ interface Message {
   sender_name: string;
   content: string;
   created_at: string;
+  source: "messages" | "guests";
 }
 
 export default function MessagesPanel() {
@@ -19,14 +20,49 @@ export default function MessagesPanel() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const { data, error } = await supabase
+        const { data: msgData, error: msgError } = await supabase
           .from("messages")
           .select("id, sender_name, content, created_at")
           .order("created_at", { ascending: false });
 
-        if (error) throw error;
-        
-        setMessages(data || []);
+        const { data: gstData, error: gstError } = await supabase
+          .from("guests")
+          .select("id, first_name, message, created_at")
+          .not("message", "is", null)
+          .neq("message", "");
+
+        if (msgError) console.error("Supabase Error fetch msgs:", msgError);
+        if (gstError) console.error("Supabase Error fetch guests:", gstError);
+
+        let combined: Message[] = [];
+
+        if (msgData) {
+          combined = [...combined, ...msgData.map(m => ({
+            id: m.id,
+            sender_name: m.sender_name,
+            content: m.content as string,
+            created_at: m.created_at,
+            source: "messages" as const
+          }))];
+        }
+
+        if (gstData) {
+          combined = [...combined, ...gstData.map(m => ({
+            id: m.id,
+            sender_name: m.first_name,
+            content: m.message as string,
+            created_at: m.created_at,
+            source: "guests" as const
+          }))];
+        }
+
+        combined.sort((a, b) => {
+            const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+            const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+            return dateB - dateA;
+        });
+
+        setMessages(combined.filter(m => m.content && m.content.trim() !== ""));
       } catch (error) {
         console.error("Error fetching messages:", error);
       } finally {
@@ -37,11 +73,16 @@ export default function MessagesPanel() {
     fetchMessages();
   }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, source: "messages" | "guests") => {
     if (window.confirm("¿Seguro que quieres borrar este mensaje? Esta acción no se puede deshacer.")) {
       try {
-        const { error } = await supabase.from('messages').delete().eq('id', id);
-        if (error) throw error;
+        if (source === "messages") {
+           const { error } = await supabase.from('messages').delete().eq('id', id);
+           if (error) throw error;
+        } else {
+           const { error } = await supabase.from('guests').update({ message: null }).eq('id', id);
+           if (error) throw error;
+        }
         setMessages(messages.filter(m => m.id !== id));
       } catch (error) {
         console.error('Error deleting message:', error);
@@ -93,7 +134,7 @@ export default function MessagesPanel() {
                   })}
                 </span>
                 <button
-                  onClick={() => handleDelete(msg.id)}
+                  onClick={() => handleDelete(msg.id, msg.source)}
                   className={styles.deleteButton}
                   title="Borrar mensaje"
                 >

@@ -25,20 +25,51 @@ export default function MessagesTicker() {
     useEffect(() => {
         // Fetch initial messages from the messages table
         const fetchMessages = async () => {
-            const { data } = await supabase
+            // Fetch from messages table
+            const { data: messagesData, error: msgError } = await supabase
                 .from("messages")
                 .select("sender_name, content, created_at")
                 .order("created_at", { ascending: false });
 
-            if (data) {
-                const formatted = data.map(m => ({
+            // Fetch from guests table (legacy messages)
+            // Removed .not/.neq from query to avoid potential supabase-js syntax errors
+            // We will filter in JS. Also this might return [] if RLS blocks it.
+            const { data: guestsData, error: guestsError } = await supabase
+                .from("guests")
+                .select("first_name, message, created_at");
+
+            if (msgError) console.error("Error fetching messages:", msgError);
+            if (guestsError) console.error("Error fetching guests messages (maybe RLS blocks anon?):", guestsError);
+
+            let allMessages: Message[] = [];
+
+            if (messagesData) {
+                allMessages = [...allMessages, ...messagesData.map(m => ({
                     sender_name: m.sender_name,
                     content: m.content as string,
                     created_at: m.created_at
-                }));
-                // Filter out empty strings just in case
-                setMessages(formatted.filter(m => m.content && m.content.trim() !== ""));
+                }))];
             }
+
+            if (guestsData) {
+                allMessages = [...allMessages, ...guestsData
+                    .filter(m => m.message && m.message.trim() !== "")
+                    .map(m => ({
+                        sender_name: m.first_name,
+                        content: m.message as string,
+                        created_at: m.created_at
+                    }))];
+            }
+
+            // Sort combined by created_at desc
+            allMessages.sort((a, b) => {
+                const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+                const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+                return dateB - dateA;
+            });
+
+            // Filter out any remaining empty strings
+            setMessages(allMessages.filter(m => m.content && m.content.trim() !== ""));
         };
 
         fetchMessages();
