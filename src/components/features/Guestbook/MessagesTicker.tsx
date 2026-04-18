@@ -221,7 +221,7 @@ export default function MessagesTicker() {
             <div className={styles.emptyState}>
                 <Heart size={32} className={styles.emptyIcon} />
                 <p className={styles.emptyText}>Sé el primero en dejarnos un mensaje ❤️</p>
-                {debugMsg && <p style={{ fontSize: '10px', color: 'gray', marginTop: '10px', wordBreak: 'break-all', padding: '0 10px' }}>[Debug: {debugMsg}]</p>}
+                {/* Debug info hidden for production, keeping state for dev: {debugMsg} */}
             </div>
         );
     }
