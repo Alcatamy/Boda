@@ -30,10 +30,14 @@ export default function MessagesTicker() {
             setDebugMsg(debugText); 
         };
 
-        if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        const sbUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+        if (!sbUrl) {
             appendDebug("NO_URL");
         } else {
-            appendDebug("URL_OK");
+            // e.g. "https://abcxyz.supabase.co" -> extract "abcxyz" safely
+            const projectMatch = sbUrl.match(/https:\/\/([^.]+)\.supabase\.co/);
+            const projectId = projectMatch ? projectMatch[1].substring(0, 4) + "..." : "UNKNOWN_URL";
+            appendDebug(`URL_OK(${projectId})`);
         }
 
         // Fetch initial messages from the messages table
@@ -57,11 +61,13 @@ export default function MessagesTicker() {
                     .from("guests")
                     .select("first_name, message, created_at");
 
+                const validGuests = guestsData?.filter(m => m.message && m.message.trim() !== "") || [];
+
                 if (guestsError) {
                     console.error("Error fetching guests messages:", guestsError);
                     appendDebug("GST_ERR_" + guestsError.message);
                 } else {
-                    appendDebug("GST_CNT_" + (guestsData?.length || 0));
+                    appendDebug(`GST_CNT_${guestsData?.length || 0}(Valids:${validGuests.length})`);
                 }
 
                 let allMessages: Message[] = [];
@@ -74,14 +80,12 @@ export default function MessagesTicker() {
                     }))];
                 }
 
-                if (guestsData) {
-                    allMessages = [...allMessages, ...guestsData
-                        .filter(m => m.message && m.message.trim() !== "")
-                        .map(m => ({
-                            sender_name: m.first_name,
-                            content: m.message as string,
-                            created_at: m.created_at
-                        }))];
+                if (validGuests.length > 0) {
+                    allMessages = [...allMessages, ...validGuests.map(m => ({
+                        sender_name: m.first_name,
+                        content: m.message as string,
+                        created_at: m.created_at
+                    }))];
                 }
 
                 // Sort combined by created_at desc
