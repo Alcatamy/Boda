@@ -28,8 +28,7 @@ export default function MessagesTicker() {
             const { data } = await supabase
                 .from("messages")
                 .select("sender_name, content, created_at")
-                .order("created_at", { ascending: false })
-                .limit(15);
+                .order("created_at", { ascending: false });
 
             if (data) {
                 const formatted = data.map(m => ({
@@ -58,7 +57,7 @@ export default function MessagesTicker() {
                             content: newMsg.content,
                             created_at: newMsg.created_at
                         };
-                        setMessages((prev) => [newMessage, ...prev.slice(0, 14)]);
+                        setMessages((prev) => [newMessage, ...prev]);
                     }
                 }
             )
