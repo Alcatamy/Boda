@@ -29,8 +29,8 @@ export default function MessagesTicker() {
                 .from("guests")
                 .select("first_name, message, created_at")
                 .not("message", "is", null)
-                .order("created_at", { ascending: false })
-                .limit(15);
+                .neq("message", "")
+                .order("created_at", { ascending: false });
 
             if (data) {
                 const formatted = data.map(g => ({
@@ -59,7 +59,7 @@ export default function MessagesTicker() {
                             content: newGuest.message,
                             created_at: newGuest.created_at
                         };
-                        setMessages((prev) => [newMessage, ...prev.slice(0, 14)]);
+                        setMessages((prev) => [newMessage, ...prev]);
                     }
                 }
             )

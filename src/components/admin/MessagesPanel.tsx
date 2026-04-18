@@ -23,6 +23,7 @@ export default function MessagesPanel() {
           .from("guests")
           .select("id, first_name, message, created_at")
           .not("message", "is", null)
+          .neq("message", "")
           .order("created_at", { ascending: false });
 
         if (error) throw error;

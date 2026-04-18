@@ -18,8 +18,11 @@ import {
   UserPlus,
   Heart,
   Baby,
-  Trash2
+  Trash2,
+  Edit,
+  MessageSquare
 } from "lucide-react";
+import EditGuestModal from "./EditGuestModal";
 import styles from "./GuestDashboard.module.css";
 
 interface Guest {
@@ -35,11 +38,13 @@ interface Guest {
   plus_one_name?: string;
   plus_one_menu_choice?: string;
   children_count: number;
+  message?: string;
   created_at: string;
 }
 
 interface Stats {
   total: number;
+  totalReal: number;
   confirmed: number;
   declined: number;
   pending: number;
@@ -54,6 +59,7 @@ export default function GuestDashboard() {
   const [filteredGuests, setFilteredGuests] = useState<Guest[]>([]);
   const [stats, setStats] = useState<Stats>({
     total: 0,
+    totalReal: 0,
     confirmed: 0,
     declined: 0,
     pending: 0,
@@ -62,6 +68,7 @@ export default function GuestDashboard() {
     meat: 0,
     fish: 0
   });
+  const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "confirmed" | "declined" | "pending">("all");
@@ -107,6 +114,7 @@ export default function GuestDashboard() {
     if (guests.length > 0) {
       const newStats: Stats = {
         total: guests.length,
+        totalReal: guests.reduce((sum, g) => sum + (g.attending === true ? (1 + (g.has_plus_one ? 1 : 0) + g.children_count) : 0), 0),
         confirmed: guests.filter(g => g.attending === true).length,
         declined: guests.filter(g => g.attending === false).length,
         pending: guests.filter(g => g.attending === null).length,
@@ -224,13 +232,23 @@ export default function GuestDashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
+        <div className={styles.statCard} style={{ background: '#ecfdf5', borderColor: '#d1fae5' }}>
+          <div className={styles.statIcon} style={{ background: '#10b981', color: 'white' }}>
+            <Users size={24} />
+          </div>
+          <div className={styles.statInfo}>
+            <span className={styles.statNumber} style={{ color: '#065f46' }}>{stats.totalReal}</span>
+            <span className={styles.statLabel} style={{ color: '#047857', fontWeight: 600 }}>Asistentes Reales</span>
+          </div>
+        </div>
+
         <div className={styles.statCard}>
           <div className={styles.statIcon}>
             <Users size={24} />
           </div>
           <div className={styles.statInfo}>
             <span className={styles.statNumber}>{stats.total}</span>
-            <span className={styles.statLabel}>Total Invitados</span>
+            <span className={styles.statLabel}>Respuestas</span>
           </div>
         </div>
 
@@ -363,94 +381,168 @@ export default function GuestDashboard() {
           <span>Contacto</span>
           <span>Estado</span>
           <span>Detalles</span>
+          <span></span>
         </div>
 
         {filteredGuests.map((guest, index) => (
           <motion.div
             key={guest.id}
-            className={styles.guestItem}
+            className={styles.guestRowGroup}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 + index * 0.05 }}
           >
-            <div className={styles.guestInfo}>
-              <div className={styles.guestName}>
-                <span className={styles.firstName}>{guest.first_name}</span>
-                <span className={styles.lastName}>{guest.last_name}</span>
+            {/* Fila del Invitado Principal */}
+            <div className={styles.mainGuestRow}>
+              {/* 1. Invitado */}
+              <div className={styles.guestInfo}>
+                <div className={styles.guestName}>
+                  <span className={styles.firstName}>{guest.first_name}</span>
+                  <span className={styles.lastName}>{guest.last_name}</span>
+                </div>
+                <div className={styles.guestMeta}>
+                  {guest.children_count > 0 && (
+                    <span className={styles.metaTag}>
+                      <Baby size={12} />
+                      {guest.children_count} Niños
+                    </span>
+                  )}
+                  {guest.has_plus_one && (
+                    <span className={styles.metaTag}>
+                      <UserPlus size={12} />
+                      Con acompañante
+                    </span>
+                  )}
+                </div>
               </div>
-              <div className={styles.guestMeta}>
-                {guest.has_plus_one && (
-                  <span className={styles.metaTag}>
-                    <UserPlus size={12} />
-                    +1
+
+              {/* 2. Contacto */}
+              <div className={styles.guestContact}>
+                {guest.email ? (
+                  <div className={styles.contactItem}>
+                    <Mail size={14} />
+                    <span>{guest.email}</span>
+                  </div>
+                ) : null}
+                {guest.phone ? (
+                  <div className={styles.contactItem}>
+                    <Phone size={14} />
+                    <span>{guest.phone}</span>
+                  </div>
+                ) : null}
+                {!guest.email && !guest.phone && (
+                  <span style={{ color: '#d9c1c3', fontStyle: 'italic', fontSize: '0.85rem' }}>Sin contacto</span>
+                )}
+              </div>
+
+              {/* 3. Estado */}
+              <div className={styles.guestStatus}>
+                {getStatusIcon(guest.attending)}
+                <span className={`${styles.statusText} ${
+                  guest.attending === true ? styles.confirmed : 
+                  guest.attending === false ? styles.declined : 
+                  styles.pending
+                }`}>
+                  {getStatusText(guest.attending)}
+                </span>
+              </div>
+
+              {/* 4. Detalles */}
+              <div className={styles.guestDetails}>
+                {guest.menu_choice && (
+                  <span className={styles.detailTag}>
+                    <Utensils size={12} />
+                    {guest.menu_choice === 'meat' ? 'Carne' : 'Pescado'}
                   </span>
                 )}
-                {guest.children_count > 0 && (
-                  <span className={styles.metaTag}>
-                    <Baby size={12} />
-                    {guest.children_count}
+                {guest.dietary_restrictions && (
+                  <span className={styles.allergyTag} title={guest.dietary_restrictions}>
+                    Alergias: {guest.dietary_restrictions.substring(0, 20)}{guest.dietary_restrictions.length > 20 ? '...' : ''}
                   </span>
                 )}
               </div>
+
+              {/* 5. Acciones */}
+              <div className={styles.actionButtons}>
+                <button 
+                  onClick={() => setEditingGuest(guest)}
+                  className={styles.iconBtn}
+                  title="Editar invitado"
+                >
+                  <Edit size={16} />
+                </button>
+                <button 
+                  onClick={() => handleDelete(guest.id)}
+                  className={`${styles.iconBtn} ${styles.deleteBtn}`}
+                  title="Borrar invitado"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+
+            {/* Fila de Mensaje (si existe) */}
+            {guest.message && guest.message.trim() !== "" && (
+              <div style={{
+                padding: "0.5rem 1.5rem 1rem",
+                background: "transparent",
+                fontSize: "0.95rem",
+                color: "#544244",
+                fontFamily: "'Newsreader', serif",
+                fontStyle: "italic",
+                display: "flex",
+                gap: "0.5rem",
+                alignItems: "flex-start",
+                borderTop: "1px dashed #e4e3db",
+                marginTop: "0.5rem",
+                paddingTop: "1rem"
+              }}>
+                <MessageSquare size={16} style={{ flexShrink: 0, marginTop: "0.25rem", color: "#8c3b4a" }} />
+                <span>&quot;{guest.message}&quot;</span>
+              </div>
+            )}
             </div>
 
-            <div className={styles.guestContact}>
-              {guest.email && (
-                <div className={styles.contactItem}>
-                  <Mail size={14} />
-                  <span>{guest.email}</span>
+            {/* Fila del Acompañante (si existe) */}
+            {guest.has_plus_one && (
+              <div className={styles.plusOneRow}>
+                <div className={styles.plusOneIndicator} />
+                
+                {/* 1. Invitado (+1) */}
+                <div className={styles.guestInfo}>
+                  <span className={styles.plusOneNameTag}>
+                    ↳ {guest.plus_one_name || "Acompañante sin registrar nombre"}
+                  </span>
                 </div>
-              )}
-              {guest.phone && (
-                <div className={styles.contactItem}>
-                  <Phone size={14} />
-                  <span>{guest.phone}</span>
+
+                {/* 2. Contacto (vacío para +1) */}
+                <div></div>
+
+                {/* 3. Estado (hereda del principal) */}
+                <div className={styles.guestStatus} style={{ opacity: 0.7 }}>
+                  {getStatusIcon(guest.attending)}
+                  <span className={`${styles.statusText} ${
+                    guest.attending === true ? styles.confirmed : 
+                    guest.attending === false ? styles.declined : 
+                    styles.pending
+                  }`}>
+                    {getStatusText(guest.attending)}
+                  </span>
                 </div>
-              )}
-            </div>
 
-            <div className={styles.guestStatus}>
-              {getStatusIcon(guest.attending)}
-              <span className={`${styles.statusText} ${
-                guest.attending === true ? styles.confirmed : 
-                guest.attending === false ? styles.declined : 
-                styles.pending
-              }`}>
-                {getStatusText(guest.attending)}
-              </span>
-            </div>
+                {/* 4. Detalles (+1) */}
+                <div className={styles.guestDetails}>
+                  {guest.plus_one_menu_choice && (
+                    <span className={styles.detailTag}>
+                      <Utensils size={12} />
+                      {guest.plus_one_menu_choice === 'meat' ? 'Carne' : 'Pescado'}
+                    </span>
+                  )}
+                </div>
 
-            <div className={styles.guestDetails}>
-              {guest.menu_choice && (
-                <span className={styles.detailTag}>
-                  <Utensils size={12} />
-                  {guest.menu_choice === 'meat' ? 'Carne' : 'Pescado'}
-                </span>
-              )}
-              {guest.plus_one_menu_choice && (
-                <span className={styles.detailTag}>
-                  <Utensils size={12} />
-                  +1 {guest.plus_one_menu_choice === 'meat' ? 'Carne' : 'Pescado'}
-                </span>
-              )}
-              {guest.dietary_restrictions && (
-                <span className={styles.detailTag} title={guest.dietary_restrictions}>
-                  Alergias: {guest.dietary_restrictions.substring(0, 15)}{guest.dietary_restrictions.length > 15 ? '...' : ''}
-                </span>
-              )}
-              {guest.plus_one_name && (
-                <span className={styles.detailTag}>
-                  +1 {guest.plus_one_name}
-                </span>
-              )}
-            </div>
-            <button 
-              onClick={() => handleDelete(guest.id)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', marginLeft: 'auto', color: '#ff4d4f' }}
-              title="Borrar invitado"
-            >
-              <Trash2 size={18} />
-            </button>
+                {/* 5. Acciones (vacío) */}
+                <div></div>
+              </div>
+            )}
           </motion.div>
         ))}
 
@@ -461,6 +553,17 @@ export default function GuestDashboard() {
           </div>
         )}
       </motion.div>
+
+      {editingGuest && (
+        <EditGuestModal 
+          guest={editingGuest} 
+          onClose={() => setEditingGuest(null)} 
+          onUpdate={() => {
+            setEditingGuest(null);
+            fetchGuests();
+          }} 
+        />
+      )}
     </div>
   );
 }
