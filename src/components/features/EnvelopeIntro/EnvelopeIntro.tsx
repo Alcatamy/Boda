@@ -1,122 +1,100 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import styles from "./EnvelopeIntro.module.css";
 
-export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
-    const [isOpen, setIsOpen] = useState(false);
-    const [isZooming, setIsZooming] = useState(false);
+interface EnvelopeIntroProps {
+  onOpen?: () => void;
+  onComplete?: () => void;
+}
 
-    const handleOpen = () => {
-        if (isOpen) return;
-        setIsOpen(true);
+export default function EnvelopeIntro({ onOpen, onComplete }: EnvelopeIntroProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isVideoFinished, setIsVideoFinished] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-        // Phase 2: Start zoom after flap opens
-        setTimeout(() => {
-            setIsZooming(true);
-        }, 800);
+  // Auto-hide prompt after a few seconds if they don't click
+  useEffect(() => {
+    const timer = setTimeout(() => setShowPrompt(false), 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
-        // Phase 3: Reveal site after zoom completes
-        setTimeout(() => {
-            onOpen();
-        }, 2200);
-    };
+  const handleOpen = () => {
+    if (!isOpen && videoRef.current) {
+      setIsOpen(true);
+      setShowPrompt(false);
+      if (onOpen) onOpen();
+      videoRef.current.play().catch(err => {
+        console.error("Video play failed", err);
+        setIsVideoFinished(true);
+        if (onComplete) onComplete();
+      });
+    }
+  };
 
-    return (
-        <motion.div
-            className={styles.overlay}
-            animate={isZooming ? {
-                opacity: 0
-            } : { opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            style={{ pointerEvents: isZooming ? "none" : "auto" }}
-        >
-            <motion.div
-                className={styles.envelopeContainer}
-                onClick={handleOpen}
-                animate={isZooming ? {
-                    scale: 25,
-                    opacity: 0
-                } : { scale: 1 }}
-                transition={{
-                    duration: 1.2,
-                    ease: [0.22, 1, 0.36, 1]
-                }}
-            >
-                <motion.div
-                    className={styles.envelope}
+  const handleTimeUpdate = () => {
+    if (videoRef.current && !isVideoFinished) {
+      const timeRemaining = videoRef.current.duration - videoRef.current.currentTime;
+      // Start fade out 1 second before it perfectly ends for a smoother transition
+      if (timeRemaining < 1.0) {
+        setIsVideoFinished(true);
+        if (onComplete) onComplete();
+      }
+    }
+  };
+
+  const handleVideoEnded = () => {
+    if (!isVideoFinished) {
+      setIsVideoFinished(true);
+      if (onComplete) onComplete();
+    }
+  };
+
+  return (
+    <>
+      <AnimatePresence>
+        {!isVideoFinished && (
+          <motion.div 
+            className={styles.introOverlay}
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            onClick={handleOpen}
+          >
+            <video
+              ref={videoRef}
+              className={`${styles.video} ${isOpen ? styles.zooming : ""}`}
+              src="/videos/envelope.mp4"
+              playsInline
+              preload="auto"
+              muted // Muted helps with mobile constraints even on click
+              onTimeUpdate={handleTimeUpdate}
+              onEnded={handleVideoEnded}
+            />
+
+            <AnimatePresence>
+              {!isOpen && showPrompt && (
+                <motion.div 
+                  className={styles.prompt}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ delay: 1, duration: 0.8 }}
                 >
-                    {/* FLAPS */}
-                    <div className={styles.flapLeft} />
-                    <div className={styles.flapRight} />
-                    <div className={styles.flapBottom} />
-
-                    {/* TOP FLAP - Dramatic 180° 3D rotation */}
-                    <motion.div
-                        className={styles.flapTop}
-                        animate={isOpen ? {
-                            rotateX: 180
-                        } : { rotateX: 0 }}
-                        transition={{
-                            duration: 1,
-                            ease: [0.34, 1.56, 0.64, 1]
-                        }}
-                        style={{ transformStyle: "preserve-3d" }}
-                    />
-
-                    {/* "Para Ti" - On the TOP FLAP area */}
-                    <motion.div
-                        className={styles.envelopeText}
-                        animate={isOpen ? { opacity: 0, y: -20 } : { opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        Para Ti
-                    </motion.div>
-
-                    {/* WAX SEAL */}
-                    <motion.div
-                        className={styles.seal}
-                        animate={isOpen ? {
-                            opacity: 0,
-                            scale: 0.3,
-                            rotate: 45
-                        } : { opacity: 1 }}
-                        transition={{ duration: 0.4, ease: "easeOut" }}
-                    >
-                        N&A
-                    </motion.div>
-
-                    {/* INNER CARD - Visible through the opening */}
-                    <motion.div
-                        className={styles.innerCard}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={isOpen ? {
-                            opacity: 1,
-                            scale: 1
-                        } : { opacity: 0, scale: 0.9 }}
-                        transition={{
-                            delay: 0.4,
-                            duration: 0.6,
-                            ease: [0.22, 1, 0.36, 1]
-                        }}
-                    >
-                        <span className={styles.innerCardText}>Nadia & Adrián</span>
-                        <span className={styles.innerCardSubtext}>25 de Julio, 2026</span>
-                    </motion.div>
+                  <span className={styles.promptText}>Tocar para abrir</span>
+                  <motion.div 
+                    className={styles.pulseDot}
+                    animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                  />
                 </motion.div>
-
-                {!isOpen && (
-                    <motion.div
-                        className={styles.clickHint}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5, duration: 0.6 }}
-                    >
-                        Toca para abrir
-                    </motion.div>
-                )}
-            </motion.div>
-        </motion.div>
-    );
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
 }

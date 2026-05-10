@@ -15,6 +15,7 @@ type FormData = {
   menuChoice: string; // "meat" | "fish"
   hasPlusOne: boolean;
   plusOneName: string;
+  plusOneMenuChoice: string; // "meat" | "fish"
   childrenCount: number;
 };
 
@@ -28,6 +29,7 @@ export default function RsvpForm() {
   const attending = watch("attending");
   const menuChoice = watch("menuChoice");
   const hasPlusOne = watch("hasPlusOne");
+  const plusOneMenuChoice = watch("plusOneMenuChoice");
 
   // Check for duplicate guest
   const checkDuplicate = async (firstName: string, lastName: string) => {
@@ -409,6 +411,48 @@ export default function RsvpForm() {
                     />
                     {(errors.plusOneName || validationErrors.plusOneName) && (
                       <span className={styles.error}>{validationErrors.plusOneName || "Requerido si vienes con acompañante"}</span>
+                    )}
+                  </div>
+
+                  {/* Plus One Menu Choice */}
+                  <div className={styles.fieldGroup}>
+                    <label><Utensils size={16} /> Menú del acompañante</label>
+                    <div className={styles.menuGrid}>
+                      <label className={`${styles.menuCard} ${plusOneMenuChoice === "meat" ? styles.menuSelected : ""}`}>
+                        <input
+                          type="radio"
+                          value="meat"
+                          {...register("plusOneMenuChoice", { required: hasPlusOne })}
+                          className={styles.radioInput}
+                        />
+                        <motion.div
+                          className={styles.menuEmoji}
+                          animate={plusOneMenuChoice === "meat" ? { scale: [1, 1.4, 1], y: [0, -10, 0], rotate: [0, -10, 10, 0] } : {}}
+                          transition={{ duration: 0.5, ease: "easeInOut" }}
+                        >
+                           🐄
+                        </motion.div>
+                        <span className={styles.menuTitle}>Carne</span>
+                      </label>
+                      <label className={`${styles.menuCard} ${plusOneMenuChoice === "fish" ? styles.menuSelected : ""}`}>
+                        <input
+                          type="radio"
+                          value="fish"
+                          {...register("plusOneMenuChoice", { required: hasPlusOne })}
+                          className={styles.radioInput}
+                        />
+                        <motion.div
+                          className={styles.menuEmoji}
+                          animate={plusOneMenuChoice === "fish" ? { scale: [1, 1.4, 1], y: [0, -10, 0], rotate: [0, 15, -15, 0] } : {}}
+                          transition={{ duration: 0.5, ease: "easeInOut" }}
+                        >
+                          🐟
+                        </motion.div>
+                        <span className={styles.menuTitle}>Pescado</span>
+                      </label>
+                    </div>
+                    {errors.plusOneMenuChoice && (
+                      <span className={styles.error}>Por favor selecciona el menú del acompañante</span>
                     )}
                   </div>
                 </motion.div>

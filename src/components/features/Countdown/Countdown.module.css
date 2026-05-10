@@ -5,11 +5,11 @@
     gap: 1.5rem;
     margin-top: 2rem;
     padding: 1.5rem 3rem;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
     border-radius: 999px;
-    border: 1px solid rgba(180, 151, 90, 0.2);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .countdownWrapper {
@@ -27,7 +27,7 @@
 .number {
     font-size: 2.5rem;
     line-height: 1;
-    color: var(--foreground);
+    color: white;
     font-variant-numeric: tabular-nums;
     font-family: var(--font-serif);
 }
@@ -36,7 +36,8 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--color-accent);
+    color: white;
+    opacity: 0.9;
     margin-top: 0.25rem;
     font-family: var(--font-sans);
     font-weight: 600;
@@ -44,7 +45,7 @@
 
 .separator {
     font-size: 2rem;
-    color: var(--color-accent);
+    color: white;
     margin-bottom: 1.25rem;
     opacity: 0.5;
     font-family: var(--font-serif);

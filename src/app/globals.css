@@ -1,31 +1,35 @@
 :root {
-  /* Luxury Warmth Palette */
-  --background: #FDFCFB;
-  /* Soft Linen */
-  --foreground: #2D2926;
-  /* Off-Black */
-  --color-accent: #B4975A;
-  /* Muted Gold */
-  --color-surface: #FFFFFF;
-  --background-alt: #E7E5E4;
-  /* Stone 200 - Clearly distinct from Linen */
+  /* Premium Elegante Palette */
+  --background: #F8F5F1;
+  /* Ivory / Cream */
+  --foreground: #2A3D36;
+  /* Dark Sage */
+  --color-accent: #C1A46E;
+  /* Elegant Gold / Tan */
+  --color-surface: rgba(255, 255, 255, 0.9);
+  /* Glass card surface */
+  --color-surface-solid: #FFFFFF;
+  --background-alt: #D7E4DC;
+  /* Light Sage */
 
   --color-base-white: #ffffff;
   --color-base-black: #000000;
 
   --font-heading: var(--font-script);
-  /* Mapping headings to Parisienne */
+  /* Mapping headings to Script */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #1C1917;
-    /* Warm Dark Grey */
-    --foreground: #FDFCFB;
-    /* Soft Linen */
-    --color-accent: #D4AF37;
+    --background: #192420;
+    /* Very Dark Sage */
+    --foreground: #F8F5F1;
+    /* Ivory / Cream */
+    --color-accent: #d2b988;
     /* Brighter Gold for Dark Mode */
-    --color-surface: #292524;
+    --color-surface: rgba(30, 43, 38, 0.9);
+    --color-surface-solid: #1E2B26;
+    --background-alt: #121a17;
   }
 }
 
@@ -87,3 +91,13 @@ a {
     color-scheme: dark;
   }
 }
+
+/* Premium Elegante Utility Classes */
+.glass-card {
+  background: var(--color-surface);
+  border: 1px solid rgba(193, 164, 110, 0.2); /* Accent gold / tan with low opacity */
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 30px -10px rgba(59, 38, 19, 0.15);
+  backdrop-filter: blur(8px);
+  padding: 2rem;
+}

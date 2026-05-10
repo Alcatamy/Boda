@@ -158,12 +158,16 @@
 /* 1. BANK SECTION - CENTERED */
 .bankSection {
   background-color: var(--color-surface);
+  background-image: url('/images/textures/white-textured-paper.png');
+  background-size: cover;
+  background-position: center;
   border: 1px solid var(--border-color);
   padding: 4rem 2rem;
   border-radius: 12px;
   max-width: 800px;
   margin: 0 auto;
   width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .bankContent {
@@ -238,11 +242,13 @@
   max-width: 500px;
   margin: 0 auto;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.5);
+  background-color: var(--color-surface);
+  background-image: url('/images/textures/white-textured-paper.png');
+  background-size: cover;
+  background-position: center;
   border-radius: 12px;
-  border: 1px solid rgba(197, 160, 89, 0.2);
-  /* Subtle gold border */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .cleanInput,
@@ -270,15 +276,15 @@
 .cleanInput:focus,
 .cleanTextarea:focus {
   outline: none;
-  border-color: var(--color-primary-gold);
-  box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(193, 164, 110, 0.1);
   background: white;
 }
 
 .copyBtnPrimary {
-  background-color: var(--color-primary-gold);
-  color: white;
-  border: 1px solid var(--color-primary-gold);
+  background-color: #C1A46E !important;
+  color: white !important;
+  border: 1px solid #C1A46E !important;
   padding: 1rem;
   border-radius: 8px;
   font-weight: 600;
@@ -291,10 +297,11 @@
 }
 
 .copyBtnPrimary:hover {
-  background-color: var(--color-primary-gold-hover);
-  border-color: var(--color-primary-gold-hover);
+  background-color: #a88b50 !important;
+  border-color: #a88b50 !important;
+  opacity: 1;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(180, 151, 90, 0.3);
+  box-shadow: 0 4px 12px rgba(193, 164, 110, 0.3);
 }
 
 /* ... existing styles ... */
@@ -302,9 +309,9 @@
 .cleanBtn {
   margin-top: 1rem;
   padding: 1rem 2rem;
-  background-color: var(--color-primary-gold);
-  border: 1px solid var(--color-primary-gold);
-  color: white;
+  background-color: #C1A46E !important;
+  border: 1px solid #C1A46E !important;
+  color: white !important;
   font-weight: 600;
   text-transform: uppercase;
   font-size: 0.85rem;
@@ -312,18 +319,18 @@
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   border-radius: 50px;
-  /* Pill shape for elegance */
   align-self: center;
   width: auto;
   min-width: 200px;
-  box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+  box-shadow: 0 4px 15px rgba(193, 164, 110, 0.3);
 }
 
 .cleanBtn:hover {
-  background-color: var(--color-primary-gold-hover);
-  border-color: var(--color-primary-gold-hover);
+  background-color: #a88b50 !important;
+  border-color: #a88b50 !important;
+  opacity: 1;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(197, 160, 89, 0.4);
+  box-shadow: 0 8px 25px rgba(193, 164, 110, 0.4);
 }
 
 .tickerWrapper {

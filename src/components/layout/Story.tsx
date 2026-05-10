@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import styles from "./Story.module.css";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 
@@ -30,33 +31,54 @@ const storyPhotos = [
   "/images/story/21-2025.jpg",
 ];
 
-const renderPhotos = (start: number, end: number) => (
-  <div className={styles.imageGrid}>
-    {storyPhotos.slice(start, end).map((photo, i) => {
-      const index = start + i;
-      return (
-        <motion.div
-          key={index}
-          className={styles.imageWrapper}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-30px" }}
-          transition={{ duration: 0.5, delay: (i % 5) * 0.08 }}
-        >
-          <OptimizedImage
-            src={photo}
-            alt={`Historia - ${index}`}
-            fill
-            sizes="(max-width: 768px) 35vw, 150px"
-            className={styles.image}
-          />
-        </motion.div>
-      );
-    })}
-  </div>
-);
-
 export default function Story() {
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+
+  const closeLightbox = useCallback(() => {
+    setSelectedPhoto(null);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+    };
+    if (selectedPhoto) {
+      document.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [selectedPhoto, closeLightbox]);
+
+  const renderPhotos = (start: number, end: number, gridClass?: string) => (
+    <div className={`${styles.imageGrid} ${gridClass ? styles[gridClass] : ""}`}>
+      {storyPhotos.slice(start, end).map((photo, i) => {
+        const index = start + i;
+        return (
+          <motion.div
+            key={index}
+            className={styles.imageWrapper}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.5, delay: (i % 5) * 0.08 }}
+            onClick={() => setSelectedPhoto(photo)}
+          >
+            <OptimizedImage
+              src={photo}
+              alt={`Historia - ${index}`}
+              fill
+              sizes="(max-width: 768px) 35vw, 150px"
+              className={styles.image}
+            />
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+
   return (
     <section className={styles.storySection} id="story">
       <div className={styles.container}>
@@ -84,7 +106,8 @@ export default function Story() {
             </p>
           </motion.div>
 
-          {renderPhotos(0, 6)}
+          {/* 6 photos → 3+3 layout */}
+          {renderPhotos(0, 6, "grid3cols")}
 
           <motion.div
             className={styles.narrativeText}
@@ -112,7 +135,8 @@ export default function Story() {
             </p>
           </motion.div>
 
-          {renderPhotos(11, 18)}
+          {/* 7 photos → 4+3 layout */}
+          {renderPhotos(11, 18, "grid4cols")}
 
           <motion.div
             className={styles.narrativeText}
@@ -129,6 +153,43 @@ export default function Story() {
           {renderPhotos(18, 23)}
         </div>
       </div>
+
+      {/* ── Lightbox Modal ── */}
+      <AnimatePresence>
+        {selectedPhoto && (
+          <motion.div
+            className={styles.lightboxOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={closeLightbox}
+          >
+            <motion.div
+              className={styles.lightboxContent}
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.85, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={selectedPhoto}
+                alt="Foto ampliada"
+                className={styles.lightboxImage}
+              />
+            </motion.div>
+            <button
+              className={styles.lightboxClose}
+              onClick={closeLightbox}
+              aria-label="Cerrar"
+            >
+              ✕
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

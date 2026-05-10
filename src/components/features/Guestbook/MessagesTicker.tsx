@@ -14,6 +14,7 @@ type Message = {
 
 export default function MessagesTicker() {
     const [messages, setMessages] = useState<Message[]>([]);
+    const [debugMsg, setDebugMsg] = useState<string>("");
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isPaused, setIsPaused] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
@@ -23,15 +24,82 @@ export default function MessagesTicker() {
     const animationRef = useRef<number>(0);
 
     useEffect(() => {
-        // Fetch initial messages
-        const fetchMessages = async () => {
-            const { data } = await supabase
-                .from("messages")
-                .select("sender_name, content, created_at")
-                .order("created_at", { ascending: false })
-                .limit(15);
+        let debugText = "";
+        const appendDebug = (str: string) => { 
+            debugText += str + " | "; 
+            setDebugMsg(debugText); 
+        };
 
-            if (data) setMessages(data);
+        const sbUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+        if (!sbUrl) {
+            appendDebug("NO_URL");
+        } else {
+            // e.g. "https://abcxyz.supabase.co" -> extract "abcxyz" safely
+            const projectMatch = sbUrl.match(/https:\/\/([^.]+)\.supabase\.co/);
+            const projectId = projectMatch ? projectMatch[1].substring(0, 4) + "..." : "UNKNOWN_URL";
+            appendDebug(`URL_OK(${projectId})`);
+        }
+
+        // Fetch initial messages from the messages table
+        const fetchMessages = async () => {
+            try {
+                // Fetch from messages table
+                const { data: messagesData, error: msgError } = await supabase
+                    .from("messages")
+                    .select("sender_name, content, created_at")
+                    .order("created_at", { ascending: false });
+
+                if (msgError) {
+                    console.error("Error fetching messages:", msgError);
+                    appendDebug("MSG_ERR_" + msgError.message);
+                } else {
+                    appendDebug("MSG_CNT_" + (messagesData?.length || 0));
+                }
+
+                // Fetch from guests table (legacy messages)
+                const { data: guestsData, error: guestsError } = await supabase
+                    .from("guests")
+                    .select("first_name, message, created_at");
+
+                const validGuests = guestsData?.filter(m => m.message && m.message.trim() !== "") || [];
+
+                if (guestsError) {
+                    console.error("Error fetching guests messages:", guestsError);
+                    appendDebug("GST_ERR_" + guestsError.message);
+                } else {
+                    appendDebug(`GST_CNT_${guestsData?.length || 0}(Valids:${validGuests.length})`);
+                }
+
+                let allMessages: Message[] = [];
+
+                if (messagesData) {
+                    allMessages = [...allMessages, ...messagesData.map(m => ({
+                        sender_name: m.sender_name,
+                        content: m.content as string,
+                        created_at: m.created_at
+                    }))];
+                }
+
+                if (validGuests.length > 0) {
+                    allMessages = [...allMessages, ...validGuests.map(m => ({
+                        sender_name: m.first_name,
+                        content: m.message as string,
+                        created_at: m.created_at
+                    }))];
+                }
+
+                // Sort combined by created_at desc
+                allMessages.sort((a, b) => {
+                    const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+                    const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+                    return dateB - dateA;
+                });
+
+                // Filter out any remaining empty strings
+                setMessages(allMessages.filter(m => m.content && m.content.trim() !== ""));
+            } catch (err: any) {
+                appendDebug("CATCH_ERR_" + err?.message);
+            }
         };
 
         fetchMessages();
@@ -43,7 +111,15 @@ export default function MessagesTicker() {
                 "postgres_changes",
                 { event: "INSERT", schema: "public", table: "messages" },
                 (payload) => {
-                    setMessages((prev) => [payload.new as Message, ...prev.slice(0, 14)]);
+                    const newMsg = payload.new;
+                    if (newMsg.content && newMsg.content.trim() !== "") {
+                        const newMessage: Message = {
+                            sender_name: newMsg.sender_name,
+                            content: newMsg.content,
+                            created_at: newMsg.created_at
+                        };
+                        setMessages((prev) => [newMessage, ...prev]);
+                    }
                 }
             )
             .subscribe();
@@ -145,6 +221,7 @@ export default function MessagesTicker() {
             <div className={styles.emptyState}>
                 <Heart size={32} className={styles.emptyIcon} />
                 <p className={styles.emptyText}>Sé el primero en dejarnos un mensaje ❤️</p>
+                {/* Debug info hidden for production, keeping state for dev: {debugMsg} */}
             </div>
         );
     }

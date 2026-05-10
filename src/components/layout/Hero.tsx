@@ -17,13 +17,16 @@ export default function Hero() {
 
   return (
     <section ref={containerRef} className={styles.hero}>
-      {/* Background Image with Overlay */}
-      <div className={styles.imageWrapper}>
-        <motion.div style={{ y, height: "120%", position: "relative", width: "100%" }} className={styles.parallaxWrapper}>
-          {/* Image removed as per user request */}
-        </motion.div>
-        <div className={styles.overlay} />
-      </div>
+      {/* Background Video */}
+      <video
+        className={styles.bgVideo}
+        src="/videos/hero-background.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+      />
+      <div className={styles.videoOverlay} />
 
       {/* Hero Content */}
       <motion.div
@@ -38,7 +41,11 @@ export default function Hero() {
         >
           <h2 className={styles.subtitle}>Reserva la Fecha</h2>
           <h1 className={styles.title}>Nadia & Adrián</h1>
-          <p className={styles.date}>25 de Julio, 2026 • Colmenar Viejo, Madrid</p>
+          <div className={styles.dateLocationContainer}>
+            <span className={styles.dateText}>25 de Julio, 2026</span>
+            <span className={styles.separator}>•</span>
+            <span className={styles.locationText}>Colmenar Viejo, Madrid</span>
+          </div>
 
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}

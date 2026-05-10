@@ -1,227 +1,56 @@
-.overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: linear-gradient(135deg, #fdfbf7 0%, #f5f5f4 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    perspective: 2000px;
-    height: 100dvh;
-    width: 100vw;
-    /* Prevent elastic scrolling / rubber-banding */
-    overscroll-behavior: none;
-    touch-action: manipulation;
-    -webkit-overflow-scrolling: auto;
+.introOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
 }
 
-.envelopeContainer {
-    position: relative;
-    width: min(85vw, 380px);
-    max-width: 90%;
-    aspect-ratio: 1.4/1;
-    transform-style: preserve-3d;
-    cursor: pointer;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    touch-action: manipulation;
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 3.5s ease-out;
 }
 
-.envelopeContainer:hover {
-    transform: scale(1.03) translateY(-5px);
+.zooming {
+  transform: scale(1.1); /* Slight zoom in as the envelope opens */
 }
 
-.envelope {
-    width: 100%;
-    height: 100%;
-    background-color: #F5F5F4;
-    position: relative;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transform-style: preserve-3d;
-    background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.01) 0, rgba(0, 0, 0, 0.01) 1px, transparent 0, transparent 50%);
-    background-size: 10px 10px;
-    background-color: #E5E5E5;
-    border-radius: 4px;
+.prompt {
+  position: absolute;
+  bottom: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  pointer-events: none;
 }
 
-/* Wax Seal - Center of envelope */
-.seal {
-    width: 90px;
-    height: 90px;
-    background: radial-gradient(circle at 30% 30%, #D4AF37, #B4975A);
-    border-radius: 50%;
-    position: absolute;
-    z-index: 20;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-script);
-    font-size: 1.3rem;
-    color: #000000;
-    font-weight: 700;
-    border: 4px solid #9A814C;
-    text-shadow: none;
-    letter-spacing: -0.02em;
+.promptText {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: #333;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem 1.5rem;
+  border-radius: 30px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-/* "Para Ti" text - ON TOP FLAP */
-.envelopeText {
-    position: absolute;
-    top: 8%;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 11;
-    font-family: var(--font-script);
-    font-size: 2.5rem;
-    color: #5c5450;
-    font-weight: 400;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
-    letter-spacing: 0.05em;
+.pulseDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
 }
 
-.clickHint {
-    position: absolute;
-    bottom: -4rem;
-    font-family: var(--font-sans);
-    font-size: 0.85rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--color-accent);
-    opacity: 1;
-    animation: pulse 2s infinite ease-in-out;
-    background: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 99px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    font-weight: 600;
-    white-space: nowrap;
-    border: 1px solid var(--color-accent);
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    50% {
-        transform: scale(1.08);
-        opacity: 0.9;
-    }
-}
-
-/* Flaps */
-.flapTop {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 55%;
-    background: linear-gradient(to bottom, #E7E5E4 0%, #D6D3D1 100%);
-    clip-path: polygon(0 0, 50% 100%, 100% 0);
-    transform-origin: top center;
-    z-index: 10;
-    /* Dramatic 3D opening animation applied via framer-motion */
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.flapBottom {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 52%;
-    background-color: #F5F5F4;
-    clip-path: polygon(0 100%, 50% 0, 100% 100%);
-    z-index: 5;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.flapLeft {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 45%;
-    background-color: #E7E5E4;
-    clip-path: polygon(0 0, 100% 50%, 0 100%);
-    z-index: 5;
-}
-
-.flapRight {
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    width: 45%;
-    background-color: #E7E5E4;
-    clip-path: polygon(100% 0, 0 50%, 100% 100%);
-    z-index: 5;
-}
-
-/* EMERGING CARD behind envelope */
-.innerCard {
-    position: absolute;
-    width: 85%;
-    height: 80%;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-}
-
-.innerCardText {
-    font-family: var(--font-script);
-    font-size: 2.5rem;
-    color: var(--color-accent);
-}
-
-.innerCardSubtext {
-    font-family: var(--font-serif);
-    font-size: 1.1rem;
-    color: #666;
-}
-
-@media (max-width: 600px) {
-    .envelopeContainer {
-        width: 92vw;
-        max-width: 100%;
-        aspect-ratio: 1.3/1;
-    }
-
-    .seal {
-        width: 70px;
-        height: 70px;
-        font-size: 1.6rem;
-    }
-
-    .envelopeText {
-        font-size: 1.8rem;
-        top: 6%;
-    }
-
-    .clickHint {
-        bottom: -3.5rem;
-        font-size: 0.7rem;
-        padding: 0.6rem 1.2rem;
-    }
-
-    .innerCardText {
-        font-size: 1.8rem;
-    }
-
-    .innerCardSubtext {
-        font-size: 0.95rem;
-    }
+.mainContent {
+  /* When video is showing we hide overflow to prevent scrolling the site behind it */
 }

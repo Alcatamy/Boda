@@ -1,9 +1,7 @@
 .section {
   padding: 8rem 0;
-  /* Phase 1 Spacing */
   background-color: var(--background);
-  border-top: 1px solid rgba(180, 151, 90, 0.1);
-  /* Luxury Border */
+  border-top: 1px solid rgba(193, 164, 110, 0.2);
 }
 
 .container {
@@ -20,9 +18,9 @@
 .title {
   font-family: var(--font-script);
   font-size: 3.5rem;
-  color: var(--foreground);
+  color: var(--color-accent);
   margin-bottom: 1.5rem;
-  letter-spacing: -0.02em;
+  font-weight: 400;
 }
 
 .subtitle {
@@ -49,9 +47,13 @@
 
 .card {
   background-color: var(--color-surface);
-  border: 1px solid rgba(0, 0, 0, 0.03);
-  border-radius: 8px;
-  /* Soft radius */
+  background-image: url('/images/textures/white-textured-paper.png');
+  background-size: cover;
+  background-position: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(193, 164, 110, 0.4);
+  border-radius: 0.5rem;
   overflow: hidden;
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
   height: 100%;
@@ -61,9 +63,8 @@
 
 .card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px -10px rgba(180, 151, 90, 0.15);
-  /* Luxury Gold Shadow */
-  border-color: rgba(180, 151, 90, 0.3);
+  box-shadow: 0 20px 40px -10px rgba(59, 38, 19, 0.15);
+  border-color: rgba(193, 164, 110, 0.4);
 }
 
 .imageContainer {
@@ -149,9 +150,9 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.875rem 1.5rem;
-  background-color: var(--color-primary-gold);
-  color: white;
-  border: 1px solid var(--color-primary-gold);
+  background-color: #C1A46E !important;
+  color: white !important;
+  border: 1px solid #C1A46E !important;
   border-radius: 4px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -163,8 +164,9 @@
 }
 
 .mapButton:hover {
-  background-color: var(--color-primary-gold-hover);
-  border-color: var(--color-primary-gold-hover);
+  background-color: #a88b50 !important;
+  border-color: #a88b50 !important;
+  opacity: 0.9;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(180, 151, 90, 0.3);
 }
@@ -173,7 +175,7 @@
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;
-  background-color: rgba(180, 151, 90, 0.1);
+  background-color: rgba(193, 164, 110, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,13 +193,11 @@
   display: flex;
   gap: 1rem;
   align-items: center;
-  /* Centered alignment */
 }
 
 .infoIcon {
   color: var(--color-accent);
   flex-shrink: 0;
-  /* Removed margin-top */
 }
 
 .infoLabel {

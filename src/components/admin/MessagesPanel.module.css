@@ -80,6 +80,25 @@
 .messageDate {
   font-size: 0.75rem;
   color: #aaa;
+  margin-right: auto;
+  margin-left: 0.5rem;
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff4d4f;
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.deleteButton:hover {
+  background-color: #fff1f0;
 }
 
 .emptyState {

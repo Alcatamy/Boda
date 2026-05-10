@@ -1,6 +1,6 @@
 .storySection {
   padding: 6rem 0;
-  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  background: var(--background);
   position: relative;
   overflow: hidden;
 }
@@ -31,17 +31,17 @@
 }
 
 .title {
-  font-size: 3rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-  font-family: var(--font-serif);
+  font-family: var(--font-script);
+  font-size: 4rem;
+  font-weight: 400;
+  color: var(--color-accent);
+  margin-bottom: 1.5rem;
 }
 
 .decorativeLine {
   width: 80px;
   height: 3px;
-  background: linear-gradient(90deg, var(--color-primary-gold), #D4AF37);
+  background: var(--color-accent);
   margin: 0 auto;
   border-radius: 2px;
 }
@@ -54,15 +54,18 @@
 }
 
 .narrativeText {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: var(--color-surface);
+  background-image: url('/images/textures/white-textured-paper.png');
+  background-size: cover;
+  background-position: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   padding: 3rem;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 30px -10px rgba(59, 38, 19, 0.15);
+  border: 1px solid rgba(193, 164, 110, 0.2);
   font-family: var(--font-sans);
-  color: var(--text-secondary);
+  color: var(--foreground);
   line-height: 1.8;
   font-size: 1.1rem;
 }
@@ -77,12 +80,12 @@
 }
 
 .narrativeText strong {
-  color: var(--text-primary);
+  color: var(--color-accent);
   font-weight: 600;
   display: block;
   margin-top: 1rem;
   font-family: var(--font-serif);
-  font-size: 1.25rem;
+  font-size: 1.5rem;
 }
 
 /* ── Photo Grid: small, irregular, cool frames ── */
@@ -139,6 +142,61 @@
   border-radius: 1px;
 }
 
+
+
+/* ── Lightbox ── */
+.lightboxOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+
+.lightboxContent {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  cursor: default;
+}
+
+.lightboxImage {
+  display: block;
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.lightboxClose {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  z-index: 10000;
+}
+
+.lightboxClose:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 @media (max-width: 768px) {
   .storySection {
     padding: 4rem 0;
@@ -168,6 +226,7 @@
   .imageWrapper:nth-child(6n+4) { width: 98px;  height: 126px; }
   .imageWrapper:nth-child(6n+5) { width: 115px; height: 98px;  }
   .imageWrapper:nth-child(6n+6) { width: 92px;  height: 121px; }
+
 }
 
 @media (max-width: 480px) {
