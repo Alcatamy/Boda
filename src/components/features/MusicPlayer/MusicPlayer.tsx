@@ -62,7 +62,7 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
             }, 2500);
         } catch (err) {
             console.error("Error saving song request:", err);
-            setError("No se pudo guardar. Inténtalo de nuevo.");
+            setError("No se pudo guardar. Intentalo de nuevo.");
         } finally {
             setSending(false);
         }
@@ -109,7 +109,7 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
                         >
                             <div className={styles.panelHeader}>
-                                <h3>Música Maestro</h3>
+                                <h3>Musica Maestro</h3>
                                 <button onClick={() => setIsExpanded(false)}><X size={18} /></button>
                             </div>
 
@@ -126,10 +126,10 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
                             </div>
 
                             <div className={styles.requestForm}>
-                                <h4>¿Qué canción no debe faltar?</h4>
+                                <h4>Que cancion no debe faltar?</h4>
                                 {sent ? (
                                     <div className={styles.successMsg}>
-                                        <Heart size={16} fill="red" color="red" /> ¡Anotada! Gracias 🎵
+                                        <Heart size={16} fill="red" color="red" /> Anotada! Gracias
                                     </div>
                                 ) : (
                                     <form onSubmit={handleRecommend}>
@@ -144,6 +144,28 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
                                         />
                                         <input
                                             type="text"
-                                            placeholder="Canción / Artista"
+                                            placeholder="Cancion / Artista"
                                             required
-                                         
+                                            className={styles.inputMini}
+                                            value={recommendation.song}
+                                            onChange={e => setRecommendation({ ...recommendation, song: e.target.value })}
+                                            disabled={sending}
+                                        />
+                                        {error && <p className={styles.errorMsg}>{error}</p>}
+                                        <button
+                                            type="submit"
+                                            className={styles.submitBtn}
+                                            disabled={sending}
+                                        >
+                                            {sending ? <Loader2 size={16} className={styles.spinIcon} /> : "Enviar"}
+                                        </button>
+                                    </form>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </motion.div>
+        </>
+    );
+}
