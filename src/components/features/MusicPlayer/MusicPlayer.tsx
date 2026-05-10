@@ -146,6 +146,4 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
                                             type="text"
                                             placeholder="Canción / Artista"
                                             required
-                                            className={styles.inputMini}
-                                            value={recommendation.song}
-                                            
+                                         
