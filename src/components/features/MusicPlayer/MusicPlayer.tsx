@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Disc, Music, X, Pause, Play, Heart } from "lucide-react";
+import { X, Pause, Play, Heart, Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 import styles from "./MusicPlayer.module.css";
 
 export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
@@ -10,25 +11,19 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
-    // Suggested Song State
     const [recommendation, setRecommendation] = useState({ name: "", song: "" });
     const [sent, setSent] = useState(false);
+    const [sending, setSending] = useState(false);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         if (autoPlay && audioRef.current) {
-            // Attempt to play
             audioRef.current.volume = 0.5;
             const playPromise = audioRef.current.play();
-
             if (playPromise !== undefined) {
                 playPromise
-                    .then(() => {
-                        setIsPlaying(true);
-                    })
-                    .catch((error) => {
-                        console.error("Autoplay prevented:", error);
-                        // We could show a "Click to Play" toast here if needed
-                    });
+                    .then(() => setIsPlaying(true))
+                    .catch(() => {/* autoplay blocked, user must interact */});
             }
         }
     }, [autoPlay]);
@@ -43,15 +38,34 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
         setIsPlaying(!isPlaying);
     };
 
-    const handleRecommend = (e: React.FormEvent) => {
+    const handleRecommend = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSent(true);
-        // Here you would optimally save to DB
-        setTimeout(() => {
-            setIsExpanded(false);
-            setSent(false);
-            setRecommendation({ name: "", song: "" });
-        }, 2000);
+        setSending(true);
+        setError("");
+
+        try {
+            const { error: dbError } = await supabase
+                .from("song_requests")
+                .insert({
+                    sender_name: recommendation.name.trim(),
+                    song_artist: recommendation.song.trim(),
+                    status: "pending",
+                });
+
+            if (dbError) throw dbError;
+
+            setSent(true);
+            setTimeout(() => {
+                setIsExpanded(false);
+                setSent(false);
+                setRecommendation({ name: "", song: "" });
+            }, 2500);
+        } catch (err) {
+            console.error("Error saving song request:", err);
+            setError("No se pudo guardar. Inténtalo de nuevo.");
+        } finally {
+            setSending(false);
+        }
     };
 
     return (
@@ -101,7 +115,9 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
 
                             <div className={styles.nowPlaying}>
                                 <button onClick={togglePlay} className={styles.playBtn}>
-                                    {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+                                    {isPlaying
+                                        ? <Pause size={20} fill="currentColor" />
+                                        : <Play size={20} fill="currentColor" />}
                                 </button>
                                 <div className={styles.trackInfo}>
                                     <span className={styles.trackTitle}>Adventure of a Lifetime</span>
@@ -113,7 +129,7 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
                                 <h4>¿Qué canción no debe faltar?</h4>
                                 {sent ? (
                                     <div className={styles.successMsg}>
-                                        <Heart size={16} fill="red" color="red" /> ¡Anotada! Gracias
+                                        <Heart size={16} fill="red" color="red" /> ¡Anotada! Gracias 🎵
                                     </div>
                                 ) : (
                                     <form onSubmit={handleRecommend}>
@@ -124,6 +140,7 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
                                             className={styles.inputMini}
                                             value={recommendation.name}
                                             onChange={e => setRecommendation({ ...recommendation, name: e.target.value })}
+                                            disabled={sending}
                                         />
                                         <input
                                             type="text"
@@ -131,16 +148,4 @@ export default function MusicPlayer({ autoPlay }: { autoPlay: boolean }) {
                                             required
                                             className={styles.inputMini}
                                             value={recommendation.song}
-                                            onChange={e => setRecommendation({ ...recommendation, song: e.target.value })}
-                                        />
-                                        <button type="submit" className={styles.sendBtn}>Enviar Sugerencia</button>
-                                    </form>
-                                )}
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </motion.div>
-        </>
-    );
-}
+                                            

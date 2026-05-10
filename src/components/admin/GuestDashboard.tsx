@@ -1,23 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
-import { 
-  Users, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
-  Calendar, 
-  Phone, 
-  Mail, 
+import {
+  Users,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Phone,
+  Mail,
   Utensils,
   Download,
   Search,
-  Filter,
   UserPlus,
-  Heart,
-  Baby
+  Baby,
+  Trash2,
+  AlertTriangle
 } from "lucide-react";
 import styles from "./GuestDashboard.module.css";
 
@@ -63,6 +62,8 @@ export default function GuestDashboard() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "confirmed" | "declined" | "pending">("all");
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => {
     fetchGuests();
@@ -70,6 +71,7 @@ export default function GuestDashboard() {
 
   useEffect(() => {
     filterGuests();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guests, searchTerm, filterStatus]);
 
   const fetchGuests = async () => {
@@ -89,25 +91,22 @@ export default function GuestDashboard() {
   };
 
   useEffect(() => {
-    if (guests.length > 0) {
-      const newStats: Stats = {
-        total: guests.length,
-        confirmed: guests.filter(g => g.attending === true).length,
-        declined: guests.filter(g => g.attending === false).length,
-        pending: guests.filter(g => g.attending === null).length,
-        plusOnes: guests.filter(g => g.has_plus_one).length,
-        children: guests.reduce((sum, g) => sum + g.children_count, 0),
-        meat: guests.filter(g => g.menu_choice === 'meat').length,
-        fish: guests.filter(g => g.menu_choice === 'fish').length
-      };
-      setStats(newStats);
-    }
+    const newStats: Stats = {
+      total: guests.length,
+      confirmed: guests.filter(g => g.attending === true).length,
+      declined: guests.filter(g => g.attending === false).length,
+      pending: guests.filter(g => g.attending === null).length,
+      plusOnes: guests.filter(g => g.has_plus_one).length,
+      children: guests.reduce((sum, g) => sum + (g.children_count || 0), 0),
+      meat: guests.filter(g => g.menu_choice === 'meat').length,
+      fish: guests.filter(g => g.menu_choice === 'fish').length
+    };
+    setStats(newStats);
   }, [guests]);
 
   const filterGuests = () => {
     let filtered = guests;
 
-    // Filter by status
     if (filterStatus !== "all") {
       filtered = filtered.filter(guest => {
         if (filterStatus === "confirmed") return guest.attending === true;
@@ -117,7 +116,6 @@ export default function GuestDashboard() {
       });
     }
 
-    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(guest =>
         `${guest.first_name} ${guest.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -129,12 +127,33 @@ export default function GuestDashboard() {
     setFilteredGuests(filtered);
   };
 
+  const handleDeleteGuest = async (guestId: string) => {
+    setDeleting(guestId);
+    try {
+      const { error } = await supabase
+        .from('guests')
+        .delete()
+        .eq('id', guestId);
+
+      if (error) throw error;
+
+      // Remove from local state immediately
+      setGuests(prev => prev.filter(g => g.id !== guestId));
+      setDeleteConfirm(null);
+    } catch (error) {
+      console.error('Error deleting guest:', error);
+      alert('Error al eliminar el invitado. Comprueba las políticas RLS de Supabase.');
+    } finally {
+      setDeleting(null);
+    }
+  };
+
   const exportToCSV = () => {
     const headers = [
-      'Nombre', 'Apellidos', 'Email', 'Teléfono', 'Estado', 
+      'Nombre', 'Apellidos', 'Email', 'Teléfono', 'Estado',
       'Restricciones', 'Menú', 'Acompañante', 'Niños', 'Fecha'
     ];
-    
+
     const csvData = filteredGuests.map(guest => [
       guest.first_name,
       guest.last_name,
@@ -144,7 +163,7 @@ export default function GuestDashboard() {
       guest.dietary_restrictions || '',
       guest.menu_choice === 'meat' ? 'Carne' : guest.menu_choice === 'fish' ? 'Pescado' : '',
       guest.has_plus_one ? guest.plus_one_name || 'Sí' : 'No',
-      guest.children_count.toString(),
+      (guest.children_count || 0).toString(),
       new Date(guest.created_at).toLocaleDateString('es-ES')
     ]);
 
@@ -153,7 +172,7 @@ export default function GuestDashboard() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `guests_${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `invitados_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -181,6 +200,52 @@ export default function GuestDashboard() {
 
   return (
     <div className={styles.dashboard}>
+      {/* Confirm Delete Modal */}
+      <AnimatePresence>
+        {deleteConfirm && (
+          <motion.div
+            className={styles.modalOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setDeleteConfirm(null)}
+          >
+            <motion.div
+              className={styles.modal}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+            >
+              <AlertTriangle size={36} color="#ef4444" />
+              <h3>¿Eliminar invitado?</h3>
+              <p>
+                {(() => {
+                  const g = guests.find(g => g.id === deleteConfirm);
+                  return g ? `${g.first_name} ${g.last_name}` : '';
+                })()}
+              </p>
+              <p className={styles.modalWarning}>Esta acción no se puede deshacer.</p>
+              <div className={styles.modalActions}>
+                <button
+                  className={styles.cancelBtn}
+                  onClick={() => setDeleteConfirm(null)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className={styles.deleteBtn}
+                  onClick={() => handleDeleteGuest(deleteConfirm)}
+                  disabled={deleting === deleteConfirm}
+                >
+                  {deleting === deleteConfirm ? 'Eliminando...' : 'Eliminar'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <motion.div
         className={styles.header}
@@ -210,79 +275,56 @@ export default function GuestDashboard() {
         transition={{ delay: 0.1 }}
       >
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>
-            <Users size={24} />
-          </div>
+          <div className={styles.statIcon}><Users size={24} /></div>
           <div className={styles.statInfo}>
             <span className={styles.statNumber}>{stats.total}</span>
             <span className={styles.statLabel}>Total Invitados</span>
           </div>
         </div>
-
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>
-            <CheckCircle size={24} />
-          </div>
+          <div className={styles.statIcon}><CheckCircle size={24} /></div>
           <div className={styles.statInfo}>
             <span className={styles.statNumber}>{stats.confirmed}</span>
             <span className={styles.statLabel}>Confirmados</span>
           </div>
         </div>
-
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>
-            <XCircle size={24} />
-          </div>
+          <div className={styles.statIcon}><XCircle size={24} /></div>
           <div className={styles.statInfo}>
             <span className={styles.statNumber}>{stats.declined}</span>
             <span className={styles.statLabel}>No asisten</span>
           </div>
         </div>
-
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>
-            <Clock size={24} />
-          </div>
+          <div className={styles.statIcon}><Clock size={24} /></div>
           <div className={styles.statInfo}>
             <span className={styles.statNumber}>{stats.pending}</span>
             <span className={styles.statLabel}>Pendientes</span>
           </div>
         </div>
-
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>
-            <UserPlus size={24} />
-          </div>
+          <div className={styles.statIcon}><UserPlus size={24} /></div>
           <div className={styles.statInfo}>
             <span className={styles.statNumber}>{stats.plusOnes}</span>
             <span className={styles.statLabel}>Acompañantes</span>
           </div>
         </div>
-
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>
-            <Baby size={24} />
-          </div>
+          <div className={styles.statIcon}><Baby size={24} /></div>
           <div className={styles.statInfo}>
             <span className={styles.statNumber}>{stats.children}</span>
             <span className={styles.statLabel}>Niños</span>
           </div>
         </div>
-
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>
-            <Utensils size={24} />
-          </div>
+          <div className={styles.statIcon}><Utensils size={24} /></div>
           <div className={styles.statInfo}>
             <span className={styles.statNumber}>{stats.meat}</span>
             <span className={styles.statLabel}>Carne</span>
           </div>
         </div>
-
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>
-            <Utensils size={24} />
-          </div>
+          <div className={styles.statIcon}><Utensils size={24} /></div>
           <div className={styles.statInfo}>
             <span className={styles.statNumber}>{stats.fish}</span>
             <span className={styles.statLabel}>Pescado</span>
@@ -309,30 +351,18 @@ export default function GuestDashboard() {
         </div>
 
         <div className={styles.filterButtons}>
-          <button
-            className={`${styles.filterBtn} ${filterStatus === 'all' ? styles.active : ''}`}
-            onClick={() => setFilterStatus('all')}
-          >
-            Todos ({stats.total})
-          </button>
-          <button
-            className={`${styles.filterBtn} ${filterStatus === 'confirmed' ? styles.active : ''}`}
-            onClick={() => setFilterStatus('confirmed')}
-          >
-            Confirmados ({stats.confirmed})
-          </button>
-          <button
-            className={`${styles.filterBtn} ${filterStatus === 'declined' ? styles.active : ''}`}
-            onClick={() => setFilterStatus('declined')}
-          >
-            No asisten ({stats.declined})
-          </button>
-          <button
-            className={`${styles.filterBtn} ${filterStatus === 'pending' ? styles.active : ''}`}
-            onClick={() => setFilterStatus('pending')}
-          >
-            Pendientes ({stats.pending})
-          </button>
+          {(['all', 'confirmed', 'declined', 'pending'] as const).map(f => (
+            <button
+              key={f}
+              className={`${styles.filterBtn} ${filterStatus === f ? styles.active : ''}`}
+              onClick={() => setFilterStatus(f)}
+            >
+              {f === 'all' && `Todos (${stats.total})`}
+              {f === 'confirmed' && `Confirmados (${stats.confirmed})`}
+              {f === 'declined' && `No asisten (${stats.declined})`}
+              {f === 'pending' && `Pendientes (${stats.pending})`}
+            </button>
+          ))}
         </div>
       </motion.div>
 
@@ -348,6 +378,7 @@ export default function GuestDashboard() {
           <span>Contacto</span>
           <span>Estado</span>
           <span>Detalles</span>
+          <span></span>
         </div>
 
         {filteredGuests.map((guest, index) => (
@@ -356,7 +387,8 @@ export default function GuestDashboard() {
             className={styles.guestItem}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 + index * 0.05 }}
+            transition={{ delay: 0.4 + index * 0.03 }}
+            layout
           >
             <div className={styles.guestInfo}>
               <div className={styles.guestName}>
@@ -366,14 +398,12 @@ export default function GuestDashboard() {
               <div className={styles.guestMeta}>
                 {guest.has_plus_one && (
                   <span className={styles.metaTag}>
-                    <UserPlus size={12} />
-                    +1
+                    <UserPlus size={12} />+1
                   </span>
                 )}
-                {guest.children_count > 0 && (
+                {(guest.children_count || 0) > 0 && (
                   <span className={styles.metaTag}>
-                    <Baby size={12} />
-                    {guest.children_count}
+                    <Baby size={12} />{guest.children_count}
                   </span>
                 )}
               </div>
@@ -394,45 +424,4 @@ export default function GuestDashboard() {
               )}
             </div>
 
-            <div className={styles.guestStatus}>
-              {getStatusIcon(guest.attending)}
-              <span className={`${styles.statusText} ${
-                guest.attending === true ? styles.confirmed : 
-                guest.attending === false ? styles.declined : 
-                styles.pending
-              }`}>
-                {getStatusText(guest.attending)}
-              </span>
-            </div>
-
-            <div className={styles.guestDetails}>
-              {guest.menu_choice && (
-                <span className={styles.detailTag}>
-                  <Utensils size={12} />
-                  {guest.menu_choice === 'meat' ? 'Carne' : 'Pescado'}
-                </span>
-              )}
-              {guest.dietary_restrictions && (
-                <span className={styles.detailTag}>
-                  Restricciones
-                </span>
-              )}
-              {guest.plus_one_name && (
-                <span className={styles.detailTag}>
-                  {guest.plus_one_name}
-                </span>
-              )}
-            </div>
-          </motion.div>
-        ))}
-
-        {filteredGuests.length === 0 && (
-          <div className={styles.emptyState}>
-            <Users size={48} className={styles.emptyIcon} />
-            <span>No se encontraron invitados</span>
-          </div>
-        )}
-      </motion.div>
-    </div>
-  );
-}
+            <div className
