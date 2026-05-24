@@ -46,7 +46,6 @@ export const metadata: Metadata = {
   },
 };
 
-import Header from "@/components/layout/Header";
 import ChatWidget from "@/components/features/ChatWidget";
 import NoiseOverlay from "@/components/ui/NoiseOverlay";
 import Preloader from "@/components/ui/Preloader";
@@ -65,8 +64,6 @@ export default function RootLayout({
         <Preloader />
         <NoiseOverlay />
         <ClientLayout>
-
-          <Header />
           {children}
         </ClientLayout>
       </body>

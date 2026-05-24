@@ -19,19 +19,6 @@
   /* Mapping headings to Script */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #192420;
-    /* Very Dark Sage */
-    --foreground: #F8F5F1;
-    /* Ivory / Cream */
-    --color-accent: #d2b988;
-    /* Brighter Gold for Dark Mode */
-    --color-surface: rgba(30, 43, 38, 0.9);
-    --color-surface-solid: #1E2B26;
-    --background-alt: #121a17;
-  }
-}
 
 html,
 body {
@@ -86,11 +73,6 @@ a {
   letter-spacing: 0.12em;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
 
 /* Premium Elegante Utility Classes */
 .glass-card {

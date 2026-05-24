@@ -1,14 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
 import nodemailer from "nodemailer";
-
-// Initialize Supabase admin client (bypass RLS if needed, or just normal client)
-// We use the normal client with anon key as it's sufficient for insert if RLS allows anon inserts,
-// but server-side it's safer to use the service role key if available, or just regular env vars.
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(req: Request) {
     try {

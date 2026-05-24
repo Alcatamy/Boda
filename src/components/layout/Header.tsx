@@ -20,9 +20,10 @@ export default function Header() {
   });
 
   const navLinks = [
-    { name: "Historia", href: "#story" },
-    { name: "RSVP", href: "#rsvp" },
-    { name: "Detalles", href: "#logistics" },
+    { name: "Historia", href: "/#story" },
+    { name: "RSVP", href: "/#rsvp" },
+    { name: "Detalles", href: "/#logistics" },
+    { name: "Quiz 🎮", href: "/quiz" },
   ];
 
   return (

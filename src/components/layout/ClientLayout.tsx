@@ -6,8 +6,13 @@ import EnvelopeIntro from "@/components/features/EnvelopeIntro/EnvelopeIntro";
 import MusicPlayer from "@/components/features/MusicPlayer/MusicPlayer";
 import SpotlightCursor from "@/components/ui/SpotlightCursor";
 import ButterflyEffect from "@/components/ui/ButterflyEffect";
-
+import { usePathname } from "next/navigation";
+import Header from "@/components/layout/Header";
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname();
+    const isAdmin = pathname?.startsWith('/admin');
+    const isQuiz = pathname?.startsWith('/quiz');
+
     const [hasOpenedEnvelope, setHasOpenedEnvelope] = useState(false);
     const [showContent, setShowContent] = useState(false);
 
@@ -31,6 +36,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     const handleEnvelopeComplete = () => {
         setShowContent(true);
     };
+
+    if (isAdmin || isQuiz) {
+        return <>{children}</>;
+    }
 
     return (
         <>
@@ -66,7 +75,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             <main style={{
                 opacity: showContent ? 1 : 0,
                 transition: "opacity 1s ease-in-out",
-                filter: showContent ? "none" : "blur(10px)"
+                filter: showContent ? "none" : "blur(10px)",
+                minHeight: "100vh",
+                position: "relative"
             }}>
                 {children}
             </main>
