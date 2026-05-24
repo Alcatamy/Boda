@@ -85,7 +85,6 @@ export default function TablePlanner() {
       }
 
       // 3. Reconcile
-      // Default layout matching Salon Mityana floor plan
       const defaultTables: TableConfig[] = [
         { id: 'presidential', name: 'Mesa Presidencial', maxSeats: 14, seats: [] },
         { id: 'table_1',  name: 'Mesa 1',  maxSeats: 8, seats: [] },
@@ -413,4 +412,27 @@ export default function TablePlanner() {
                       style={{ padding: "0.5rem 0.75rem", background: "white", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "grab", display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem", boxShadow: "0 1px 2px rgba(0,0,0,0.05)", position: "relative" }}
                     >
                       <span style={{ fontSize: "0.75rem", color: "#94a3b8", minWidth: "1rem" }}>{idx + 1}.</span>
-                      <GripVertical si
+                      <GripVertical size={14} color="#cbd5e1" />
+                      <span style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 500 }}>
+                        {node.name}
+                      </span>
+                      {node.type === 'child' && (
+                        <span style={{ fontSize: "0.65rem", background: "#f1f5f9", padding: "0.125rem 0.375rem", borderRadius: "4px", color: "#64748b", textTransform: "uppercase" }}>Niño</span>
+                      )}
+                    </div>
+                  ))
+                )}
+                {table.seats.length > table.maxSeats && (
+                  <div style={{ padding: "0.5rem", background: "#fef2f2", border: "1px dashed #fca5a5", color: "#ef4444", fontSize: "0.75rem", borderRadius: "6px", display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.5rem" }}>
+                    <AlertCircle size={14} /> Excede límite
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  );
+}
