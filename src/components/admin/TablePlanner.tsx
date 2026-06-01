@@ -104,6 +104,27 @@ const ALIAS: Record<string, string> = {
   oliver: 'oliver', marisa: 'marisa', jose: 'jose'
 };
 
+const GRID_POSITIONS: Record<number, { row: number; col: string }> = {
+  1: { row: 1, col: '3 / span 2' },
+  2: { row: 1, col: '1' },
+  3: { row: 1, col: '2' },
+  6: { row: 1, col: '5' },
+  7: { row: 1, col: '6' },
+  4: { row: 2, col: '3' },
+  5: { row: 2, col: '4' },
+  8: { row: 3, col: '1' },
+  9: { row: 3, col: '2' },
+  10: { row: 3, col: '3' },
+  11: { row: 3, col: '4' },
+  12: { row: 3, col: '5' },
+  13: { row: 3, col: '6' },
+  14: { row: 4, col: '1' },
+  15: { row: 4, col: '2' },
+  16: { row: 4, col: '3 / span 2' },
+  17: { row: 4, col: '5' },
+  18: { row: 4, col: '6' }
+};
+
 const FORCE: Record<string, { menu?: 'Carne' | 'Pescado' | 'Especial' | 'Infantil' | '?'; conf?: boolean }> = {
   '1:Adrián': { menu: 'Pescado', conf: true },
   '1:Nadia': { menu: 'Pescado', conf: true }
@@ -786,62 +807,69 @@ export default function TablePlanner() {
           <div className={styles.room}>
             <div className={styles.grid}>
               
-              {/* Render Presidential first and alone at the top */}
-              {TABLES.filter(t => t.head).map(t => {
-                const arr = guests.filter(g => g.table === t.id);
-                const isOver = overTableId === t.id;
-                
-                return (
-                  <div key={t.id} className={`${styles.cell} ${styles.headcell}`}>
-                    <div className={styles.tcap}>
-                      {t.name || `Mesa ${t.id}`}
-                      <span className={styles.cnt}>{arr.length} pers · 🥩{arr.filter(x => x.menu === 'Carne').length} 🐟{arr.filter(x => x.menu === 'Pescado').length}</span>
-                    </div>
-                    <div 
-                      className={`${styles.head} ${isOver ? styles.over : ''}`}
-                      onDragOver={(e) => handleTableDragOver(e, t.id)}
-                      onDragLeave={() => setOverTableId(null)}
-                      onDrop={(e) => handleTableDrop(e, t.id)}
-                      data-table={t.id}
-                    >
-                      <div className={styles.toprow}>
-                        {arr.map((g, idx) => {
-                          const dim = searchTerm && !g.name.toLowerCase().includes(searchTerm.toLowerCase());
-                          return (
-                            <div
-                              key={g.id}
-                              className={`${styles.seat} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${overSeatId === g.id ? styles.insbar : ''} ${dim ? styles.dim : ''}`}
-                              draggable
-                              onDragStart={(e) => handleDragStart(e, g.id)}
-                              onDragEnd={handleDragEnd}
-                              onDragOver={(e) => handleSeatDragOver(e, g.id)}
-                              onDragLeave={() => setOverSeatId(null)}
-                              onDrop={(e) => handleSeatDrop(e, g)}
-                              onClick={(e) => { e.stopPropagation(); openPopover(g, e.currentTarget); }}
-                              title={`${g.name} · ${g.menu}`}
-                            >
-                              {renderLabel(g)}
-                              <span className={styles.tag}>{MENU_ICON[g.menu]}{g.al && ' ⚠️'}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <div className={styles.rect}>
-                        <span className={styles.tnum}>{t.id}</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Render the remaining circular tables in wrapping grid */}
-              {TABLES.filter(t => !t.head).slice().sort((a,b) => a.id - b.id).map(t => {
+              {/* Render all tables using custom grid coordinate mapping */}
+              {TABLES.slice().sort((a,b) => a.id - b.id).map(t => {
                 const arr = guests.filter(g => g.table === t.id);
                 const n = arr.length;
                 const isOver = overTableId === t.id;
+                const pos = GRID_POSITIONS[t.id];
+                const cellStyle = pos ? { gridRow: pos.row, gridColumn: pos.col } : {};
+                const isSpanned = t.id === 1 || t.id === 16;
+
+                if (t.head) {
+                  return (
+                    <div 
+                      key={t.id} 
+                      className={`${styles.cell} ${styles.headcell}`} 
+                      style={cellStyle}
+                    >
+                      <div className={styles.tcap}>
+                        {t.name || `Mesa ${t.id}`}
+                        <span className={styles.cnt}>{arr.length} pers · 🥩{arr.filter(x => x.menu === 'Carne').length} 🐟{arr.filter(x => x.menu === 'Pescado').length}</span>
+                      </div>
+                      <div 
+                        className={`${styles.head} ${isOver ? styles.over : ''}`}
+                        onDragOver={(e) => handleTableDragOver(e, t.id)}
+                        onDragLeave={() => setOverTableId(null)}
+                        onDrop={(e) => handleTableDrop(e, t.id)}
+                        data-table={t.id}
+                      >
+                        <div className={styles.toprow}>
+                          {arr.map((g) => {
+                            const dim = searchTerm && !g.name.toLowerCase().includes(searchTerm.toLowerCase());
+                            return (
+                              <div
+                                key={g.id}
+                                className={`${styles.seat} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${overSeatId === g.id ? styles.insbar : ''} ${dim ? styles.dim : ''}`}
+                                draggable
+                                onDragStart={(e) => handleDragStart(e, g.id)}
+                                onDragEnd={handleDragEnd}
+                                onDragOver={(e) => handleSeatDragOver(e, g.id)}
+                                onDragLeave={() => setOverSeatId(null)}
+                                onDrop={(e) => handleSeatDrop(e, g)}
+                                onClick={(e) => { e.stopPropagation(); openPopover(g, e.currentTarget); }}
+                                title={`${g.name} · ${g.menu}`}
+                              >
+                                {renderLabel(g)}
+                                <span className={styles.tag}>{MENU_ICON[g.menu]}{g.al && ' ⚠️'}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className={styles.rect}>
+                          <span className={styles.tnum}>{t.id}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
 
                 return (
-                  <div key={t.id} className={styles.cell}>
+                  <div 
+                    key={t.id} 
+                    className={`${styles.cell} ${isSpanned ? styles.spannedCell : ''}`} 
+                    style={cellStyle}
+                  >
                     <div className={styles.tcap}>
                       Mesa {t.id} {t.name && <small>“{t.name}”</small>}
                       <span className={styles.cnt}>
