@@ -1,45 +1,167 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
-import { motion } from "framer-motion";
-import { Save, Plus, Trash2, Users, GripVertical, AlertCircle, RefreshCw } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Save, RefreshCw, Printer } from "lucide-react";
+import styles from "./TablePlanner.module.css";
+
+// ─── Interfaces ──────────────────────────────────────────────────────────────
 
 interface Guest {
   id: string;
   first_name: string;
   last_name: string;
+  email?: string;
+  phone?: string;
   attending: boolean | null;
+  dietary_restrictions?: string;
+  menu_choice?: string;
   has_plus_one: boolean;
-  plus_one_name: string;
+  plus_one_name?: string;
+  plus_one_menu_choice?: string;
   children_count: number;
+  message?: string;
+  created_at: string;
 }
 
-interface SeatNode {
-  id: string; 
+interface SeatingGuest {
+  id: string;
   name: string;
-  type: 'adult' | 'child';
-  guestId: string;
+  ap: string;
+  table: number | '__none__';
+  menu: 'Carne' | 'Pescado' | 'Especial' | 'Infantil' | '?';
+  conf: boolean;
+  child: boolean;
+  al: string;
+  ac: string;
+  guestId?: string;
+  isPlusOne?: boolean;
+  isChild?: boolean;
 }
 
 interface TableConfig {
-  id: string;
+  id: number;
   name: string;
-  maxSeats: number;
-  seats: SeatNode[];
+  head?: boolean;
+  pos?: number[];
 }
 
-interface SeatingLayout {
-  unassigned: SeatNode[];
-  tables: TableConfig[];
+// ─── Constants ───────────────────────────────────────────────────────────────
+
+const TABLES: TableConfig[] = [
+  { id: 1, name: 'Balón de oro', head: true },
+  { id: 2, name: 'MVP' },
+  { id: 3, name: 'Pole Position' },
+  { id: 6, name: 'Hoyo en uno' },
+  { id: 7, name: 'Strike' },
+  { id: 4, name: 'Maillot Amarillo' },
+  { id: 5, name: 'ACE' },
+  { id: 12, name: 'Smash' },
+  { id: 13, name: 'Cinturón negro' },
+  { id: 8, name: 'Home run' },
+  { id: 9, name: 'Touchdown' },
+  { id: 10, name: 'K.O.' },
+  { id: 11, name: 'Jaque Mate' },
+  { id: 14, name: 'Órdago' },
+  { id: 15, name: '' },
+  { id: 16, name: 'Foto Finish' },
+  { id: 17, name: '180' },
+  { id: 18, name: 'Triple Corona' }
+];
+
+const SEATS: Record<number, string[]> = {
+  1: ['Adrián', 'Nadia', 'Antonio', 'Raquel', 'Rafael', 'Mariví'],
+  2: ['Marta', 'Roberto', 'Ana', 'Nerea', 'Emma', 'Gabi', 'Silvia', 'Mary', 'Antonio'],
+  3: ['Virtudes', 'Ana', 'Manolo', 'Kiko', 'Martín', 'Leti', 'Andrea', 'Raúl'],
+  4: ['Josema', 'Soraya', 'Moreno', 'Nacho', 'Maca', 'Lucía', 'Pablo', 'Víctor', 'Aroa'],
+  5: ['Óscar', 'Laura', 'Claudia', 'Myri', 'Álvaro', 'Patri', 'Ale', 'Ana R', 'Alex'],
+  6: ['Mercedes', 'Carla', 'Víctor', 'Ana', 'Paula', 'Hugo', 'Jose V', 'Merce', 'Martín'],
+  7: ['Gerardo', 'Jimena', 'Esther', 'Gabi', 'Lucía', 'Bea', 'Jesús'],
+  8: ['Mariví', 'Juan Manuel', 'Beatriz', 'Gaizka', 'Ucho', 'Rafa', 'Úrsula', 'Novio'],
+  9: ['Lupe', 'Jose', 'Sergio', 'Uxue', 'Maitane', 'Luken', 'Darío', 'Ashraf', 'Rubén'],
+  10: ['Pepe', 'Lexis', 'Álvarez', 'Raquel', 'Claudia', 'Alex D.P', 'Vigar', 'Ludo', 'Giorgio'],
+  11: ['Tamara', 'Nacho', 'Nacho', 'Sandra', 'Marcos', 'Oliver', 'Sara', 'Sandra', 'Enrique'],
+  12: ['Luis', 'Juani', 'Javi', 'Luisje', 'Nines', 'Leo', 'Loli', 'Dioni', 'Rosi'],
+  13: ['Charo', 'Chelo', 'Pedro', 'Samuel', 'Mariana', 'Nerea', 'Víctor', 'Joel'],
+  14: ['Ernesto', 'Andoni', 'Alberto', 'Arturo', 'Lucía', 'Ignacio', 'Laia', 'Íñigo', 'Ainhoa'],
+  15: ['Ana', 'Diana', 'Valle', 'Cris', 'Lola'],
+  16: ['Alberto', 'Leticia', 'Alfredo', 'Alfredito', 'Alba', 'Alba', 'Elena', 'Fran', 'Kiko'],
+  17: ['Joel', 'Iván', 'Elena', 'Mirian', 'Alba', 'Dieguito', 'Diego', 'Esther', 'Natalia'],
+  18: ['Marisa', 'Gonzalo', 'Julián', 'Nieves', 'Adri', 'Andrei', 'Laura', 'Lucía']
+};
+
+const KIDS = new Set(['Emma', 'Martín', 'Paula', 'Hugo', 'Uxue', 'Luken', 'Darío', 'Fran', 'Dieguito']);
+
+const ALIAS: Record<string, string> = {
+  adri: 'adrian', myri: 'myriam', maca: 'maca', lexis: 'alexis',
+  marivi: 'maria victoria', mari: 'maria victoria', ale: 'alejandro',
+  rafa: 'rafael', 'jose v': 'jose vicente', merce: 'mercedes',
+  juani: 'juani', javi: 'javier', luisje: 'luis', ruben: 'ruben',
+  oscar: 'oscar', ursula: 'ursula', valle: 'maria del valle',
+  cris: 'cristina', leti: 'leticia', raul: 'raul', mary: 'maria jesus',
+  rosi: 'maria rosa', patri: 'patricia', 'ana r': 'ana',
+  oliver: 'oliver', marisa: 'marisa', jose: 'jose'
+};
+
+const FORCE: Record<string, { menu?: 'Carne' | 'Pescado' | 'Especial' | 'Infantil' | '?'; conf?: boolean }> = {
+  '1:Adrián': { menu: 'Pescado', conf: true },
+  '1:Nadia': { menu: 'Pescado', conf: true }
+};
+
+const MENU_ICON: Record<string, string> = {
+  Carne: '🥩', Pescado: '🐟', Especial: '🥗', Infantil: '🧒', '?': '❓'
+};
+
+const STORAGE_KEY = 'mesasBodaNA_v5';
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function norm(s: string): string {
+  return (s || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z ]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function mapDbMenu(choice: string | undefined | null): 'Carne' | 'Pescado' | 'Especial' | 'Infantil' | '?' {
+  if (!choice) return '?';
+  const c = choice.toLowerCase();
+  if (c === 'meat' || c === 'carne') return 'Carne';
+  if (c === 'fish' || c === 'pescado') return 'Pescado';
+  if (c === 'special' || c === 'especial') return 'Especial';
+  if (c === 'child' || c === 'infantil') return 'Infantil';
+  return '?';
+}
+
+function mapMenuToDb(menu: string): string {
+  if (menu === 'Carne') return 'meat';
+  if (menu === 'Pescado') return 'fish';
+  if (menu === 'Especial') return 'special';
+  if (menu === 'Infantil') return 'child';
+  return '';
 }
 
 export default function TablePlanner() {
-  const [layout, setLayout] = useState<SeatingLayout | null>(null);
+  const [guests, setGuests] = useState<SeatingGuest[]>([]);
+  const [dbGuests, setDbGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [messageId, setMessageId] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  
+  // Drag targets tracking
+  const [overTableId, setOverTableId] = useState<number | '__none__' | null>(null);
+  const [overSeatId, setOverSeatId] = useState<string | null>(null);
 
+  // Popover state
+  const [popoverGuest, setPopoverGuest] = useState<SeatingGuest | null>(null);
+  const [popoverAnchor, setPopoverAnchor] = useState<DOMRect | null>(null);
+
+  // Load Data
   useEffect(() => {
     loadData();
   }, []);
@@ -48,390 +170,810 @@ export default function TablePlanner() {
     try {
       setLoading(true);
       
-      // 1. Fetch confirmed guests
-      const { data: guestsData, error: guestsError } = await supabase
+      // 1. Fetch confirmed guests from DB
+      const { data: dbData, error: dbError } = await supabase
         .from('guests')
-        .select('*')
-        .eq('attending', true);
-      
-      if (guestsError) throw guestsError;
+        .select('*');
 
-      // Flatten guests into seats
-      const allNodes: SeatNode[] = [];
-      (guestsData as Guest[]).forEach(g => {
-        allNodes.push({ id: `${g.id}_main`, name: `${g.first_name} ${g.last_name}`, type: 'adult', guestId: g.id });
-        if (g.has_plus_one) {
-          allNodes.push({ id: `${g.id}_plusone`, name: g.plus_one_name || `Acompañante de ${g.first_name}`, type: 'adult', guestId: g.id });
-        }
-        for (let i = 0; i < g.children_count; i++) {
-          allNodes.push({ id: `${g.id}_child_${i+1}`, name: `Niño ${i+1} de ${g.first_name}`, type: 'child', guestId: g.id });
-        }
-      });
+      if (dbError) throw dbError;
+      const guestsList = (dbData || []) as Guest[];
+      setDbGuests(guestsList);
 
-      // 2. Fetch saved layout from messages
-      const { data: layoutData, error: layoutError } = await supabase
-        .from('messages')
-        .select('*')
-        .eq('sender_name', 'SYSTEM_SEATING_PLAN')
+      // 2. Fetch saved layout from seating_plan
+      const { data: planData, error: planError } = await supabase
+        .from('seating_plan')
+        .select('plan_data')
+        .eq('id', 'main')
         .maybeSingle();
 
-      if (layoutError && layoutError.code !== 'PGRST116') {
-        throw layoutError;
+      const savedLayout = planData?.plan_data as { guests: SeatingGuest[] } | null;
+
+      // 3. Reconcile or build initial
+      let reconciled: SeatingGuest[] = [];
+      const confirmedDbGuests = guestsList.filter(g => g.attending === true);
+
+      if (savedLayout && Array.isArray(savedLayout.guests)) {
+        const savedGuests = savedLayout.guests;
+        const dbMap = new Map<string, Guest>();
+        guestsList.forEach(g => dbMap.set(g.id, g));
+
+        const processedDbGuestIds = new Set<string>();
+
+        savedGuests.forEach(sg => {
+          if (sg.guestId) {
+            const dbg = dbMap.get(sg.guestId);
+            if (dbg && dbg.attending === true) {
+              // Guest is still attending - update live details
+              reconciled.push({
+                ...sg,
+                name: sg.isPlusOne ? (dbg.plus_one_name || sg.name) : dbg.first_name,
+                ap: sg.isPlusOne ? "" : (dbg.last_name ? dbg.last_name.split(' ')[0] : ""),
+                menu: sg.isChild 
+                  ? 'Infantil' 
+                  : (sg.isPlusOne ? mapDbMenu(dbg.plus_one_menu_choice || dbg.menu_choice) : mapDbMenu(dbg.menu_choice)),
+                al: dbg.dietary_restrictions || "",
+                ac: dbg.plus_one_name || "",
+                conf: true
+              });
+              processedDbGuestIds.add(sg.guestId);
+            }
+            // If they are no longer attending, we drop them. 
+            // If they occupied a default seat template, we will restore it later.
+          } else {
+            // Placeholder seat or child
+            reconciled.push(sg);
+          }
+        });
+
+        // Add default seat template placeholders for missing seats
+        const reconciledSeatKeys = new Set(reconciled.map(g => `${g.table}:${g.name}`));
+        TABLES.forEach(t => {
+          const originalSeats = SEATS[t.id] || [];
+          originalSeats.forEach(seatName => {
+            const key = `${t.id}:${seatName}`;
+            if (!reconciledSeatKeys.has(key)) {
+              // Seat is missing, recreate it empty/unconfirmed
+              reconciled.push({
+                id: 'g_placeholder_' + t.id + '_' + seatName,
+                name: seatName,
+                ap: '',
+                table: t.id,
+                menu: KIDS.has(seatName) ? 'Infantil' : '?',
+                conf: KIDS.has(seatName) ? true : false,
+                child: KIDS.has(seatName),
+                al: '',
+                ac: ''
+              });
+            }
+          });
+        });
+
+        // Add newly confirmed guests not yet in the layout to the tray
+        confirmedDbGuests.forEach(dbg => {
+          if (!processedDbGuestIds.has(dbg.id)) {
+            // Main Guest
+            reconciled.push({
+              id: 'g_' + dbg.id + '_main',
+              name: dbg.first_name,
+              ap: dbg.last_name ? dbg.last_name.split(' ')[0] : "",
+              table: '__none__',
+              menu: mapDbMenu(dbg.menu_choice),
+              conf: true,
+              child: false,
+              al: dbg.dietary_restrictions || "",
+              ac: dbg.plus_one_name || "",
+              guestId: dbg.id
+            });
+
+            // Plus One Guest
+            if (dbg.has_plus_one) {
+              reconciled.push({
+                id: 'g_' + dbg.id + '_plusone',
+                name: dbg.plus_one_name || `Acompañante de ${dbg.first_name}`,
+                ap: "",
+                table: '__none__',
+                menu: mapDbMenu(dbg.plus_one_menu_choice || dbg.menu_choice),
+                conf: true,
+                child: false,
+                al: "",
+                ac: "",
+                guestId: dbg.id,
+                isPlusOne: true
+              });
+            }
+          }
+        });
+      } else {
+        // Fallback to initial build
+        reconciled = buildInitial(confirmedDbGuests);
       }
 
-      const savedLayout = layoutData ? JSON.parse(layoutData.message) as { tables: TableConfig[] } : null;
-      if (layoutData) {
-        setMessageId(layoutData.id);
-      }
-
-      // 3. Reconcile
-      const defaultTables: TableConfig[] = [
-        { id: 'presidential', name: 'Mesa Presidencial', maxSeats: 14, seats: [] },
-        { id: 'table_1',  name: 'Mesa 1',  maxSeats: 8, seats: [] },
-        { id: 'table_2',  name: 'Mesa 2',  maxSeats: 8, seats: [] },
-        { id: 'table_3',  name: 'Mesa 3',  maxSeats: 8, seats: [] },
-        { id: 'table_4',  name: 'Mesa 4',  maxSeats: 8, seats: [] },
-        { id: 'table_5',  name: 'Mesa 5',  maxSeats: 8, seats: [] },
-        { id: 'table_6',  name: 'Mesa 6',  maxSeats: 8, seats: [] },
-        { id: 'table_7',  name: 'Mesa 7',  maxSeats: 8, seats: [] },
-        { id: 'table_8',  name: 'Mesa 8',  maxSeats: 8, seats: [] },
-        { id: 'table_9',  name: 'Mesa 9',  maxSeats: 8, seats: [] },
-        { id: 'table_10', name: 'Mesa 10', maxSeats: 8, seats: [] },
-        { id: 'table_11', name: 'Mesa 11', maxSeats: 8, seats: [] },
-        { id: 'table_12', name: 'Mesa 12', maxSeats: 8, seats: [] },
-        { id: 'table_13', name: 'Mesa 13', maxSeats: 8, seats: [] },
-        { id: 'table_14', name: 'Mesa 14', maxSeats: 8, seats: [] },
-        { id: 'table_15', name: 'Mesa 15', maxSeats: 8, seats: [] },
-        { id: 'table_16', name: 'Mesa 16', maxSeats: 8, seats: [] },
-      ];
-      let tables = savedLayout?.tables || defaultTables;
-
-      // Extract all assigned node IDs to see who is missing
-      const assignedNodeIds = new Set<string>();
-      tables.forEach(t => t.seats.forEach(s => assignedNodeIds.add(s.id)));
-
-      // Find guests that were deleted/un-RSVP'd and remove them from tables
-      const validationNodeIds = new Set(allNodes.map(n => n.id));
-      tables = tables.map(t => ({
-        ...t,
-        seats: t.seats.filter(s => validationNodeIds.has(s.id))
-      }));
-
-      // Find Unassigned guests
-      const assignedFilteredSet = new Set<string>();
-      tables.forEach(t => t.seats.forEach(s => assignedFilteredSet.add(s.id)));
-
-      const unassigned = allNodes.filter(n => !assignedFilteredSet.has(n.id));
-
-      setLayout({ unassigned, tables });
+      setGuests(reconciled);
     } catch (err) {
-      console.error(err);
-      alert("Error cargando el organizador de mesas.");
+      console.error("Error loading visual planner data:", err);
+      alert("Error al cargar los datos del plano.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDragStart = (e: React.DragEvent, nodeId: string, sourceContainerId: string) => {
-    e.dataTransfer.setData('nodeId', nodeId);
-    e.dataTransfer.setData('sourceContainerId', sourceContainerId);
-  };
+  const buildInitial = (confirmedList: Guest[]): SeatingGuest[] => {
+    const recs = confirmedList.map((r, i) => ({ ...r, _i: i }));
+    const used: Record<number, boolean> = {};
+    const arr: SeatingGuest[] = [];
+    let idCounter = 0;
 
-  const handleDrop = (e: React.DragEvent, targetContainerId: string) => {
-    e.preventDefault();
-    if (!layout) return;
+    // Accompanists list
+    const compNames: string[] = [];
+    const compMenu: Record<string, 'Carne' | 'Pescado' | 'Especial' | 'Infantil' | '?'> = {};
 
-    const nodeId = e.dataTransfer.getData('nodeId');
-    const sourceContainerId = e.dataTransfer.getData('sourceContainerId');
+    recs.forEach(r => {
+      if (r.plus_one_name) {
+        r.plus_one_name.split(/[,/]| y | e /).forEach(p => {
+          const fn = norm(p).split(' ')[0];
+          if (fn.length >= 3) {
+            compNames.push(fn);
+            if (!compMenu[fn]) compMenu[fn] = mapDbMenu(r.plus_one_menu_choice || r.menu_choice);
+          }
+        });
+      }
+    });
 
-    if (sourceContainerId === targetContainerId) return;
+    const take = (seatName: string) => {
+      const key = ALIAS[norm(seatName)] || norm(seatName);
+      const fn = key.split(' ')[0];
+      let c: typeof recs[number] | undefined;
 
-    // Find the node
-    let node: SeatNode | undefined;
-    if (sourceContainerId === 'unassigned') {
-      node = layout.unassigned.find(n => n.id === nodeId);
-    } else {
-      for (const t of layout.tables) {
-        if (t.id === sourceContainerId) {
-          node = t.seats.find(n => n.id === nodeId);
-          break;
+      if (key.indexOf(' ') >= 0) {
+        c = recs.find(r => !used[r._i] && (norm(r.first_name + ' ' + r.last_name).indexOf(key) >= 0 || norm(r.first_name).indexOf(key) >= 0));
+      }
+      if (!c) {
+        c = recs.find(r => !used[r._i] && norm(r.first_name).split(' ')[0] === fn);
+      }
+      if (c) {
+        used[c._i] = true;
+      }
+      return c;
+    };
+
+    TABLES.forEach(t => {
+      const seats = SEATS[t.id] || [];
+      seats.forEach(seatName => {
+        const kid = KIDS.has(seatName);
+        const rec = take(seatName);
+        const fn = (ALIAS[norm(seatName)] || norm(seatName)).split(' ')[0];
+
+        // FIXED CLAUDE BUG: Use compMenu[fn] correctly to inherit menu
+        let conf = rec ? true : (compNames.indexOf(fn) >= 0);
+        let menu = kid ? 'Infantil' : (rec ? mapDbMenu(rec.menu_choice) : (compMenu[fn] || '?'));
+        if (kid) conf = true;
+
+        const g: SeatingGuest = {
+          id: 'g' + (idCounter++),
+          name: seatName,
+          ap: rec ? rec.last_name.split(' ')[0] : '',
+          table: t.id,
+          menu: menu as any,
+          conf: conf,
+          child: kid,
+          al: rec ? rec.dietary_restrictions || '' : '',
+          ac: rec ? rec.plus_one_name || '' : '',
+          guestId: rec ? rec.id : undefined,
+          isPlusOne: !rec && (compNames.indexOf(fn) >= 0) ? true : undefined,
+          isChild: kid ? true : undefined
+        };
+
+        const fx = FORCE[t.id + ':' + seatName];
+        if (fx) {
+          if (fx.menu) g.menu = fx.menu;
+          if (fx.conf !== undefined) g.conf = fx.conf;
+        }
+
+        arr.push(g);
+      });
+    });
+
+    // Unassigned confirmed guests
+    recs.forEach(r => {
+      if (!used[r._i]) {
+        arr.push({
+          id: 'g' + (idCounter++),
+          name: r.first_name,
+          ap: r.last_name ? r.last_name.split(' ')[0] : '',
+          table: '__none__',
+          menu: mapDbMenu(r.menu_choice),
+          conf: true,
+          child: false,
+          al: r.dietary_restrictions || '',
+          ac: r.plus_one_name || '',
+          guestId: r.id
+        });
+
+        if (r.has_plus_one) {
+          arr.push({
+            id: 'g' + (idCounter++),
+            name: r.plus_one_name || `Acompañante de ${r.first_name}`,
+            ap: '',
+            table: '__none__',
+            menu: mapDbMenu(r.plus_one_menu_choice || r.menu_choice),
+            conf: true,
+            child: false,
+            al: '',
+            ac: '',
+            guestId: r.id,
+            isPlusOne: true
+          });
         }
       }
-    }
+    });
 
-    if (!node) return; // shouldn't happen
-
-    // Check capacity if target is a table
-    if (targetContainerId !== 'unassigned') {
-      const targetTable = layout.tables.find(t => t.id === targetContainerId);
-      if (targetTable && targetTable.seats.length >= targetTable.maxSeats) {
-        alert("Esta mesa ya está llena.");
-        return;
-      }
-    }
-
-    // Create a deep copy of layout to modify
-    const newLayout = { ...layout };
-    newLayout.tables = newLayout.tables.map(t => ({ ...t, seats: [...t.seats] }));
-    newLayout.unassigned = [...newLayout.unassigned];
-
-    // Remove from source
-    if (sourceContainerId === 'unassigned') {
-      newLayout.unassigned = newLayout.unassigned.filter(n => n.id !== nodeId);
-    } else {
-      const srcTable = newLayout.tables.find(t => t.id === sourceContainerId);
-      if (srcTable) {
-        srcTable.seats = srcTable.seats.filter(n => n.id !== nodeId);
-      }
-    }
-
-    // Add to target
-    if (targetContainerId === 'unassigned') {
-      newLayout.unassigned.push(node);
-    } else {
-      const tgtTable = newLayout.tables.find(t => t.id === targetContainerId);
-      if (tgtTable) {
-        tgtTable.seats.push(node);
-      }
-    }
-
-    setLayout(newLayout);
+    return arr;
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault(); // necessary to allow drop
+  // Drag and drop mechanics
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    setDraggedId(id);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', id);
   };
 
-  const addTable = () => {
-    if (!layout) return;
-    const number = layout.tables.length + 1;
-    setLayout({
-      ...layout,
-      tables: [...layout.tables, { id: `table_${Date.now()}`, name: `Nueva Mesa ${number}`, maxSeats: 10, seats: [] }]
+  const handleDragEnd = () => {
+    setDraggedId(null);
+    setOverTableId(null);
+    setOverSeatId(null);
+  };
+
+  const moveGuest = (id: string, targetTable: number | '__none__', beforeId?: string | null) => {
+    setGuests(prev => {
+      const next = [...prev];
+      const i = next.findIndex(x => x.id === id);
+      if (i < 0) return prev;
+
+      const g = { ...next.splice(i, 1)[0] };
+      g.table = targetTable;
+
+      if (beforeId) {
+        const j = next.findIndex(x => x.id === beforeId);
+        if (j !== -1) {
+          next.splice(j, 0, g);
+          return next;
+        }
+      }
+
+      // Re-add at the end of the table
+      let lastIndex = -1;
+      next.forEach((x, k) => {
+        if (x.table === targetTable) lastIndex = k;
+      });
+      next.splice(lastIndex + 1, 0, g);
+      return next;
     });
   };
 
-  const deleteTable = (id: string) => {
-    if (!layout) return;
-    if (confirm("¿Estás seguro de eliminar esta mesa? Los invitados volverán a 'Sin Asignar'.")) {
-      const table = layout.tables.find(t => t.id === id);
-      if (!table) return;
+  const handleTableDragOver = (e: React.DragEvent, tableId: number | '__none__') => {
+    e.preventDefault();
+    setOverTableId(tableId);
+  };
 
-      const newLayout = { ...layout };
-      newLayout.tables = newLayout.tables.filter(t => t.id !== id);
-      newLayout.unassigned = [...newLayout.unassigned, ...table.seats];
-      setLayout(newLayout);
+  const handleTableDrop = (e: React.DragEvent, tableId: number | '__none__') => {
+    e.preventDefault();
+    if (!draggedId) return;
+    moveGuest(draggedId, tableId, null);
+    handleDragEnd();
+  };
+
+  const handleSeatDragOver = (e: React.DragEvent, seatId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setOverSeatId(seatId);
+  };
+
+  const handleSeatDrop = (e: React.DragEvent, targetGuest: SeatingGuest) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!draggedId || draggedId === targetGuest.id) return;
+    moveGuest(draggedId, targetGuest.table, targetGuest.id);
+    handleDragEnd();
+  };
+
+  // Popup edition logic
+  const openPopover = (guest: SeatingGuest, targetEl: HTMLElement) => {
+    setPopoverGuest(guest);
+    setPopoverAnchor(targetEl.getBoundingClientRect());
+  };
+
+  const closePopover = () => {
+    setPopoverGuest(null);
+    setPopoverAnchor(null);
+  };
+
+  const updateDbGuest = async (guestId: string, updates: any) => {
+    try {
+      const { error } = await supabase
+        .from('guests')
+        .update(updates)
+        .eq('id', guestId);
+      if (error) throw error;
+    } catch (err) {
+      console.error("Error updating guest in db:", err);
     }
   };
 
-  const changeTableName = (id: string, newName: string) => {
-    if (!layout) return;
-    setLayout({
-      ...layout,
-      tables: layout.tables.map(t => t.id === id ? { ...t, name: newName } : t)
-    });
+  const handlePopoverMenuChoice = async (m: 'Carne' | 'Pescado' | 'Especial' | 'Infantil' | '?') => {
+    if (!popoverGuest) return;
+    
+    // Update local state
+    setGuests(prev => prev.map(g => g.id === popoverGuest.id ? { ...g, menu: m, child: m === 'Infantil' ? true : g.child } : g));
+    
+    // Sync to DB
+    if (popoverGuest.guestId) {
+      const dbMenu = mapMenuToDb(m);
+      const updates: any = {};
+      if (popoverGuest.isPlusOne) {
+        updates.plus_one_menu_choice = dbMenu;
+      } else {
+        updates.menu_choice = dbMenu;
+      }
+      await updateDbGuest(popoverGuest.guestId, updates);
+    }
+
+    setPopoverGuest(prev => prev ? { ...prev, menu: m, child: m === 'Infantil' ? true : prev.child } : null);
   };
 
-  const changeTableCapacity = (id: string, maxSeats: number) => {
-    if (!layout) return;
-    setLayout({
-      ...layout,
-      tables: layout.tables.map(t => t.id === id ? { ...t, maxSeats } : t)
-    });
+  const handlePopoverConfChange = async (confVal: boolean) => {
+    if (!popoverGuest) return;
+
+    setGuests(prev => prev.map(g => g.id === popoverGuest.id ? { ...g, conf: confVal } : g));
+
+    if (popoverGuest.guestId && !popoverGuest.isPlusOne) {
+      await updateDbGuest(popoverGuest.guestId, { attending: confVal });
+    }
+
+    setPopoverGuest(prev => prev ? { ...prev, conf: confVal } : null);
   };
 
+  const handlePopoverChildChange = async () => {
+    if (!popoverGuest) return;
+
+    const newChild = !popoverGuest.child;
+    const newMenu = newChild ? 'Infantil' : 'Carne';
+
+    setGuests(prev => prev.map(g => g.id === popoverGuest.id ? { ...g, child: newChild, menu: newMenu as any } : g));
+
+    if (popoverGuest.guestId) {
+      if (popoverGuest.isPlusOne) {
+        await updateDbGuest(popoverGuest.guestId, { plus_one_menu_choice: newChild ? 'child' : 'meat' });
+      } else {
+        await updateDbGuest(popoverGuest.guestId, { menu_choice: newChild ? 'child' : 'meat' });
+      }
+    }
+
+    setPopoverGuest(prev => prev ? { ...prev, child: newChild, menu: newMenu as any } : null);
+  };
+
+  const handlePopoverDelete = async () => {
+    if (!popoverGuest) return;
+
+    if (window.confirm(`¿Eliminar a ${popoverGuest.name}?`)) {
+      setGuests(prev => prev.filter(g => g.id !== popoverGuest.id));
+
+      if (popoverGuest.guestId && !popoverGuest.isPlusOne && !popoverGuest.isChild) {
+        try {
+          const { error } = await supabase.from('guests').delete().eq('id', popoverGuest.guestId);
+          if (error) throw error;
+        } catch (err) {
+          console.error("Error deleting guest:", err);
+        }
+      }
+
+      closePopover();
+    }
+  };
+
+  // Add guest manually
+  const addGuest = () => {
+    const name = prompt('Nombre de la persona a añadir:');
+    if (!name) return;
+    
+    setGuests(prev => [
+      ...prev,
+      {
+        id: 'g_manual_' + Date.now(),
+        name: name.trim(),
+        ap: '',
+        table: '__none__',
+        menu: '?',
+        conf: false,
+        child: false,
+        al: '',
+        ac: ''
+      }
+    ]);
+  };
+
+  // Save layout to Supabase
   const saveLayout = async () => {
-    if (!layout) return;
     setSaving(true);
     try {
-      const layoutDataToSave = {
-        tables: layout.tables
-      };
+      const planData = { guests };
       
-      if (messageId) {
-        // Update existing definition
-        const { error } = await supabase
-          .from('messages')
-          .update({ message: JSON.stringify(layoutDataToSave) })
-          .eq('id', messageId);
-        if (error) throw error;
-      } else {
-        // Insert new definition
-        const { data, error } = await supabase
-          .from('messages')
-          .insert({
-            sender_name: 'SYSTEM_SEATING_PLAN',
-            message: JSON.stringify(layoutDataToSave)
-          })
-          .select('id')
-          .single();
-          
-        if (error) throw error;
-        if (data) setMessageId(data.id);
-      }
+      const { error } = await supabase
+        .from('seating_plan')
+        .upsert({ id: 'main', plan_data: planData }, { onConflict: 'id' });
 
-      alert("Organizador guardado exitosamente!");
+      if (error) throw error;
+      alert("Diseño guardado correctamente en Supabase.");
     } catch (err) {
-      console.error(err);
-      alert("Error guardando el organizador.");
+      console.error("Error saving layout:", err);
+      // Fallback to local storage or messages if seating_plan fails
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(guests));
+        alert("Guardado en almacenamiento local (no se pudo acceder a Supabase).");
+      } catch (localErr) {
+        alert("Error al guardar.");
+      }
     } finally {
       setSaving(false);
     }
   };
 
+  // Reset layout
+  const resetLayout = () => {
+    if (window.confirm('¿Reiniciar al diseño original? Se perderán los cambios manuales de las mesas.')) {
+      const confirmedList = dbGuests.filter(g => g.attending === true);
+      const initial = buildInitial(confirmedList);
+      setGuests(initial);
+      closePopover();
+    }
+  };
+
+  // Print layout
+  const printLayout = () => {
+    window.print();
+  };
+
+  // Render Stats computations
+  const getStats = () => {
+    const seated = guests.filter(g => g.table !== '__none__');
+    const counts = { Carne: 0, Pescado: 0, Especial: 0, Infantil: 0, '?': 0 };
+    seated.forEach(g => {
+      counts[g.menu] = (counts[g.menu] || 0) + 1;
+    });
+    const unconfirmed = seated.filter(g => !g.conf).length;
+    const unassigned = guests.filter(g => g.table === '__none__').length;
+
+    return {
+      seated: seated.length,
+      unassigned,
+      unconfirmed,
+      ...counts
+    };
+  };
+
+  const stats = getStats();
+
+  const getDups = () => {
+    const dups: Record<string, number> = {};
+    guests.forEach(g => {
+      const k = norm(g.name).split(' ')[0];
+      dups[k] = (dups[k] || 0) + 1;
+    });
+    return dups;
+  };
+  const dupNames = getDups();
+
+  const renderLabel = (g: SeatingGuest) => {
+    const isDup = dupNames[norm(g.name).split(' ')[0]] > 1 && g.ap;
+    return (
+      <>
+        <span className={styles.nm}>{g.name}</span>
+        {isDup && <span className={styles.ap}>{g.ap}</span>}
+      </>
+    );
+  };
+
+  const getMenuClass = (m: string) => {
+    if (m === 'Carne') return styles.mCarne;
+    if (m === 'Pescado') return styles.mPescado;
+    if (m === 'Especial') return styles.mEspecial;
+    if (m === 'Infantil') return styles.mInfantil;
+    return styles.mUnassigned;
+  };
+
   if (loading) {
-    return <div style={{ display: "flex", justifyContent: "center", padding: "4rem", color: "#64748b" }}><RefreshCw className="animate-spin" size={32} /></div>;
+    return (
+      <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "#f6f1e7" }}>
+        <RefreshCw className="animate-spin" size={32} color="#b8893b" />
+      </div>
+    );
   }
 
-  if (!layout) return null;
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', height: 'calc(100vh - 40px)', paddingBottom: '2rem' }}>
+    <div className={styles.dashboardContainer} onClick={closePopover}>
       
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "white", padding: "1.5rem", borderRadius: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }}>
+      {/* Header panel */}
+      <div className={styles.headerPanel}>
         <div>
-          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: "700", color: "#0f172a" }}>Organizador de Mesas</h1>
-          <p style={{ margin: 0, color: "#64748b", fontSize: "0.875rem", marginTop: "0.25rem" }}>
-            Arrastra a los invitados a sus respectivas mesas.
-          </p>
+          <h1>Nadia <span>&</span> Adrián · <span>Organizador de Mesas</span></h1>
+          <div className={styles.date}>Hacienda Mityana · 25/07/2026</div>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <button 
-            onClick={addTable}
-            style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.25rem", borderRadius: "8px", border: "1px dashed #cbd5e1", background: "transparent", color: "#475569", fontWeight: "600", cursor: "pointer" }}
-          >
-            <Plus size={18} /> Añadir Mesa
+        <div className={styles.tools}>
+          <input 
+            type="search" 
+            placeholder="Buscar por nombre..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            autoComplete="off"
+          />
+          <button className={styles.btn} onClick={addGuest}>+ Persona</button>
+          <button className={`${styles.btn} ${styles.btnSave}`} onClick={saveLayout} disabled={saving}>
+            <Save size={16} /> {saving ? "Guardando..." : "Guardar Diseño"}
           </button>
-          <button 
-            onClick={saveLayout}
-            disabled={saving}
-            style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", borderRadius: "8px", border: "none", background: "#0f172a", color: "white", fontWeight: "600", cursor: saving ? "not-allowed" : "pointer" }}
-          >
-            <Save size={18} /> {saving ? "Guardando..." : "Guardar Diseño"}
+          <button className={styles.btn} onClick={printLayout}>
+            <Printer size={16} /> Imprimir
           </button>
+          <button className={styles.btn} onClick={resetLayout}>Reiniciar</button>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '1.5rem', flex: 1, minHeight: 0 }}>
-        {/* Unassigned Sidebar */}
-        <div 
-          style={{ width: "300px", background: "white", borderRadius: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column" }}
-          onDragOver={handleDragOver}
-          onDrop={(e) => handleDrop(e, 'unassigned')}
-        >
-          <div style={{ padding: "1rem", borderBottom: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f8fafc", borderTopLeftRadius: "12px", borderTopRightRadius: "12px" }}>
-            <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "#334155", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <Users size={18} /> Sin asignar
-            </h3>
-            <span style={{ background: "#e2e8f0", color: "#475569", padding: "0.125rem 0.5rem", borderRadius: "999px", fontSize: "0.75rem", fontWeight: 700 }}>
-              {layout.unassigned.length}
-            </span>
-          </div>
+      {/* Stats list */}
+      <div className={styles.stats}>
+        <div className={styles.stat}><b>{stats.seated}</b> sentados</div>
+        <div className={`${styles.stat} ${styles.statMeat}`}><b>{stats.Carne}</b> {MENU_ICON.Carne} carne</div>
+        <div className={`${styles.stat} ${styles.statFish}`}><b>{stats.Pescado}</b> {MENU_ICON.Pescado} pescado</div>
+        {stats.Especial > 0 && <div className={`${styles.stat} ${styles.statVeg}`}><b>{stats.Especial}</b> {MENU_ICON.Especial} especial</div>}
+        <div className={`${styles.stat} ${styles.statKid}`}><b>{stats.Infantil}</b> {MENU_ICON.Infantil} infantil</div>
+        {stats['?'] > 0 && <div className={styles.stat}><b>{stats['?']}</b> {MENU_ICON['?']} sin menú</div>}
+        {stats.unconfirmed > 0 && <div className={`${styles.stat} ${styles.statOrange}`}><b>{stats.unconfirmed}</b> sin confirmar</div>}
+        {stats.unassigned > 0 && <div className={styles.stat}><b>{stats.unassigned}</b> sin asignar</div>}
+      </div>
+
+      {/* Seating Layout Canvas */}
+      <div className={styles.layout}>
+        {/* Unassigned Guest Sidebar */}
+        <aside className={styles.tray}>
+          <h3>Sin asignar</h3>
+          <p className={styles.traySubtitle}>Arrastra a una silla, o toca y selecciona mesa.</p>
           
-          <div style={{ padding: "1rem", overflowY: "auto", flex: 1, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            {layout.unassigned.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "2rem 1rem", color: "#94a3b8", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
-                <Users size={32} />
-                <span style={{ fontSize: "0.875rem" }}>Todos los invitados están asignados</span>
-              </div>
-            ) : (
-              layout.unassigned.map(node => (
-                <div 
-                  key={node.id}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, node.id, 'unassigned')}
-                  style={{ padding: "0.75rem", background: "white", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "grab", display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
-                >
-                  <GripVertical size={14} color="#94a3b8" />
-                  <span style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 500 }}>
-                    {node.name}
-                  </span>
-                  {node.type === 'child' && (
-                    <span style={{ fontSize: "0.65rem", background: "#f1f5f9", padding: "0.125rem 0.375rem", borderRadius: "4px", color: "#64748b", textTransform: "uppercase" }}>Niño</span>
-                  )}
-                </div>
-              ))
-            )}
+          <div 
+            className={`${styles.unassignedZone} ${overTableId === '__none__' ? styles.over : ''} ${guests.filter(g => g.table === '__none__').length === 0 ? styles.empty : ''}`}
+            onDragOver={(e) => handleTableDragOver(e, '__none__')}
+            onDragLeave={() => setOverTableId(null)}
+            onDrop={(e) => handleTableDrop(e, '__none__')}
+            data-table="__none__"
+          >
+            {guests
+              .filter(g => g.table === '__none__')
+              .map(g => {
+                const dim = searchTerm && !g.name.toLowerCase().includes(searchTerm.toLowerCase());
+                return (
+                  <div
+                    key={g.id}
+                    className={`${styles.chip} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${dim ? styles.dim : ''}`}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, g.id)}
+                    onDragEnd={handleDragEnd}
+                    onClick={(e) => { e.stopPropagation(); openPopover(g, e.currentTarget); }}
+                    title={g.name}
+                  >
+                    <span>{MENU_ICON[g.menu]}</span>
+                    {renderLabel(g)}
+                    {g.al && ' ⚠️'}
+                  </div>
+                );
+              })}
+          </div>
+
+          <div className={styles.legend}>
+            <div className={styles.legendItem}>
+              <span className={styles.legendDot} style={{ background: '#f5ddd6', borderColor: '#e3c4bc' }}></span> Carne
+              <span className={styles.legendDot} style={{ background: '#d9e7f4', borderColor: '#b9cfd4' }}></span> Pescado
+            </div>
+            <div className={styles.legendItem}>
+              <span className={styles.legendDot} style={{ background: '#dcecd6', borderColor: '#c5dbbf' }}></span> Especial
+              <span className={styles.legendDot} style={{ background: '#ece0f7', borderColor: '#d4c2ed' }}></span> Infantil
+            </div>
+            <div className={styles.legendItem}>
+              <span className={styles.legendDot} style={{ borderStyle: 'dashed', borderColor: '#e08a2b', background: '#fdeccf' }}></span> Sin confirmar
+              <span className={styles.legendDot} style={{ background: '#eeebe6', borderColor: '#dcd9d4' }}></span> Menú sin saber
+            </div>
+          </div>
+        </aside>
+
+        {/* Tables Floor Plan */}
+        <div className={styles.board}>
+          <div className={styles.room}>
+            <div className={styles.grid}>
+              
+              {/* Render Presidential first and alone at the top */}
+              {TABLES.filter(t => t.head).map(t => {
+                const arr = guests.filter(g => g.table === t.id);
+                const isOver = overTableId === t.id;
+                
+                return (
+                  <div key={t.id} className={`${styles.cell} ${styles.headcell}`}>
+                    <div className={styles.tcap}>
+                      {t.name || `Mesa ${t.id}`}
+                      <span className={styles.cnt}>{arr.length} pers · 🥩{arr.filter(x => x.menu === 'Carne').length} 🐟{arr.filter(x => x.menu === 'Pescado').length}</span>
+                    </div>
+                    <div 
+                      className={`${styles.head} ${isOver ? styles.over : ''}`}
+                      onDragOver={(e) => handleTableDragOver(e, t.id)}
+                      onDragLeave={() => setOverTableId(null)}
+                      onDrop={(e) => handleTableDrop(e, t.id)}
+                      data-table={t.id}
+                    >
+                      <div className={styles.toprow}>
+                        {arr.map((g, idx) => {
+                          const dim = searchTerm && !g.name.toLowerCase().includes(searchTerm.toLowerCase());
+                          return (
+                            <div
+                              key={g.id}
+                              className={`${styles.seat} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${overSeatId === g.id ? styles.insbar : ''} ${dim ? styles.dim : ''}`}
+                              draggable
+                              onDragStart={(e) => handleDragStart(e, g.id)}
+                              onDragEnd={handleDragEnd}
+                              onDragOver={(e) => handleSeatDragOver(e, g.id)}
+                              onDragLeave={() => setOverSeatId(null)}
+                              onDrop={(e) => handleSeatDrop(e, g)}
+                              onClick={(e) => { e.stopPropagation(); openPopover(g, e.currentTarget); }}
+                              title={`${g.name} · ${g.menu}`}
+                            >
+                              {renderLabel(g)}
+                              <span className={styles.tag}>{MENU_ICON[g.menu]}{g.al && ' ⚠️'}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className={styles.rect}>
+                        <span className={styles.tnum}>{t.id}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Render the remaining circular tables in wrapping grid */}
+              {TABLES.filter(t => !t.head).slice().sort((a,b) => a.id - b.id).map(t => {
+                const arr = guests.filter(g => g.table === t.id);
+                const n = arr.length;
+                const isOver = overTableId === t.id;
+
+                return (
+                  <div key={t.id} className={styles.cell}>
+                    <div className={styles.tcap}>
+                      Mesa {t.id} {t.name && <small>“{t.name}”</small>}
+                      <span className={styles.cnt}>
+                        <span className={n > 10 ? styles.warn : ''}>
+                          {n} pers · 🥩{arr.filter(x => x.menu === 'Carne').length} 🐟{arr.filter(x => x.menu === 'Pescado').length}
+                        </span>
+                      </span>
+                    </div>
+
+                    <div 
+                      className={`${styles.round} ${isOver ? styles.over : ''}`}
+                      onDragOver={(e) => handleTableDragOver(e, t.id)}
+                      onDragLeave={() => setOverTableId(null)}
+                      onDrop={(e) => handleTableDrop(e, t.id)}
+                      data-table={t.id}
+                    >
+                      <div className={styles.cloth}>
+                        <div className={styles.tnum}>{t.id}</div>
+                        {t.name && <div className={styles.tnick}>{t.name}</div>}
+                      </div>
+
+                      {arr.map((g, idx) => {
+                        const ang = (-90 + (idx * 360) / Math.max(n, 1)) * Math.PI / 180;
+                        const left = `${50 + 42 * Math.cos(ang)}%`;
+                        const top = `${50 + 42 * Math.sin(ang)}%`;
+                        const dim = searchTerm && !g.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+                        return (
+                          <div
+                            key={g.id}
+                            className={`${styles.seat} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${overSeatId === g.id ? styles.insbar : ''} ${dim ? styles.dim : ''}`}
+                            style={{ left, top }}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, g.id)}
+                            onDragEnd={handleDragEnd}
+                            onDragOver={(e) => handleSeatDragOver(e, g.id)}
+                            onDragLeave={() => setOverSeatId(null)}
+                            onDrop={(e) => handleSeatDrop(e, g)}
+                            onClick={(e) => { e.stopPropagation(); openPopover(g, e.currentTarget); }}
+                            title={`${g.name} · ${g.menu}`}
+                          >
+                            {renderLabel(g)}
+                            <span className={styles.tag}>{MENU_ICON[g.menu]}{g.al && ' ⚠️'}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+
+            </div>
+            <div className={styles.doorHint}>— — — ENTRADA — — —</div>
           </div>
         </div>
-
-        {/* Tables Canvas */}
-        <div style={{ flex: 1, overflowY: "auto", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem", alignContent: "start" }}>
-          {layout.tables.map(table => (
-            <motion.div 
-              key={table.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              style={{ background: "white", borderRadius: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", overflow: "hidden", border: table.seats.length > table.maxSeats ? "2px solid #ef4444" : "1px solid #e2e8f0" }}
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, table.id)}
-            >
-              <div style={{ padding: "1rem", borderBottom: "1px solid #e2e8f0", background: table.id === 'presidential' ? "#f8fafc" : "white" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
-                  <input 
-                    type="text" 
-                    value={table.name} 
-                    onChange={e => changeTableName(table.id, e.target.value)}
-                    style={{ fontSize: "1.125rem", fontWeight: 700, border: "1px solid transparent", outline: "none", background: "transparent", color: "#0f172a", width: "100%", padding: "0.25rem", borderRadius: "4px" }}
-                    onFocus={e => e.target.style.borderColor = "#cbd5e1"}
-                    onBlur={e => e.target.style.borderColor = "transparent"}
-                  />
-                  {table.id !== 'presidential' && (
-                    <button onClick={() => deleteTable(table.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "#94a3b8", padding: "0.25rem" }}>
-                      <Trash2 size={16} />
-                    </button>
-                  )}
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{ fontSize: "0.875rem", color: "#64748b", display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                    Capacidad: 
-                    <input 
-                      type="number" 
-                      value={table.maxSeats} 
-                      onChange={e => changeTableCapacity(table.id, parseInt(e.target.value) || 0)}
-                      style={{ width: "40px", border: "1px solid #cbd5e1", borderRadius: "4px", padding: "0.125rem", textAlign: "center", fontSize: "0.875rem" }}
-                    />
-                  </div>
-                  <span style={{ fontSize: "0.875rem", fontWeight: 600, color: table.seats.length > table.maxSeats ? "#ef4444" : table.seats.length === table.maxSeats ? "#10b981" : "#3b82f6" }}>
-                    {table.seats.length} / {table.maxSeats}
-                  </span>
-                </div>
-              </div>
-
-              <div style={{ padding: "1rem", minHeight: "150px", display: "flex", flexDirection: "column", gap: "0.5rem", background: "#f8fafc", transition: "background 0.2s" }}>
-                {table.seats.length === 0 ? (
-                  <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontSize: "0.875rem", border: "1px dashed #cbd5e1", borderRadius: "8px" }}>
-                    Arrastra invitados aquí
-                  </div>
-                ) : (
-                  table.seats.map((node, idx) => (
-                    <div 
-                      key={node.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, node.id, table.id)}
-                      style={{ padding: "0.5rem 0.75rem", background: "white", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "grab", display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem", boxShadow: "0 1px 2px rgba(0,0,0,0.05)", position: "relative" }}
-                    >
-                      <span style={{ fontSize: "0.75rem", color: "#94a3b8", minWidth: "1rem" }}>{idx + 1}.</span>
-                      <GripVertical size={14} color="#cbd5e1" />
-                      <span style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontWeight: 500 }}>
-                        {node.name}
-                      </span>
-                      {node.type === 'child' && (
-                        <span style={{ fontSize: "0.65rem", background: "#f1f5f9", padding: "0.125rem 0.375rem", borderRadius: "4px", color: "#64748b", textTransform: "uppercase" }}>Niño</span>
-                      )}
-                    </div>
-                  ))
-                )}
-                {table.seats.length > table.maxSeats && (
-                  <div style={{ padding: "0.5rem", background: "#fef2f2", border: "1px dashed #fca5a5", color: "#ef4444", fontSize: "0.75rem", borderRadius: "6px", display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.5rem" }}>
-                    <AlertCircle size={14} /> Excede límite
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
       </div>
+
+      <div className={styles.hint}>
+        💡 <b>Arrastra</b> a cada persona a su silla; suéltala sobre otra silla para intercalarla en ese orden. <b>Toca una silla</b> para cambiar el menú, marcar niño (menú infantil), confirmar o eliminar. En móvil: toca una persona y luego la mesa. Naranja = sin confirmar. Se guarda en Supabase.
+      </div>
+
+      {/* Editing popover dialog */}
+      <AnimatePresence>
+        {popoverGuest && popoverAnchor && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className={styles.popover}
+            style={{
+              top: `${popoverAnchor.bottom + window.scrollY + 6}px`,
+              left: `${Math.max(6, Math.min(window.innerWidth - 248, popoverAnchor.left + window.scrollX))}px`
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span className={styles.close} onClick={closePopover}>×</span>
+            <h4>{popoverGuest.name} {popoverGuest.ap}</h4>
+            
+            {popoverGuest.al && <div className={styles.al}>⚠️ {popoverGuest.al}</div>}
+            {popoverGuest.ac && <div className={styles.ac}>+ {popoverGuest.ac}</div>}
+
+            <div className={styles.row}>
+              <div className={styles.lbl}>Menú</div>
+              <div className={styles.opts}>
+                {(['Carne', 'Pescado', 'Especial', 'Infantil', '?'] as const).map(m => (
+                  <div 
+                    key={m} 
+                    className={`${styles.opt} ${popoverGuest.menu === m ? styles.on : ''}`}
+                    onClick={() => handlePopoverMenuChoice(m)}
+                  >
+                    {MENU_ICON[m]} {m === '?' ? 'Sin saber' : m}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.lbl}>Estado</div>
+              <div className={styles.opts}>
+                <div 
+                  className={`${styles.opt} ${popoverGuest.conf ? styles.on : ''}`}
+                  onClick={() => handlePopoverConfChange(true)}
+                >
+                  ✔ Confirmado
+                </div>
+                <div 
+                  className={`${styles.opt} ${!popoverGuest.conf ? styles.on : ''}`}
+                  onClick={() => handlePopoverConfChange(false)}
+                >
+                  ⏳ Sin confirmar
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.lbl}>Tipo</div>
+              <div className={styles.opts}>
+                <div 
+                  className={`${styles.opt} ${popoverGuest.child ? styles.on : ''}`}
+                  onClick={handlePopoverChildChange}
+                >
+                  🧒 Niño (menú infantil)
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.del} onClick={handlePopoverDelete}>
+              🗑 Eliminar persona
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
