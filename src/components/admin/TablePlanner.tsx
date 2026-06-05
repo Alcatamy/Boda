@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { Save, RefreshCw, Printer } from "lucide-react";
@@ -639,6 +639,14 @@ export default function TablePlanner() {
     setSelectedGuestId(null);
   };
 
+  const handleInsertClick = (
+    e: React.MouseEvent<HTMLElement>,
+    tableId: number | '__none__',
+    beforeId?: string | null
+  ) => {
+    handleTouchTableClick(e, tableId, beforeId);
+  };
+
   const handleGuestClick = (e: React.MouseEvent<HTMLElement>, guest: SeatingGuest) => {
     e.stopPropagation();
 
@@ -1118,6 +1126,7 @@ export default function TablePlanner() {
               {/* Render all tables using custom grid coordinate mapping */}
               {tables.slice().sort((a,b) => a.id - b.id).map(t => {
                 const arr = guests.filter(g => g.table === t.id);
+                const moveTargets = arr.filter(g => g.id !== selectedGuestId);
                 const n = arr.length;
                 const isOver = overTableId === t.id;
                 const pos = GRID_POSITIONS[t.id];
@@ -1151,24 +1160,45 @@ export default function TablePlanner() {
                           {arr.map((g) => {
                             const dim = searchTerm && !g.name.toLowerCase().includes(searchTerm.toLowerCase());
                             return (
-                              <div
-                                key={g.id}
-                                className={`${styles.seat} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${selectedGuestId === g.id ? styles.sel : ''} ${overSeatId === g.id ? styles.insbar : ''} ${dim ? styles.dim : ''}`}
-                                draggable
-                                onDragStart={(e) => handleDragStart(e, g.id)}
-                                onDragEnd={handleDragEnd}
-                                onDragOver={(e) => handleSeatDragOver(e, g.id)}
-                                onDragLeave={() => setOverSeatId(null)}
-                                onDrop={(e) => handleSeatDrop(e, g)}
-                                onClick={(e) => handleGuestClick(e, g)}
-                                onDoubleClick={(e) => { e.stopPropagation(); void deleteGuest(g); }}
-                                title={`${g.name} · ${g.menu}`}
-                              >
-                                {renderLabel(g)}
-                                <span className={styles.tag}>{MENU_ICON[g.menu]}{g.al && ' ⚠️'}</span>
-                              </div>
+                              <Fragment key={g.id}>
+                                {selectedGuestId && selectedGuestId !== g.id && (
+                                  <button
+                                    type="button"
+                                    className={styles.inlineInsertSlot}
+                                    onClick={(e) => handleInsertClick(e, t.id, g.id)}
+                                    title={`Colocar antes de ${g.name}`}
+                                  >
+                                    +
+                                  </button>
+                                )}
+                                <div
+                                  className={`${styles.seat} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${selectedGuestId === g.id ? styles.sel : ''} ${overSeatId === g.id ? styles.insbar : ''} ${dim ? styles.dim : ''}`}
+                                  draggable
+                                  onDragStart={(e) => handleDragStart(e, g.id)}
+                                  onDragEnd={handleDragEnd}
+                                  onDragOver={(e) => handleSeatDragOver(e, g.id)}
+                                  onDragLeave={() => setOverSeatId(null)}
+                                  onDrop={(e) => handleSeatDrop(e, g)}
+                                  onClick={(e) => handleGuestClick(e, g)}
+                                  onDoubleClick={(e) => { e.stopPropagation(); void deleteGuest(g); }}
+                                  title={`${g.name} · ${g.menu}`}
+                                >
+                                  {renderLabel(g)}
+                                  <span className={styles.tag}>{MENU_ICON[g.menu]}{g.al && ' ⚠️'}</span>
+                                </div>
+                              </Fragment>
                             );
                           })}
+                          {selectedGuestId && (
+                            <button
+                              type="button"
+                              className={styles.inlineInsertSlot}
+                              onClick={(e) => handleInsertClick(e, t.id, null)}
+                              title="Colocar al final de esta mesa"
+                            >
+                              +
+                            </button>
+                          )}
                         </div>
                         <div className={styles.rect}>
                           <span className={styles.tnum}>{t.id}</span>
@@ -1236,6 +1266,39 @@ export default function TablePlanner() {
                           </div>
                         );
                       })}
+
+                      {selectedGuestId && (
+                        <>
+                          {moveTargets.map((target, idx) => {
+                            const slotCount = Math.max(moveTargets.length + 1, 1);
+                            const ang = (-90 + ((idx + 0.5) * 360) / slotCount) * Math.PI / 180;
+                            const left = `${50 + 48 * Math.cos(ang)}%`;
+                            const top = `${50 + 48 * Math.sin(ang)}%`;
+
+                            return (
+                              <button
+                                type="button"
+                                key={`insert-before-${target.id}`}
+                                className={styles.radialInsertSlot}
+                                style={{ left, top }}
+                                onClick={(e) => handleInsertClick(e, t.id, target.id)}
+                                title={`Colocar antes de ${target.name}`}
+                              >
+                                +
+                              </button>
+                            );
+                          })}
+                          <button
+                            type="button"
+                            className={styles.radialInsertSlot}
+                            style={{ left: '50%', top: '8%' }}
+                            onClick={(e) => handleInsertClick(e, t.id, null)}
+                            title="Colocar al final de esta mesa"
+                          >
+                            +
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
