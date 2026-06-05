@@ -122,6 +122,81 @@
   border-color: #e9d8b4;
 }
 
+.btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.saveBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #4a443b;
+  background: #2b2723;
+  color: #e9d8b4;
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.save_saved {
+  border-color: rgba(116, 164, 98, 0.45);
+  color: #dff0d7;
+}
+
+.save_saving,
+.save_dirty {
+  border-color: rgba(184, 137, 59, 0.65);
+  color: #ffe2a8;
+}
+
+.save_local {
+  border-color: rgba(224, 138, 43, 0.7);
+  color: #ffd6a6;
+}
+
+.save_error {
+  border-color: rgba(192, 86, 63, 0.75);
+  color: #ffc4ba;
+}
+
+.save_idle {
+  color: #cfc0a4;
+}
+
+.touchMoveBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid #cba05a;
+  border-radius: 12px;
+  background: #fff8e7;
+  color: #4b3820;
+  box-shadow: 0 6px 18px rgba(100, 74, 26, 0.12);
+}
+
+.touchMoveBanner b {
+  color: #23201c;
+}
+
+.touchMoveBanner span {
+  flex: 1;
+  font-size: 0.88rem;
+}
+
+.touchMoveBanner button {
+  border: 1px solid #d8bd86;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: #6a4b1f;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.45rem 0.75rem;
+}
+
 /* Stats panel */
 .stats {
   display: flex;
@@ -256,6 +331,8 @@
   flex: 1;
   overflow-x: auto;
   padding-bottom: 1.5rem;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
 }
 
 .room {
@@ -334,6 +411,35 @@
 .tcap .cnt .warn {
   color: #c0563f;
   font-weight: 700;
+}
+
+.tableActions {
+  display: flex;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.tableActions button {
+  border: 1px solid #dfd2bb;
+  border-radius: 999px;
+  background: #fffdf8;
+  color: #6b5f47;
+  cursor: pointer;
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 0.25rem 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.tableActions button:hover {
+  border-color: #b8893b;
+  color: #2b2620;
+}
+
+.tableActions .tableDanger {
+  color: #a84734;
 }
 
 /* Circular table structure */
@@ -447,6 +553,7 @@
   border: 1.5px solid #e3dac9;
   border-radius: 8px;
   padding: 0.25rem 0.5rem;
+  min-height: 28px;
   font-size: 0.72rem;
   line-height: 1.2;
   white-space: nowrap;
@@ -533,6 +640,7 @@
   border: 1px solid #e3dac9;
   border-radius: 12px;
   padding: 0.25rem 0.5rem;
+  min-height: 30px;
   font-size: 0.75rem;
   cursor: grab;
   user-select: none;
@@ -671,6 +779,131 @@
   border-color: #c0563f;
 }
 
+.moveTouch {
+  width: 100%;
+  border: 1px solid #d7bf8b;
+  border-radius: 6px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: #fff8e7;
+  color: #6a4b1f;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.moveTouch:hover {
+  border-color: #b8893b;
+  background: #fff3d7;
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(35, 32, 28, 0.36);
+  backdrop-filter: blur(5px);
+}
+
+.personPicker {
+  width: min(520px, 96vw);
+  max-height: min(680px, 88vh);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d8c9ae;
+  border-radius: 14px;
+  background: #fffdf8;
+  box-shadow: 0 22px 50px rgba(35, 32, 28, 0.28);
+}
+
+.personPickerHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid #e9ddc8;
+  background: #fbf6ea;
+}
+
+.personPickerHeader h3 {
+  margin: 0;
+  color: #23201c;
+  font-size: 1rem;
+}
+
+.personPickerHeader p {
+  margin: 0.2rem 0 0;
+  color: #847865;
+  font-size: 0.78rem;
+}
+
+.personPickerHeader button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #dccdb4;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: #6b5f47;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.personPickerList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.personPickItem {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid #ded4c2;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0.55rem 0.65rem;
+  color: #2b2620;
+  text-align: left;
+  font-size: 0.78rem;
+}
+
+.personPickItem strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.personPickItem em {
+  margin-left: auto;
+  color: #c0563f;
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.personPickItem:hover {
+  border-color: #b8893b;
+  box-shadow: 0 3px 10px rgba(80, 58, 25, 0.12);
+}
+
+.emptyPicker {
+  grid-column: 1 / -1;
+  padding: 2rem 1rem;
+  color: #8a8070;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
 .close {
   position: absolute;
   top: 0.5rem;
@@ -699,8 +932,13 @@
 
 /* Mobile Responsiveness */
 @media (max-width: 760px) {
+  .dashboardContainer {
+    gap: 1rem;
+    padding: 0.75rem;
+  }
   .headerPanel {
     padding: 1rem;
+    border-radius: 10px;
   }
   .headerPanel h1 {
     font-size: 1.2rem;
@@ -708,8 +946,19 @@
   .tools {
     width: 100%;
   }
+  .btn,
+  .saveBadge {
+    min-height: 42px;
+  }
   .tools input[type="search"] {
     width: 100%;
+    min-height: 42px;
+    border-radius: 10px;
+  }
+  .touchMoveBanner {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.45rem;
   }
   .layout {
     flex-direction: column;
@@ -725,8 +974,44 @@
     width: 100%;
   }
   .room {
-    padding: 1rem;
+    min-width: 1220px;
+    padding: 1.25rem;
     border-width: 2px;
+  }
+  .grid {
+    grid-template-columns: repeat(6, 175px);
+    gap: 2.5rem 0.75rem;
+  }
+  .cell {
+    width: 175px;
+  }
+  .round {
+    width: 175px;
+    height: 175px;
+  }
+  .head {
+    max-width: 370px;
+    height: 205px;
+  }
+  .seat {
+    min-height: 34px;
+    max-width: 92px;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.7rem;
+  }
+  .chip {
+    min-height: 38px;
+    font-size: 0.78rem;
+  }
+  .tableActions button {
+    min-height: 30px;
+    padding: 0.3rem 0.45rem;
+  }
+  .personPickerList {
+    grid-template-columns: 1fr;
+  }
+  .personPickItem {
+    min-height: 52px;
   }
   .doorHint {
     display: none;

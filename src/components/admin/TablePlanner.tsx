@@ -47,6 +47,17 @@ interface TableConfig {
   pos?: number[];
 }
 
+interface SeatingPlanData {
+  version: number;
+  updatedAt: string;
+  tables: TableConfig[];
+  guests: SeatingGuest[];
+  deletedSeatKeys: string[];
+  hiddenGuestKeys: string[];
+}
+
+type SaveStatus = 'idle' | 'dirty' | 'saving' | 'saved' | 'local' | 'error';
+
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const TABLES: TableConfig[] = [
@@ -135,6 +146,7 @@ const MENU_ICON: Record<string, string> = {
 };
 
 const STORAGE_KEY = 'mesasBodaNA_v5';
+const AUTOSAVE_DELAY_MS = 900;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -166,17 +178,97 @@ function mapMenuToDb(menu: string): string {
   return '';
 }
 
+function makePlanData(
+  tables: TableConfig[],
+  guests: SeatingGuest[],
+  deletedSeatKeys: Set<string>,
+  hiddenGuestKeys: Set<string>
+): SeatingPlanData {
+  return {
+    version: 2,
+    updatedAt: new Date().toISOString(),
+    tables,
+    guests,
+    deletedSeatKeys: Array.from(deletedSeatKeys),
+    hiddenGuestKeys: Array.from(hiddenGuestKeys),
+  };
+}
+
+function normalizePlanData(raw: unknown): SeatingPlanData | null {
+  if (!raw) return null;
+
+  if (Array.isArray(raw)) {
+    return {
+      version: 1,
+      updatedAt: '',
+      tables: TABLES,
+      guests: raw as SeatingGuest[],
+      deletedSeatKeys: [],
+      hiddenGuestKeys: [],
+    };
+  }
+
+  if (typeof raw !== 'object') return null;
+  const plan = raw as Partial<SeatingPlanData>;
+  if (!Array.isArray(plan.guests) || plan.guests.length === 0) return null;
+
+  return {
+    version: typeof plan.version === 'number' ? plan.version : 1,
+    updatedAt: typeof plan.updatedAt === 'string' ? plan.updatedAt : '',
+    tables: Array.isArray(plan.tables) && plan.tables.length > 0 ? plan.tables : TABLES,
+    guests: plan.guests as SeatingGuest[],
+    deletedSeatKeys: Array.isArray(plan.deletedSeatKeys) ? plan.deletedSeatKeys : [],
+    hiddenGuestKeys: Array.isArray(plan.hiddenGuestKeys) ? plan.hiddenGuestKeys : [],
+  };
+}
+
+function readLocalPlan(): SeatingPlanData | null {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? normalizePlanData(JSON.parse(raw)) : null;
+  } catch (err) {
+    console.error("Error reading local seating plan:", err);
+    return null;
+  }
+}
+
+function writeLocalPlan(planData: SeatingPlanData) {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(planData));
+}
+
+function getSeatTemplateKey(guest: SeatingGuest): string | null {
+  return guest.guestId || guest.table === '__none__' ? null : `${guest.table}:${guest.name}`;
+}
+
+function getGuestRecordKey(guest: Pick<SeatingGuest, 'guestId' | 'isPlusOne'>): string | null {
+  if (!guest.guestId) return null;
+  return `${guest.guestId}:${guest.isPlusOne ? 'plusone' : 'main'}`;
+}
+
 export default function TablePlanner() {
+  const [tables, setTables] = useState<TableConfig[]>(TABLES);
   const [guests, setGuests] = useState<SeatingGuest[]>([]);
   const [dbGuests, setDbGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const [lastSavedAt, setLastSavedAt] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState("");
   const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [selectedGuestId, setSelectedGuestId] = useState<string | null>(null);
+  const [deletedSeatKeys, setDeletedSeatKeys] = useState<Set<string>>(new Set());
+  const [hiddenGuestKeys, setHiddenGuestKeys] = useState<Set<string>>(new Set());
+  const loadedRef = useRef(false);
+  const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveSeqRef = useRef(0);
   
   // Drag targets tracking
   const [overTableId, setOverTableId] = useState<number | '__none__' | null>(null);
   const [overSeatId, setOverSeatId] = useState<string | null>(null);
+  const [addPersonTableId, setAddPersonTableId] = useState<number | null>(null);
 
   // Popover state
   const [popoverGuest, setPopoverGuest] = useState<SeatingGuest | null>(null);
@@ -187,16 +279,39 @@ export default function TablePlanner() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    if (loading) return;
+
+    const planData = makePlanData(tables, guests, deletedSeatKeys, hiddenGuestKeys);
+    writeLocalPlan(planData);
+
+    if (!loadedRef.current) {
+      loadedRef.current = true;
+      return;
+    }
+
+    setSaveStatus('dirty');
+    if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+    autosaveTimerRef.current = setTimeout(() => {
+      void savePlanSnapshot(planData, { silent: true });
+    }, AUTOSAVE_DELAY_MS);
+
+    return () => {
+      if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+    };
+  }, [tables, guests, deletedSeatKeys, hiddenGuestKeys, loading]);
+
   const loadData = async () => {
+    let localPlan: SeatingPlanData | null = null;
+
     try {
       setLoading(true);
+      setSaveStatus('idle');
+      localPlan = readLocalPlan();
       
-      // 1. Fetch confirmed guests from DB
-      const { data: dbData, error: dbError } = await supabase
-        .from('guests')
-        .select('*');
-
-      if (dbError) throw dbError;
+      // 1. Fetch guests from DB, but keep the local plan usable if Supabase is unavailable.
+      const { data: dbData, error: dbError } = await supabase.from('guests').select('*');
+      if (dbError && !localPlan) throw dbError;
       const guestsList = (dbData || []) as Guest[];
       setDbGuests(guestsList);
 
@@ -207,20 +322,43 @@ export default function TablePlanner() {
         .eq('id', 'main')
         .maybeSingle();
 
-      const savedLayout = planData?.plan_data as { guests: SeatingGuest[] } | null;
+      if (planError) {
+        console.error("Error loading Supabase seating plan:", planError);
+      }
+
+      const supabasePlan = normalizePlanData(planData?.plan_data);
+      const savedLayout = supabasePlan || localPlan;
+      const loadedTables = savedLayout?.tables?.length ? savedLayout.tables : TABLES;
+      const nextDeletedSeatKeys = new Set(savedLayout?.deletedSeatKeys || []);
+      const nextHiddenGuestKeys = new Set(savedLayout?.hiddenGuestKeys || []);
 
       // 3. Reconcile or build initial
       let reconciled: SeatingGuest[] = [];
       const confirmedDbGuests = guestsList.filter(g => g.attending === true);
+
+      if (dbError && savedLayout) {
+        setTables(loadedTables);
+        setDeletedSeatKeys(nextDeletedSeatKeys);
+        setHiddenGuestKeys(nextHiddenGuestKeys);
+        setGuests(savedLayout.guests);
+        setLastSavedAt(savedLayout.updatedAt || '');
+        setSaveStatus('local');
+        return;
+      }
 
       if (savedLayout && Array.isArray(savedLayout.guests)) {
         const savedGuests = savedLayout.guests;
         const dbMap = new Map<string, Guest>();
         guestsList.forEach(g => dbMap.set(g.id, g));
 
-        const processedDbGuestIds = new Set<string>();
+        const processedGuestKeys = new Set<string>();
 
         savedGuests.forEach(sg => {
+          const guestKey = getGuestRecordKey(sg);
+          const seatKey = getSeatTemplateKey(sg);
+          if (guestKey && nextHiddenGuestKeys.has(guestKey)) return;
+          if (seatKey && nextDeletedSeatKeys.has(seatKey)) return;
+
           if (sg.guestId) {
             const dbg = dbMap.get(sg.guestId);
             if (dbg && dbg.attending === true) {
@@ -236,7 +374,7 @@ export default function TablePlanner() {
                 ac: dbg.plus_one_name || "",
                 conf: true
               });
-              processedDbGuestIds.add(sg.guestId);
+              if (guestKey) processedGuestKeys.add(guestKey);
             }
             // If they are no longer attending, we drop them. 
             // If they occupied a default seat template, we will restore it later.
@@ -248,11 +386,11 @@ export default function TablePlanner() {
 
         // Add default seat template placeholders for missing seats
         const reconciledSeatKeys = new Set(reconciled.map(g => `${g.table}:${g.name}`));
-        TABLES.forEach(t => {
+        loadedTables.forEach(t => {
           const originalSeats = SEATS[t.id] || [];
           originalSeats.forEach(seatName => {
             const key = `${t.id}:${seatName}`;
-            if (!reconciledSeatKeys.has(key)) {
+            if (!reconciledSeatKeys.has(key) && !nextDeletedSeatKeys.has(key)) {
               // Seat is missing, recreate it empty/unconfirmed
               reconciled.push({
                 id: 'g_placeholder_' + t.id + '_' + seatName,
@@ -271,8 +409,10 @@ export default function TablePlanner() {
 
         // Add newly confirmed guests not yet in the layout to the tray
         confirmedDbGuests.forEach(dbg => {
-          if (!processedDbGuestIds.has(dbg.id)) {
-            // Main Guest
+          const mainKey = `${dbg.id}:main`;
+          const plusOneKey = `${dbg.id}:plusone`;
+
+          if (!processedGuestKeys.has(mainKey) && !nextHiddenGuestKeys.has(mainKey)) {
             reconciled.push({
               id: 'g_' + dbg.id + '_main',
               name: dbg.first_name,
@@ -285,23 +425,24 @@ export default function TablePlanner() {
               ac: dbg.plus_one_name || "",
               guestId: dbg.id
             });
+            processedGuestKeys.add(mainKey);
+          }
 
-            // Plus One Guest
-            if (dbg.has_plus_one) {
-              reconciled.push({
-                id: 'g_' + dbg.id + '_plusone',
-                name: dbg.plus_one_name || `Acompañante de ${dbg.first_name}`,
-                ap: "",
-                table: '__none__',
-                menu: mapDbMenu(dbg.plus_one_menu_choice || dbg.menu_choice),
-                conf: true,
-                child: false,
-                al: "",
-                ac: "",
-                guestId: dbg.id,
-                isPlusOne: true
-              });
-            }
+          if (dbg.has_plus_one && !processedGuestKeys.has(plusOneKey) && !nextHiddenGuestKeys.has(plusOneKey)) {
+            reconciled.push({
+              id: 'g_' + dbg.id + '_plusone',
+              name: dbg.plus_one_name || `Acompañante de ${dbg.first_name}`,
+              ap: "",
+              table: '__none__',
+              menu: mapDbMenu(dbg.plus_one_menu_choice || dbg.menu_choice),
+              conf: true,
+              child: false,
+              al: "",
+              ac: "",
+              guestId: dbg.id,
+              isPlusOne: true
+            });
+            processedGuestKeys.add(plusOneKey);
           }
         });
       } else {
@@ -309,10 +450,25 @@ export default function TablePlanner() {
         reconciled = buildInitial(confirmedDbGuests);
       }
 
+      setTables(loadedTables);
+      setDeletedSeatKeys(nextDeletedSeatKeys);
+      setHiddenGuestKeys(nextHiddenGuestKeys);
       setGuests(reconciled);
+      setLastSavedAt(savedLayout?.updatedAt || '');
+      setSaveStatus(supabasePlan ? 'saved' : localPlan ? 'local' : 'idle');
     } catch (err) {
       console.error("Error loading visual planner data:", err);
-      alert("Error al cargar los datos del plano.");
+      if (localPlan) {
+        setTables(localPlan.tables);
+        setDeletedSeatKeys(new Set(localPlan.deletedSeatKeys));
+        setHiddenGuestKeys(new Set(localPlan.hiddenGuestKeys));
+        setGuests(localPlan.guests);
+        setLastSavedAt(localPlan.updatedAt);
+        setSaveStatus('local');
+      } else {
+        alert("Error al cargar los datos del plano.");
+        setSaveStatus('error');
+      }
     } finally {
       setLoading(false);
     }
@@ -366,7 +522,7 @@ export default function TablePlanner() {
 
         // FIXED CLAUDE BUG: Use compMenu[fn] correctly to inherit menu
         let conf = rec ? true : (compNames.indexOf(fn) >= 0);
-        let menu = kid ? 'Infantil' : (rec ? mapDbMenu(rec.menu_choice) : (compMenu[fn] || '?'));
+        let menu: SeatingGuest['menu'] = kid ? 'Infantil' : (rec ? mapDbMenu(rec.menu_choice) : (compMenu[fn] || '?'));
         if (kid) conf = true;
 
         const g: SeatingGuest = {
@@ -374,7 +530,7 @@ export default function TablePlanner() {
           name: seatName,
           ap: rec ? rec.last_name.split(' ')[0] : '',
           table: t.id,
-          menu: menu as any,
+          menu,
           conf: conf,
           child: kid,
           al: rec ? rec.dietary_restrictions || '' : '',
@@ -471,6 +627,30 @@ export default function TablePlanner() {
     });
   };
 
+  const handleTouchTableClick = (
+    e: React.MouseEvent<HTMLElement>,
+    tableId: number | '__none__',
+    beforeId?: string | null
+  ) => {
+    if (!selectedGuestId) return;
+    e.preventDefault();
+    e.stopPropagation();
+    moveGuest(selectedGuestId, tableId, beforeId);
+    setSelectedGuestId(null);
+  };
+
+  const handleGuestClick = (e: React.MouseEvent<HTMLElement>, guest: SeatingGuest) => {
+    e.stopPropagation();
+
+    if (selectedGuestId && selectedGuestId !== guest.id) {
+      moveGuest(selectedGuestId, guest.table, guest.id);
+      setSelectedGuestId(null);
+      return;
+    }
+
+    openPopover(guest, e.currentTarget);
+  };
+
   const handleTableDragOver = (e: React.DragEvent, tableId: number | '__none__') => {
     e.preventDefault();
     setOverTableId(tableId);
@@ -508,15 +688,18 @@ export default function TablePlanner() {
     setPopoverAnchor(null);
   };
 
-  const updateDbGuest = async (guestId: string, updates: any) => {
+  const updateDbGuest = async (guestId: string, updates: Partial<Guest>) => {
     try {
       const { error } = await supabase
         .from('guests')
         .update(updates)
         .eq('id', guestId);
       if (error) throw error;
+      return true;
     } catch (err) {
       console.error("Error updating guest in db:", err);
+      setSaveStatus('local');
+      return false;
     }
   };
 
@@ -529,7 +712,7 @@ export default function TablePlanner() {
     // Sync to DB
     if (popoverGuest.guestId) {
       const dbMenu = mapMenuToDb(m);
-      const updates: any = {};
+      const updates: Partial<Guest> = {};
       if (popoverGuest.isPlusOne) {
         updates.plus_one_menu_choice = dbMenu;
       } else {
@@ -557,9 +740,9 @@ export default function TablePlanner() {
     if (!popoverGuest) return;
 
     const newChild = !popoverGuest.child;
-    const newMenu = newChild ? 'Infantil' : 'Carne';
+    const newMenu: SeatingGuest['menu'] = newChild ? 'Infantil' : 'Carne';
 
-    setGuests(prev => prev.map(g => g.id === popoverGuest.id ? { ...g, child: newChild, menu: newMenu as any } : g));
+    setGuests(prev => prev.map(g => g.id === popoverGuest.id ? { ...g, child: newChild, menu: newMenu } : g));
 
     if (popoverGuest.guestId) {
       if (popoverGuest.isPlusOne) {
@@ -569,26 +752,53 @@ export default function TablePlanner() {
       }
     }
 
-    setPopoverGuest(prev => prev ? { ...prev, child: newChild, menu: newMenu as any } : null);
+    setPopoverGuest(prev => prev ? { ...prev, child: newChild, menu: newMenu } : null);
+  };
+
+  const deleteGuest = async (guest: SeatingGuest, confirmDelete = true) => {
+    if (confirmDelete && !window.confirm(`¿Eliminar a ${guest.name} del organizador?`)) {
+      return;
+    }
+
+    const guestKey = getGuestRecordKey(guest);
+    const seatKey = getSeatTemplateKey(guest);
+
+    setGuests(prev => prev.filter(g => g.id !== guest.id));
+    setSelectedGuestId(prev => prev === guest.id ? null : prev);
+
+    if (guestKey) {
+      setHiddenGuestKeys(prev => new Set(prev).add(guestKey));
+    }
+
+    if (seatKey) {
+      setDeletedSeatKeys(prev => new Set(prev).add(seatKey));
+    }
+
+    if (guest.guestId && !guest.isPlusOne && !guest.isChild) {
+      const deleted = await deleteDbGuest(guest.guestId);
+      if (!deleted) {
+        await updateDbGuest(guest.guestId, { attending: false });
+      }
+    }
+
+    closePopover();
+  };
+
+  const deleteDbGuest = async (guestId: string) => {
+    try {
+      const { error } = await supabase.from('guests').delete().eq('id', guestId);
+      if (error) throw error;
+      return true;
+    } catch (err) {
+      console.error("Error deleting guest:", err);
+      setSaveStatus('local');
+      return false;
+    }
   };
 
   const handlePopoverDelete = async () => {
     if (!popoverGuest) return;
-
-    if (window.confirm(`¿Eliminar a ${popoverGuest.name}?`)) {
-      setGuests(prev => prev.filter(g => g.id !== popoverGuest.id));
-
-      if (popoverGuest.guestId && !popoverGuest.isPlusOne && !popoverGuest.isChild) {
-        try {
-          const { error } = await supabase.from('guests').delete().eq('id', popoverGuest.guestId);
-          if (error) throw error;
-        } catch (err) {
-          console.error("Error deleting guest:", err);
-        }
-      }
-
-      closePopover();
-    }
+    await deleteGuest(popoverGuest);
   };
 
   // Add guest manually
@@ -612,30 +822,91 @@ export default function TablePlanner() {
     ]);
   };
 
-  // Save layout to Supabase
-  const saveLayout = async () => {
+  const addTable = () => {
+    const nextId = Math.max(0, ...tables.map(t => t.id)) + 1;
+    const name = prompt('Nombre de la nueva mesa:', `Mesa ${nextId}`);
+    if (name === null) return;
+
+    setTables(prev => [
+      ...prev,
+      {
+        id: nextId,
+        name: name?.trim() || `Mesa ${nextId}`,
+      }
+    ]);
+  };
+
+  const removeTable = (tableId: number) => {
+    const table = tables.find(t => t.id === tableId);
+    const guestsInTable = guests.filter(g => g.table === tableId).length;
+    const tableName = table?.name ? `Mesa ${tableId} "${table.name}"` : `Mesa ${tableId}`;
+
+    if (!window.confirm(`¿Quitar ${tableName}? ${guestsInTable} persona(s) volverán a "Sin asignar".`)) {
+      return;
+    }
+
+    setGuests(prev => prev.map(g => g.table === tableId ? { ...g, table: '__none__' } : g));
+    setTables(prev => prev.filter(t => t.id !== tableId));
+    setAddPersonTableId(prev => prev === tableId ? null : prev);
+  };
+
+  const openAddPerson = (e: React.MouseEvent<HTMLButtonElement>, tableId: number) => {
+    e.stopPropagation();
+    setAddPersonTableId(tableId);
+    closePopover();
+  };
+
+  const addUnassignedGuestToTable = (guestId: string, tableId: number) => {
+    moveGuest(guestId, tableId, null);
+    setAddPersonTableId(null);
+  };
+
+  const savePlanSnapshot = async (
+    planData: SeatingPlanData,
+    options: { silent?: boolean } = {}
+  ) => {
+    const saveSeq = ++saveSeqRef.current;
     setSaving(true);
+    setSaveStatus('saving');
+
     try {
-      const planData = { guests };
+      writeLocalPlan(planData);
       
       const { error } = await supabase
         .from('seating_plan')
         .upsert({ id: 'main', plan_data: planData }, { onConflict: 'id' });
 
       if (error) throw error;
-      alert("Diseño guardado correctamente en Supabase.");
+
+      if (saveSeq === saveSeqRef.current) {
+        setLastSavedAt(planData.updatedAt);
+        setSaveStatus('saved');
+      }
+
+      if (!options.silent) {
+        alert("Diseño guardado correctamente en Supabase.");
+      }
     } catch (err) {
       console.error("Error saving layout:", err);
-      // Fallback to local storage or messages if seating_plan fails
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(guests));
-        alert("Guardado en almacenamiento local (no se pudo acceder a Supabase).");
-      } catch (localErr) {
-        alert("Error al guardar.");
+
+      if (saveSeq === saveSeqRef.current) {
+        setLastSavedAt(planData.updatedAt);
+        setSaveStatus('local');
+      }
+
+      if (!options.silent) {
+        alert("Guardado en este dispositivo. No se pudo sincronizar con Supabase.");
       }
     } finally {
-      setSaving(false);
+      if (saveSeq === saveSeqRef.current) {
+        setSaving(false);
+      }
     }
+  };
+
+  // Save layout to Supabase, with an immediate local backup.
+  const saveLayout = async () => {
+    await savePlanSnapshot(makePlanData(tables, guests, deletedSeatKeys, hiddenGuestKeys));
   };
 
   // Reset layout
@@ -643,7 +914,11 @@ export default function TablePlanner() {
     if (window.confirm('¿Reiniciar al diseño original? Se perderán los cambios manuales de las mesas.')) {
       const confirmedList = dbGuests.filter(g => g.attending === true);
       const initial = buildInitial(confirmedList);
+      setTables(TABLES);
       setGuests(initial);
+      setDeletedSeatKeys(new Set());
+      setHiddenGuestKeys(new Set());
+      setSelectedGuestId(null);
       closePopover();
     }
   };
@@ -701,6 +976,25 @@ export default function TablePlanner() {
     return styles.mUnassigned;
   };
 
+  const saveStatusText = () => {
+    if (saveStatus === 'saving') return 'Guardando...';
+    if (saveStatus === 'dirty') return 'Cambios pendientes';
+    if (saveStatus === 'local') return 'Guardado local';
+    if (saveStatus === 'error') return 'Error de guardado';
+    if (saveStatus === 'saved') return lastSavedAt ? `Sincronizado ${new Date(lastSavedAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}` : 'Sincronizado';
+    return 'Listo';
+  };
+
+  const selectedGuest = selectedGuestId ? guests.find(g => g.id === selectedGuestId) : null;
+  const saveStatusClass: Record<SaveStatus, string> = {
+    idle: styles.save_idle,
+    dirty: styles.save_dirty,
+    saving: styles.save_saving,
+    saved: styles.save_saved,
+    local: styles.save_local,
+    error: styles.save_error,
+  };
+
   if (loading) {
     return (
       <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "#f6f1e7" }}>
@@ -719,6 +1013,9 @@ export default function TablePlanner() {
           <div className={styles.date}>Hacienda Mityana · 25/07/2026</div>
         </div>
         <div className={styles.tools}>
+          <span className={`${styles.saveBadge} ${saveStatusClass[saveStatus]}`}>
+            {saveStatusText()}
+          </span>
           <input 
             type="search" 
             placeholder="Buscar por nombre..." 
@@ -728,6 +1025,7 @@ export default function TablePlanner() {
             autoComplete="off"
           />
           <button className={styles.btn} onClick={addGuest}>+ Persona</button>
+          <button className={styles.btn} onClick={addTable}>+ Mesa</button>
           <button className={`${styles.btn} ${styles.btnSave}`} onClick={saveLayout} disabled={saving}>
             <Save size={16} /> {saving ? "Guardando..." : "Guardar Diseño"}
           </button>
@@ -737,6 +1035,14 @@ export default function TablePlanner() {
           <button className={styles.btn} onClick={resetLayout}>Reiniciar</button>
         </div>
       </div>
+
+      {selectedGuest && (
+        <div className={styles.touchMoveBanner}>
+          <b>Moviendo a {selectedGuest.name}</b>
+          <span>Toca una mesa o una silla para colocarla ahí.</span>
+          <button type="button" onClick={() => setSelectedGuestId(null)}>Cancelar</button>
+        </div>
+      )}
 
       {/* Stats list */}
       <div className={styles.stats}>
@@ -762,6 +1068,7 @@ export default function TablePlanner() {
             onDragOver={(e) => handleTableDragOver(e, '__none__')}
             onDragLeave={() => setOverTableId(null)}
             onDrop={(e) => handleTableDrop(e, '__none__')}
+            onClick={(e) => handleTouchTableClick(e, '__none__')}
             data-table="__none__"
           >
             {guests
@@ -771,11 +1078,12 @@ export default function TablePlanner() {
                 return (
                   <div
                     key={g.id}
-                    className={`${styles.chip} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${dim ? styles.dim : ''}`}
+                    className={`${styles.chip} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${selectedGuestId === g.id ? styles.sel : ''} ${dim ? styles.dim : ''}`}
                     draggable
                     onDragStart={(e) => handleDragStart(e, g.id)}
                     onDragEnd={handleDragEnd}
-                    onClick={(e) => { e.stopPropagation(); openPopover(g, e.currentTarget); }}
+                    onClick={(e) => handleGuestClick(e, g)}
+                    onDoubleClick={(e) => { e.stopPropagation(); void deleteGuest(g); }}
                     title={g.name}
                   >
                     <span>{MENU_ICON[g.menu]}</span>
@@ -808,7 +1116,7 @@ export default function TablePlanner() {
             <div className={styles.grid}>
               
               {/* Render all tables using custom grid coordinate mapping */}
-              {TABLES.slice().sort((a,b) => a.id - b.id).map(t => {
+              {tables.slice().sort((a,b) => a.id - b.id).map(t => {
                 const arr = guests.filter(g => g.table === t.id);
                 const n = arr.length;
                 const isOver = overTableId === t.id;
@@ -826,12 +1134,17 @@ export default function TablePlanner() {
                       <div className={styles.tcap}>
                         {t.name || `Mesa ${t.id}`}
                         <span className={styles.cnt}>{arr.length} pers · 🥩{arr.filter(x => x.menu === 'Carne').length} 🐟{arr.filter(x => x.menu === 'Pescado').length}</span>
+                        <span className={styles.tableActions}>
+                          <button type="button" onClick={(e) => openAddPerson(e, t.id)}>+ persona</button>
+                          <button type="button" className={styles.tableDanger} onClick={(e) => { e.stopPropagation(); removeTable(t.id); }}>quitar</button>
+                        </span>
                       </div>
                       <div 
                         className={`${styles.head} ${isOver ? styles.over : ''}`}
                         onDragOver={(e) => handleTableDragOver(e, t.id)}
                         onDragLeave={() => setOverTableId(null)}
                         onDrop={(e) => handleTableDrop(e, t.id)}
+                        onClick={(e) => handleTouchTableClick(e, t.id)}
                         data-table={t.id}
                       >
                         <div className={styles.toprow}>
@@ -840,14 +1153,15 @@ export default function TablePlanner() {
                             return (
                               <div
                                 key={g.id}
-                                className={`${styles.seat} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${overSeatId === g.id ? styles.insbar : ''} ${dim ? styles.dim : ''}`}
+                                className={`${styles.seat} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${selectedGuestId === g.id ? styles.sel : ''} ${overSeatId === g.id ? styles.insbar : ''} ${dim ? styles.dim : ''}`}
                                 draggable
                                 onDragStart={(e) => handleDragStart(e, g.id)}
                                 onDragEnd={handleDragEnd}
                                 onDragOver={(e) => handleSeatDragOver(e, g.id)}
                                 onDragLeave={() => setOverSeatId(null)}
                                 onDrop={(e) => handleSeatDrop(e, g)}
-                                onClick={(e) => { e.stopPropagation(); openPopover(g, e.currentTarget); }}
+                                onClick={(e) => handleGuestClick(e, g)}
+                                onDoubleClick={(e) => { e.stopPropagation(); void deleteGuest(g); }}
                                 title={`${g.name} · ${g.menu}`}
                               >
                                 {renderLabel(g)}
@@ -877,6 +1191,10 @@ export default function TablePlanner() {
                           {n} pers · 🥩{arr.filter(x => x.menu === 'Carne').length} 🐟{arr.filter(x => x.menu === 'Pescado').length}
                         </span>
                       </span>
+                      <span className={styles.tableActions}>
+                        <button type="button" onClick={(e) => openAddPerson(e, t.id)}>+ persona</button>
+                        <button type="button" className={styles.tableDanger} onClick={(e) => { e.stopPropagation(); removeTable(t.id); }}>quitar</button>
+                      </span>
                     </div>
 
                     <div 
@@ -884,6 +1202,7 @@ export default function TablePlanner() {
                       onDragOver={(e) => handleTableDragOver(e, t.id)}
                       onDragLeave={() => setOverTableId(null)}
                       onDrop={(e) => handleTableDrop(e, t.id)}
+                      onClick={(e) => handleTouchTableClick(e, t.id)}
                       data-table={t.id}
                     >
                       <div className={styles.cloth}>
@@ -900,7 +1219,7 @@ export default function TablePlanner() {
                         return (
                           <div
                             key={g.id}
-                            className={`${styles.seat} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${overSeatId === g.id ? styles.insbar : ''} ${dim ? styles.dim : ''}`}
+                            className={`${styles.seat} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf} ${draggedId === g.id ? styles.dragging : ''} ${selectedGuestId === g.id ? styles.sel : ''} ${overSeatId === g.id ? styles.insbar : ''} ${dim ? styles.dim : ''}`}
                             style={{ left, top }}
                             draggable
                             onDragStart={(e) => handleDragStart(e, g.id)}
@@ -908,7 +1227,8 @@ export default function TablePlanner() {
                             onDragOver={(e) => handleSeatDragOver(e, g.id)}
                             onDragLeave={() => setOverSeatId(null)}
                             onDrop={(e) => handleSeatDrop(e, g)}
-                            onClick={(e) => { e.stopPropagation(); openPopover(g, e.currentTarget); }}
+                            onClick={(e) => handleGuestClick(e, g)}
+                            onDoubleClick={(e) => { e.stopPropagation(); void deleteGuest(g); }}
                             title={`${g.name} · ${g.menu}`}
                           >
                             {renderLabel(g)}
@@ -928,8 +1248,57 @@ export default function TablePlanner() {
       </div>
 
       <div className={styles.hint}>
-        💡 <b>Arrastra</b> a cada persona a su silla; suéltala sobre otra silla para intercalarla en ese orden. <b>Toca una silla</b> para cambiar el menú, marcar niño (menú infantil), confirmar o eliminar. En móvil: toca una persona y luego la mesa. Naranja = sin confirmar. Se guarda en Supabase.
+        💡 <b>Arrastra</b> a cada persona a su silla; suéltala sobre otra silla para intercalarla en ese orden. <b>Toca una persona</b> para cambiar menú, confirmar, marcar infantil o activar “Mover con toque”. <b>Doble clic</b> elimina. Naranja = sin confirmar. Se guarda en Supabase con copia local de seguridad.
       </div>
+
+      <AnimatePresence>
+        {addPersonTableId !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={styles.modalBackdrop}
+            onClick={() => setAddPersonTableId(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 12, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.98 }}
+              className={styles.personPicker}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.personPickerHeader}>
+                <div>
+                  <h3>Añadir a mesa {addPersonTableId}</h3>
+                  <p>Personas confirmadas o manuales que aún no están ubicadas.</p>
+                </div>
+                <button type="button" onClick={() => setAddPersonTableId(null)}>×</button>
+              </div>
+
+              <div className={styles.personPickerList}>
+                {guests.filter(g => g.table === '__none__').length === 0 ? (
+                  <div className={styles.emptyPicker}>No hay personas sin ubicar.</div>
+                ) : (
+                  guests
+                    .filter(g => g.table === '__none__')
+                    .map(g => (
+                      <button
+                        type="button"
+                        key={g.id}
+                        className={`${styles.personPickItem} ${getMenuClass(g.menu)} ${g.conf ? '' : styles.noconf}`}
+                        onClick={() => addUnassignedGuestToTable(g.id, addPersonTableId)}
+                      >
+                        <span>{MENU_ICON[g.menu]}</span>
+                        <strong>{g.name} {g.ap}</strong>
+                        {g.al && <em>Restricción</em>}
+                      </button>
+                    ))
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Editing popover dialog */}
       <AnimatePresence>
@@ -995,6 +1364,17 @@ export default function TablePlanner() {
                 </div>
               </div>
             </div>
+
+            <button
+              type="button"
+              className={styles.moveTouch}
+              onClick={() => {
+                setSelectedGuestId(popoverGuest.id);
+                closePopover();
+              }}
+            >
+              Mover con toque
+            </button>
 
             <div className={styles.del} onClick={handlePopoverDelete}>
               🗑 Eliminar persona
