@@ -222,6 +222,27 @@ function normalizePlanData(raw: unknown): SeatingPlanData | null {
   };
 }
 
+function getPlanTimestamp(plan: SeatingPlanData | null): number {
+  if (!plan?.updatedAt) return 0;
+  const timestamp = new Date(plan.updatedAt).getTime();
+  return Number.isFinite(timestamp) ? timestamp : 0;
+}
+
+function chooseNewestPlan(
+  supabasePlan: SeatingPlanData | null,
+  localPlan: SeatingPlanData | null
+): { plan: SeatingPlanData | null; source: 'supabase' | 'local' | 'none' } {
+  if (supabasePlan && localPlan) {
+    return getPlanTimestamp(localPlan) > getPlanTimestamp(supabasePlan)
+      ? { plan: localPlan, source: 'local' }
+      : { plan: supabasePlan, source: 'supabase' };
+  }
+
+  if (supabasePlan) return { plan: supabasePlan, source: 'supabase' };
+  if (localPlan) return { plan: localPlan, source: 'local' };
+  return { plan: null, source: 'none' };
+}
+
 function readLocalPlan(): SeatingPlanData | null {
   if (typeof window === 'undefined') return null;
 
@@ -327,7 +348,7 @@ export default function TablePlanner() {
       }
 
       const supabasePlan = normalizePlanData(planData?.plan_data);
-      const savedLayout = supabasePlan || localPlan;
+      const { plan: savedLayout, source: savedLayoutSource } = chooseNewestPlan(supabasePlan, localPlan);
       const loadedTables = savedLayout?.tables?.length ? savedLayout.tables : TABLES;
       const nextDeletedSeatKeys = new Set(savedLayout?.deletedSeatKeys || []);
       const nextHiddenGuestKeys = new Set(savedLayout?.hiddenGuestKeys || []);
@@ -455,7 +476,7 @@ export default function TablePlanner() {
       setHiddenGuestKeys(nextHiddenGuestKeys);
       setGuests(reconciled);
       setLastSavedAt(savedLayout?.updatedAt || '');
-      setSaveStatus(supabasePlan ? 'saved' : localPlan ? 'local' : 'idle');
+      setSaveStatus(savedLayoutSource === 'supabase' ? 'saved' : savedLayoutSource === 'local' ? 'local' : 'idle');
     } catch (err) {
       console.error("Error loading visual planner data:", err);
       if (localPlan) {
