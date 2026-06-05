@@ -50,6 +50,7 @@ interface TableConfig {
 interface SeatingPlanData {
   version: number;
   updatedAt: string;
+  syncState?: 'pending' | 'synced';
   tables: TableConfig[];
   guests: SeatingGuest[];
   deletedSeatKeys: string[];
@@ -182,11 +183,13 @@ function makePlanData(
   tables: TableConfig[],
   guests: SeatingGuest[],
   deletedSeatKeys: Set<string>,
-  hiddenGuestKeys: Set<string>
+  hiddenGuestKeys: Set<string>,
+  syncState: SeatingPlanData['syncState'] = 'pending'
 ): SeatingPlanData {
   return {
     version: 2,
     updatedAt: new Date().toISOString(),
+    syncState,
     tables,
     guests,
     deletedSeatKeys: Array.from(deletedSeatKeys),
@@ -215,6 +218,7 @@ function normalizePlanData(raw: unknown): SeatingPlanData | null {
   return {
     version: typeof plan.version === 'number' ? plan.version : 1,
     updatedAt: typeof plan.updatedAt === 'string' ? plan.updatedAt : '',
+    syncState: plan.syncState === 'pending' || plan.syncState === 'synced' ? plan.syncState : undefined,
     tables: Array.isArray(plan.tables) && plan.tables.length > 0 ? plan.tables : TABLES,
     guests: plan.guests as SeatingGuest[],
     deletedSeatKeys: Array.isArray(plan.deletedSeatKeys) ? plan.deletedSeatKeys : [],
@@ -233,7 +237,9 @@ function chooseNewestPlan(
   localPlan: SeatingPlanData | null
 ): { plan: SeatingPlanData | null; source: 'supabase' | 'local' | 'none' } {
   if (supabasePlan && localPlan) {
-    return getPlanTimestamp(localPlan) > getPlanTimestamp(supabasePlan)
+    const localHasUnsyncedChanges = localPlan.syncState === 'pending';
+
+    return localHasUnsyncedChanges && getPlanTimestamp(localPlan) > getPlanTimestamp(supabasePlan)
       ? { plan: localPlan, source: 'local' }
       : { plan: supabasePlan, source: 'supabase' };
   }
@@ -303,14 +309,13 @@ export default function TablePlanner() {
   useEffect(() => {
     if (loading) return;
 
-    const planData = makePlanData(tables, guests, deletedSeatKeys, hiddenGuestKeys);
-    writeLocalPlan(planData);
-
     if (!loadedRef.current) {
       loadedRef.current = true;
       return;
     }
 
+    const planData = makePlanData(tables, guests, deletedSeatKeys, hiddenGuestKeys, 'pending');
+    writeLocalPlan(planData);
     setSaveStatus('dirty');
     if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
     autosaveTimerRef.current = setTimeout(() => {
@@ -895,20 +900,23 @@ export default function TablePlanner() {
     options: { silent?: boolean } = {}
   ) => {
     const saveSeq = ++saveSeqRef.current;
+    const pendingPlan = { ...planData, syncState: 'pending' as const };
+    const syncedPlan = { ...planData, syncState: 'synced' as const };
     setSaving(true);
     setSaveStatus('saving');
 
     try {
-      writeLocalPlan(planData);
+      writeLocalPlan(pendingPlan);
       
       const { error } = await supabase
         .from('seating_plan')
-        .upsert({ id: 'main', plan_data: planData }, { onConflict: 'id' });
+        .upsert({ id: 'main', plan_data: syncedPlan }, { onConflict: 'id' });
 
       if (error) throw error;
+      writeLocalPlan(syncedPlan);
 
       if (saveSeq === saveSeqRef.current) {
-        setLastSavedAt(planData.updatedAt);
+        setLastSavedAt(syncedPlan.updatedAt);
         setSaveStatus('saved');
       }
 
@@ -919,7 +927,7 @@ export default function TablePlanner() {
       console.error("Error saving layout:", err);
 
       if (saveSeq === saveSeqRef.current) {
-        setLastSavedAt(planData.updatedAt);
+        setLastSavedAt(pendingPlan.updatedAt);
         setSaveStatus('local');
       }
 
