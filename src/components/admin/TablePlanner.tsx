@@ -388,6 +388,8 @@ export default function TablePlanner() {
           if (sg.guestId) {
             const dbg = dbMap.get(sg.guestId);
             if (dbg && dbg.attending === true) {
+              if (sg.isPlusOne && !dbg.has_plus_one) return;
+
               // Guest is still attending - update live details
               reconciled.push({
                 ...sg,
@@ -794,18 +796,36 @@ export default function TablePlanner() {
       return;
     }
 
-    const guestKey = getGuestRecordKey(guest);
-    const seatKey = getSeatTemplateKey(guest);
+    const removeLinkedGuests = !!guest.guestId && !guest.isPlusOne && !guest.isChild;
+    const guestsToRemove = guests.filter(g => {
+      if (g.id === guest.id) return true;
+      return removeLinkedGuests && g.guestId === guest.guestId;
+    });
 
-    setGuests(prev => prev.filter(g => g.id !== guest.id));
-    setSelectedGuestId(prev => prev === guest.id ? null : prev);
+    setGuests(prev => prev.filter(g => !guestsToRemove.some(removed => removed.id === g.id)));
+    setSelectedGuestId(prev => guestsToRemove.some(removed => removed.id === prev) ? null : prev);
 
-    if (guestKey) {
-      setHiddenGuestKeys(prev => new Set(prev).add(guestKey));
+    const nextHiddenGuestKeys = guestsToRemove
+      .map(getGuestRecordKey)
+      .filter((key): key is string => !!key);
+    const nextDeletedSeatKeys = guestsToRemove
+      .map(getSeatTemplateKey)
+      .filter((key): key is string => !!key);
+
+    if (nextHiddenGuestKeys.length > 0) {
+      setHiddenGuestKeys(prev => {
+        const next = new Set(prev);
+        nextHiddenGuestKeys.forEach(key => next.add(key));
+        return next;
+      });
     }
 
-    if (seatKey) {
-      setDeletedSeatKeys(prev => new Set(prev).add(seatKey));
+    if (nextDeletedSeatKeys.length > 0) {
+      setDeletedSeatKeys(prev => {
+        const next = new Set(prev);
+        nextDeletedSeatKeys.forEach(key => next.add(key));
+        return next;
+      });
     }
 
     if (guest.guestId && !guest.isPlusOne && !guest.isChild) {
@@ -813,6 +833,8 @@ export default function TablePlanner() {
       if (!deleted) {
         await updateDbGuest(guest.guestId, { attending: false });
       }
+    } else if (guest.guestId && guest.isPlusOne) {
+      await updateDbGuest(guest.guestId, { has_plus_one: false, plus_one_name: '', plus_one_menu_choice: '' });
     }
 
     closePopover();
