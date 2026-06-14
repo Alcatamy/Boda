@@ -320,6 +320,32 @@ export default function TablePlanner() {
   // Popover state
   const [popoverGuest, setPopoverGuest] = useState<SeatingGuest | null>(null);
   const [popoverAnchor, setPopoverAnchor] = useState<DOMRect | null>(null);
+  const [popoverPos, setPopoverPos] = useState<{ top: number; left: number }>({ top: -9999, left: -9999 });
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  // Position the popover within the viewport: align to the clicked chip,
+  // flip above when there's no room below, and always keep it fully on screen.
+  useEffect(() => {
+    if (!popoverGuest || !popoverAnchor) return;
+
+    const margin = 8;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const el = popoverRef.current;
+    const width = el?.offsetWidth || Math.min(260, vw - margin * 2);
+    const height = el?.offsetHeight || 320;
+
+    let left = popoverAnchor.left;
+    left = Math.max(margin, Math.min(left, vw - width - margin));
+
+    let top = popoverAnchor.bottom + 6;
+    if (top + height > vh - margin) {
+      const above = popoverAnchor.top - height - 6;
+      top = above >= margin ? above : Math.max(margin, vh - height - margin);
+    }
+
+    setPopoverPos({ top, left });
+  }, [popoverGuest, popoverAnchor]);
 
   // Load Data
   useEffect(() => {
@@ -845,6 +871,7 @@ export default function TablePlanner() {
 
   // Popup edition logic
   const openPopover = (guest: SeatingGuest, targetEl: HTMLElement) => {
+    setPopoverPos({ top: -9999, left: -9999 });
     setPopoverGuest(guest);
     setPopoverAnchor(targetEl.getBoundingClientRect());
   };
@@ -1655,13 +1682,14 @@ export default function TablePlanner() {
       <AnimatePresence>
         {popoverGuest && popoverAnchor && (
           <motion.div
+            ref={popoverRef}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             className={styles.popover}
             style={{
-              top: `${popoverAnchor.bottom + window.scrollY + 6}px`,
-              left: `${Math.max(6, Math.min(window.innerWidth - 248, popoverAnchor.left + window.scrollX))}px`
+              top: `${popoverPos.top}px`,
+              left: `${popoverPos.left}px`,
             }}
             onClick={(e) => e.stopPropagation()}
           >

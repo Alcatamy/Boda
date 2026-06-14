@@ -741,7 +741,11 @@
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(60, 45, 20, 0.2);
   padding: 0.85rem;
-  width: 240px;
+  width: 260px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   display: block;
 }
 
@@ -1095,8 +1099,7 @@
     display: none;
   }
   .popover {
-    width: 90vw;
-    left: 5vw !important;
+    width: min(320px, calc(100vw - 16px));
   }
 }
 
