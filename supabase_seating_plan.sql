@@ -37,3 +37,7 @@ to authenticated using (true);
 insert into public.seating_plan (id, plan_data)
 values ('main', '{"tables":[]}')
 on conflict (id) do nothing;
+
+-- 3. Habilitar Realtime para sincronización entre dispositivos
+--    Sin esto, guardar en un móvil NO se refleja en vivo en otro dispositivo.
+alter publication supabase_realtime add table public.seating_plan;

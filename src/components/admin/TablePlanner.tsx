@@ -3,7 +3,7 @@
 import { Fragment, useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
-import { Save, RefreshCw, Printer } from "lucide-react";
+import { Save, RefreshCw, Printer, Undo2, Redo2 } from "lucide-react";
 import styles from "./TablePlanner.module.css";
 
 // ─── Interfaces ──────────────────────────────────────────────────────────────
@@ -58,6 +58,15 @@ interface SeatingPlanData {
 }
 
 type SaveStatus = 'idle' | 'dirty' | 'saving' | 'saved' | 'local' | 'error';
+
+interface PlanSnapshot {
+  tables: TableConfig[];
+  guests: SeatingGuest[];
+  deletedSeatKeys: string[];
+  hiddenGuestKeys: string[];
+}
+
+const MAX_HISTORY = 60;
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -291,6 +300,17 @@ export default function TablePlanner() {
   const loadedRef = useRef(false);
   const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveSeqRef = useRef(0);
+
+  // Undo / redo history
+  const undoStackRef = useRef<PlanSnapshot[]>([]);
+  const redoStackRef = useRef<PlanSnapshot[]>([]);
+  const lastSnapshotRef = useRef<PlanSnapshot | null>(null);
+  const isRestoringRef = useRef(false);
+  const [, setHistoryVersion] = useState(0);
+
+  // Transient notice when another device pushes an update
+  const [remoteNotice, setRemoteNotice] = useState(false);
+  const remoteNoticeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   // Drag targets tracking
   const [overTableId, setOverTableId] = useState<number | '__none__' | null>(null);
@@ -306,13 +326,123 @@ export default function TablePlanner() {
     loadData();
   }, []);
 
+  // Realtime sync: pick up changes saved from other devices
+  useEffect(() => {
+    const channel = supabase
+      .channel('seating_plan_changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'seating_plan', filter: 'id=eq.main' },
+        (payload) => {
+          const incoming = normalizePlanData((payload.new as { plan_data?: unknown } | null)?.plan_data);
+          if (!incoming) return;
+
+          // Don't clobber unsynced local edits or a save currently in flight.
+          if (saveStatus === 'dirty' || saveStatus === 'saving') return;
+          if (getPlanTimestamp(incoming) <= getPlanTimestamp({ updatedAt: lastSavedAt } as SeatingPlanData)) return;
+
+          applyRemotePlan(incoming, true);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saveStatus, lastSavedAt]);
+
+  // Refresh from Supabase when the tab regains visibility/focus,
+  // so devices that were backgrounded pick up the latest saved layout.
+  useEffect(() => {
+    const handleVisible = () => {
+      if (document.visibilityState !== 'visible') return;
+      if (saveStatus === 'dirty' || saveStatus === 'saving') return;
+
+      supabase
+        .from('seating_plan')
+        .select('plan_data')
+        .eq('id', 'main')
+        .maybeSingle()
+        .then(({ data, error }) => {
+          if (error) return;
+          const incoming = normalizePlanData(data?.plan_data);
+          if (!incoming) return;
+          if (getPlanTimestamp(incoming) <= getPlanTimestamp({ updatedAt: lastSavedAt } as SeatingPlanData)) return;
+
+          applyRemotePlan(incoming, false);
+        });
+    };
+
+    document.addEventListener('visibilitychange', handleVisible);
+    window.addEventListener('focus', handleVisible);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisible);
+      window.removeEventListener('focus', handleVisible);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saveStatus, lastSavedAt]);
+
+  // Apply a plan that arrived from another device (realtime or refocus refetch).
+  const applyRemotePlan = (incoming: SeatingPlanData, notify: boolean) => {
+    loadedRef.current = false; // skip the autosave/history effect for this programmatic change
+    const nextTables = incoming.tables?.length ? incoming.tables : TABLES;
+    const nextDeleted = incoming.deletedSeatKeys || [];
+    const nextHidden = incoming.hiddenGuestKeys || [];
+
+    setTables(nextTables);
+    setDeletedSeatKeys(new Set(nextDeleted));
+    setHiddenGuestKeys(new Set(nextHidden));
+    setGuests(incoming.guests);
+    setLastSavedAt(incoming.updatedAt || '');
+    setSaveStatus('saved');
+    writeLocalPlan({ ...incoming, syncState: 'synced' });
+
+    // Keep undo/redo baseline aligned with the new remote state.
+    lastSnapshotRef.current = {
+      tables: nextTables,
+      guests: incoming.guests,
+      deletedSeatKeys: nextDeleted,
+      hiddenGuestKeys: nextHidden,
+    };
+
+    if (notify) {
+      setRemoteNotice(true);
+      if (remoteNoticeTimerRef.current) clearTimeout(remoteNoticeTimerRef.current);
+      remoteNoticeTimerRef.current = setTimeout(() => setRemoteNotice(false), 4000);
+    }
+  };
+
   useEffect(() => {
     if (loading) return;
 
     if (!loadedRef.current) {
       loadedRef.current = true;
+      lastSnapshotRef.current = {
+        tables,
+        guests,
+        deletedSeatKeys: Array.from(deletedSeatKeys),
+        hiddenGuestKeys: Array.from(hiddenGuestKeys),
+      };
       return;
     }
+
+    // Capture history (skip when the change came from undo/redo or a remote sync)
+    const snapshot: PlanSnapshot = {
+      tables,
+      guests,
+      deletedSeatKeys: Array.from(deletedSeatKeys),
+      hiddenGuestKeys: Array.from(hiddenGuestKeys),
+    };
+    if (isRestoringRef.current) {
+      isRestoringRef.current = false;
+    } else if (lastSnapshotRef.current) {
+      undoStackRef.current.push(lastSnapshotRef.current);
+      if (undoStackRef.current.length > MAX_HISTORY) undoStackRef.current.shift();
+      redoStackRef.current = [];
+      setHistoryVersion(v => v + 1);
+    }
+    lastSnapshotRef.current = snapshot;
 
     const planData = makePlanData(tables, guests, deletedSeatKeys, hiddenGuestKeys, 'pending');
     writeLocalPlan(planData);
@@ -968,6 +1098,89 @@ export default function TablePlanner() {
     await savePlanSnapshot(makePlanData(tables, guests, deletedSeatKeys, hiddenGuestKeys));
   };
 
+  // ─── Undo / Redo ─────────────────────────────────────────────────────────
+  const applySnapshot = (s: PlanSnapshot) => {
+    isRestoringRef.current = true;
+    lastSnapshotRef.current = s;
+    closePopover();
+    setSelectedGuestId(null);
+    setTables(s.tables);
+    setGuests(s.guests);
+    setDeletedSeatKeys(new Set(s.deletedSeatKeys));
+    setHiddenGuestKeys(new Set(s.hiddenGuestKeys));
+  };
+
+  const currentSnapshot = (): PlanSnapshot => ({
+    tables,
+    guests,
+    deletedSeatKeys: Array.from(deletedSeatKeys),
+    hiddenGuestKeys: Array.from(hiddenGuestKeys),
+  });
+
+  const undo = () => {
+    if (undoStackRef.current.length === 0) return;
+    const prev = undoStackRef.current.pop()!;
+    redoStackRef.current.push(currentSnapshot());
+    applySnapshot(prev);
+    setHistoryVersion(v => v + 1);
+  };
+
+  const redo = () => {
+    if (redoStackRef.current.length === 0) return;
+    const next = redoStackRef.current.pop()!;
+    undoStackRef.current.push(currentSnapshot());
+    applySnapshot(next);
+    setHistoryVersion(v => v + 1);
+  };
+
+  const canUndo = undoStackRef.current.length > 0;
+  const canRedo = redoStackRef.current.length > 0;
+
+  // Keyboard shortcuts: Ctrl/Cmd+Z (undo), Ctrl/Cmd+Shift+Z or Ctrl+Y (redo)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || target?.isContentEditable) return;
+      if (!(e.ctrlKey || e.metaKey)) return;
+      const key = e.key.toLowerCase();
+      if (key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if ((key === 'z' && e.shiftKey) || key === 'y') {
+        e.preventDefault();
+        redo();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tables, guests, deletedSeatKeys, hiddenGuestKeys]);
+
+  // Flush a pending autosave immediately when the tab is hidden or closed,
+  // so a change made on a phone isn't lost before its debounce fires.
+  useEffect(() => {
+    const flush = () => {
+      if (saveStatus !== 'dirty') return;
+      if (autosaveTimerRef.current) {
+        clearTimeout(autosaveTimerRef.current);
+        autosaveTimerRef.current = null;
+      }
+      const planData = makePlanData(tables, guests, deletedSeatKeys, hiddenGuestKeys, 'pending');
+      void savePlanSnapshot(planData, { silent: true });
+    };
+    const onHide = () => {
+      if (document.visibilityState === 'hidden') flush();
+    };
+    document.addEventListener('visibilitychange', onHide);
+    window.addEventListener('pagehide', flush);
+    return () => {
+      document.removeEventListener('visibilitychange', onHide);
+      window.removeEventListener('pagehide', flush);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saveStatus, tables, guests, deletedSeatKeys, hiddenGuestKeys]);
+
   // Reset layout
   const resetLayout = () => {
     if (window.confirm('¿Reiniciar al diseño original? Se perderán los cambios manuales de las mesas.')) {
@@ -1075,7 +1288,25 @@ export default function TablePlanner() {
           <span className={`${styles.saveBadge} ${saveStatusClass[saveStatus]}`}>
             {saveStatusText()}
           </span>
-          <input 
+          <button
+            className={styles.btn}
+            onClick={undo}
+            disabled={!canUndo}
+            title="Deshacer (Ctrl+Z)"
+            aria-label="Deshacer"
+          >
+            <Undo2 size={16} />
+          </button>
+          <button
+            className={styles.btn}
+            onClick={redo}
+            disabled={!canRedo}
+            title="Rehacer (Ctrl+Shift+Z)"
+            aria-label="Rehacer"
+          >
+            <Redo2 size={16} />
+          </button>
+          <input
             type="search" 
             placeholder="Buscar por nombre..." 
             value={searchTerm}
@@ -1094,6 +1325,12 @@ export default function TablePlanner() {
           <button className={styles.btn} onClick={resetLayout}>Reiniciar</button>
         </div>
       </div>
+
+      {remoteNotice && (
+        <div className={styles.remoteNotice}>
+          🔄 Plano actualizado desde otro dispositivo.
+        </div>
+      )}
 
       {selectedGuest && (
         <div className={styles.touchMoveBanner}>

@@ -202,6 +202,24 @@
   padding: 0.45rem 0.75rem;
 }
 
+.remoteNotice {
+  margin: 0 1.5rem 0.5rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid #b9cfd4;
+  border-radius: 12px;
+  background: #eaf3fb;
+  color: #28485c;
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(40, 72, 92, 0.1);
+  animation: remoteNoticeIn 0.25s ease;
+}
+
+@keyframes remoteNoticeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Stats panel */
 .stats {
   display: flex;
