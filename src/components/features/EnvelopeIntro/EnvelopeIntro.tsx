@@ -12,35 +12,53 @@ interface EnvelopeIntroProps {
 export default function EnvelopeIntro({ onOpen, onComplete }: EnvelopeIntroProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isVideoFinished, setIsVideoFinished] = useState(false);
-  const [showPrompt, setShowPrompt] = useState(true);
+  const [isReady, setIsReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Auto-hide prompt after a few seconds if they don't click
+  // Safety net: if the user does not click within 7 seconds of mounting,
+  // automatically complete the intro so they are not stuck.
   useEffect(() => {
-    const timer = setTimeout(() => setShowPrompt(false), 4000);
-    return () => clearTimeout(timer);
-  }, []);
+    const fallbackTimer = setTimeout(() => {
+      if (!isOpen && !isVideoFinished) {
+        console.warn("Envelope intro loading timed out, skipping to content.");
+        setIsVideoFinished(true);
+        if (onComplete) onComplete();
+      }
+    }, 7000);
+
+    return () => clearTimeout(fallbackTimer);
+  }, [isOpen, isVideoFinished, onComplete]);
 
   const handleOpen = () => {
     if (!isOpen && videoRef.current) {
       setIsOpen(true);
-      setShowPrompt(false);
       if (onOpen) onOpen();
       videoRef.current.play().catch(err => {
         console.error("Video play failed", err);
         setIsVideoFinished(true);
         if (onComplete) onComplete();
       });
+
+      // Safety transition: if the video gets stuck playing, force transition after 5 seconds
+      setTimeout(() => {
+        if (!isVideoFinished) {
+          setIsVideoFinished(true);
+          if (onComplete) onComplete();
+        }
+      }, 5000);
     }
   };
 
   const handleTimeUpdate = () => {
     if (videoRef.current && !isVideoFinished) {
-      const timeRemaining = videoRef.current.duration - videoRef.current.currentTime;
-      // Start fade out 1 second before it perfectly ends for a smoother transition
-      if (timeRemaining < 1.0) {
-        setIsVideoFinished(true);
-        if (onComplete) onComplete();
+      const duration = videoRef.current.duration;
+      if (duration && !isNaN(duration)) {
+        const timeRemaining = duration - videoRef.current.currentTime;
+        // Start fade out 1 second before it perfectly ends for a smoother transition
+        if (timeRemaining < 1.0) {
+          setIsVideoFinished(true);
+          if (onComplete) onComplete();
+        }
       }
     }
   };
@@ -72,16 +90,19 @@ export default function EnvelopeIntro({ onOpen, onComplete }: EnvelopeIntroProps
               muted // Muted helps with mobile constraints even on click
               onTimeUpdate={handleTimeUpdate}
               onEnded={handleVideoEnded}
+              onCanPlay={() => setIsReady(true)}
+              onPlay={() => setIsReady(true)}
+              style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.5s ease-in-out" }}
             />
 
             <AnimatePresence>
-              {!isOpen && showPrompt && (
+              {!isOpen && (
                 <motion.div 
                   className={styles.prompt}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ delay: 1, duration: 0.8 }}
+                  transition={{ delay: 0.8, duration: 0.8 }}
                 >
                   <span className={styles.promptText}>Tocar para abrir</span>
                   <motion.div 
