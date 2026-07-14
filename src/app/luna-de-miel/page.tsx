@@ -39,9 +39,9 @@ interface ItineraryDay {
   location: string;
   region: "Vietnam" | "Bali" | "Gili";
   title: string;
-  morning?: string[];
+  morning?: (string | React.ReactNode)[];
   lunch?: string;
-  afternoon?: string[];
+  afternoon?: (string | React.ReactNode)[];
   dinner?: string;
   hotel?: {
     name: string;
@@ -90,15 +90,18 @@ const itineraryData: ItineraryDay[] = [
     title: "Llegada y Primer Contacto",
     morning: [
       "Llegada en avión a las 6:40 AM.",
-      "Coger un taxi Grab al hotel (45 min de coche)."
+      "Coger un taxi Grab al hotel (45 min de coche).",
+      "Desayuno o primer café en The Note Coffee o La Place para empezar con energía."
     ],
     lunch: "Almuerzo cerca del hotel (Old Quarter).",
     afternoon: [
       "Hacer Check-in en Hanoi Dalvostro Valentino Hotel & Spa (desde las 14:00h).",
-      "Paseo por el Lago Hoan Kiem: ver el puente rojo, Templo Ngoc Son y Torre de la Tortuga.",
-      "Asegurar entradas: comprar entradas para el show de marionetas de hoy a las 18:30h."
+      "Paseo por el Lago Hoan Kiem: ver el puente rojo, Templo Ngoc Son y la Torre de la Tortuga.",
+      "Cambiar euros a dongs en las joyerías de la zona centro (calle famosa: HA TRUNG).",
+      "Asegurar entradas: comprar en taquilla del teatro Thang Long las entradas para el show de hoy (18:30h).",
+      "Preguntar a qué hora pasa el tren grande por la calle del tren (Train Street) y tomar algo."
     ],
-    dinner: "Cena recomendada en ZO 26 o Duong's Restaurant. Copas por la Catedral de San José.",
+    dinner: "Espectáculo de marionetas de agua (18:30h). Cena recomendada en ZO 26 o Duong's Restaurant. Copas por la Catedral de San José.",
     hotel: {
       name: "Hanoi Dalvostro Valentino Hotel & Spa",
       details: "Check-in 14:00h. Tarjeta asociada al pago en Booking.",
@@ -120,14 +123,15 @@ const itineraryData: ItineraryDay[] = [
       "Desayuno incluido en el hotel.",
       "Coger Grab a la Pagoda Tran Quoc + Templo Quanh Tanh.",
       "Visitar el Mausoleo de Ho Chi Minh + Pagoda del Pilar Único.",
-      "Ir al Templo de la Literatura (abierto de 7:30 a 18:00)."
+      "Ir al Templo de la Literatura (abierto de 7:30 a 18:00).",
+      "Visitar la Catedral de San José (cerca del hotel)."
     ],
     lunch: "Recomendado: Banh Mi 25 (el bocadillo vietnamita más famoso).",
     afternoon: [
-      "Pasear y perderse por los puestos callejeros del Old Quarter y el Mercado de Dong Xuan.",
-      "Último paseo de tarde-noche por el Lago Hoan Kiem iluminado."
+      "Pasear y perderse por los puestos callejeros del Old Quarter y el Mercado de Dong Xuan y hacer compras.",
+      "Último paseo de tarde-noche por el Lago Hoan Kiem iluminado de noche."
     ],
-    dinner: "Pizza 4 P's (¡Esperamos mejor o reservamos cuando lo tengamos claro!).",
+    dinner: "Cena: Opciones recomendadas (Pizza 4 P's anulada. Sugerencias: El Gaucho Argentinian Steakhouse, Green Tangerine, The Moose & Roo Smokehouse, Le Beaulieu o Anita's Cantina).",
     hotel: {
       name: "Tren Nocturno a Sapa",
       details: "Salida a las 22:40h - Llegada 6:25h. Coche compartimentado de primera clase.",
@@ -145,14 +149,17 @@ const itineraryData: ItineraryDay[] = [
     region: "Vietnam",
     title: "Ascenso al Techo de Indochina",
     morning: [
-      "Llegada a Lao Cai a las 6:25 AM. Recogida reservada en coche compartido ($5 por persona).",
-      "Desayuno en Sapa (Le Gecko Cafe) y dejar maletas en el Eden Boutique Hotel.",
-      "Subida al Fansipan (3.143m): Comprar ticket combinado (tren + teleférico) en Sapa SUN Plaza."
+      "Llegada a Lao Cai a las 6:25 AM. Recogida en coche compartido (conductor con cartel a nombre de 'Nadia', $5 por persona).",
+      "Traslado Lao Cai -> Sapa (1h). Desayuno en Le Gecko Cafe y dejar maletas en el Eden Boutique Hotel.",
+      "Subida al Fansipan (3.143m) por la mañana (comprar ticket combinado en Sapa Sun Plaza):",
+      "Punto 1: Coger tren cremallera hasta la estación de Muong Hoa.",
+      "Punto 2: Andar a la estación de Hoang Lien y coger el teleférico hasta la cima.",
+      "Punto 3: Subir los 600 escalones a pie (aire fino a más de 3000m) o coger el pequeño funicular superior opcional hasta la cima."
     ],
     lunch: "Good Morning Vietnam / Little Sapa / The Hill Station Deli.",
     afternoon: [
-      "Subir a la cima del Fansipan (los 600 escalones) o coger el pequeño funicular superior.",
-      "Tarde de cataratas: Silver Waterfall y Love Waterfall (tickets baratos) O Masaje y relax en Eden Spa."
+      "Tarde de cataratas: Silver Waterfall (20.000 VND / 0.8€) y Love Waterfall (70.000 VND / 2.9€).",
+      "Alternativa: Masaje y relax tradicional en Eden Massage & Spa, Sapa Summit o Halosa Massage."
     ],
     dinner: "Cena en Moment Romantic Restaurant o Le Bordeaux.",
     hotel: {
@@ -200,14 +207,16 @@ const itineraryData: ItineraryDay[] = [
     region: "Vietnam",
     title: "Naturaleza y Moto en Tam Coc",
     morning: [
-      "Llegada a Hanói a las 5:30 AM y traslado a Ninh Binh (Tam Coc).",
+      "Llegada en tren nocturno a Hanói a las 5:30 AM. Reservar en 12go.asia y coger autobús a Ninh Binh.",
+      "Llegada a Tam Coc: ir andando hasta el hotel (paseo de 14 min) o coger Grab.",
+      "Desayunar en Le Brick Coffee Shop o Gao Restaurant & Bar Coffee.",
       "Dejar maletas en Tam Coc Serenity Hotel & Bungalow.",
-      "Alquilar motos para 2 días. Ir en dirección a Bich Dong Pagoda."
+      "Alquilar motos para 2 días: [Alquiler de Motos en Google Maps](https://maps.app.goo.gl/V9sAFL5Bdzwg28t89?g_st=iw).",
+      "Recorrer arrozales en dirección a la Bich Dong Pagoda y después visitar la Buffalo Cave."
     ],
-    lunch: "Gao Restaurant & Bar Coffee / Tam Coc Kitchen.",
+    lunch: "Gao Restaurant & Bar Coffee / Tam Coc Kitchen / Family Restaurant.",
     afternoon: [
-      "Visita a Buffalo Cave y alrededores.",
-      "Mua Cave al atardecer: Subir los 500 escalones para ver la puesta de sol sobre el río Ngo Dong."
+      "Por la tarde, visitar únicamente Mua Cave: pasear por los jardines del lago de lotos, subir los 500 escalones y ver el atardecer sobre el río Ngo Dong."
     ],
     dinner: "Cena en Chookie's Beer Garden.",
     hotel: {
@@ -229,12 +238,12 @@ const itineraryData: ItineraryDay[] = [
     title: "Paseo Fluvial por Trang An",
     morning: [
       "Desayuno en el hotel.",
-      "Paseo en barca por Trang An (se recomienda coger la Ruta 3). Coger moto hasta el embarcadero."
+      "Paseo en barca por Trang An (Ruta 3). Ir en moto hasta el embarcadero oficial: [Embarcadero de Trang An en Google Maps](https://www.google.com/maps/place/Trang+An+Departure+Boat+Ticket/@20.2531292,105.918861,17z/data=!3m1!4b1!4m6!3m5!1s0x31367bd3eb4b4685:0x617ada48f3f271e!8m2!3d20.2531292!4d105.918861!16s%2Fg%2F11c6fdbyth?cid=439010410981435166&entry=tts)."
     ],
     lunch: "Comida en Thao Beo Restaurant.",
     afternoon: [
       "Tarde de relax y masaje tradicional en Tam Coc Lotus Spa o Tâm Spa.",
-      "Visitar Hoa Lu Old Town iluminado de noche."
+      "Visitar Hoa Lu Old Town iluminado de noche (coger Grab o devolver la moto antes)."
     ],
     dinner: "Cena en Bamboo Bar & Restaurant / Tung De / Hoang Viet.",
     hotel: {
@@ -242,7 +251,8 @@ const itineraryData: ItineraryDay[] = [
       details: "Segunda noche en Ninh Binh."
     },
     tips: [
-      "Devuelve las motos esta noche por si la recogida del día siguiente para el crucero es muy temprano."
+      "Devuelve las motos esta noche por si la recogida del día siguiente para el crucero es muy temprano.",
+      "Hablar con recepción para que nos dejen el desayuno listo para llevar (takeaway) mañana temprano."
     ],
     mapsUrl: "https://www.google.com/maps/search/?api=1&query=Trang+An+Departure+Boat+Ticket"
   },
@@ -253,9 +263,63 @@ const itineraryData: ItineraryDay[] = [
     region: "Vietnam",
     title: "Crucero de Lujo por la Bahía",
     morning: [
-      "Traslado de ida a Ha Long Bay. Recogida en el hotel sobre las 7:00-7:30 AM.",
-      "Opción Elegida: Traslado privado de Le Journey Cruise (~56€ / 60 USD) o Bus Limusina de Cat Ba Express (15€ p.p.).",
-      "Llegada al puerto de Tuan Chau a las 11:30h. Embarque en Le Journey Luxury Cruise."
+      "Traslado de Ninh Binh (Tam Coc) a Ha Long Bay. Recogida sobre las 7:00-7:30 AM (llegar antes de las 11:30 AM).",
+      <div key="options-aug3" className="mt-3 p-3 rounded-lg border border-[rgba(197,160,89,0.2)] bg-[rgba(10,25,20,0.5)] text-sm">
+        <div className="font-semibold text-[#D4AF37] mb-2 flex items-center gap-1.5 text-xs tracking-wider uppercase">
+          🚗 Opciones de Traslado Ninh Binh ➔ Ha Long (3 de Agosto)
+        </div>
+        <div className="flex flex-col gap-2.5">
+          <div className="p-2.5 rounded border border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.015)]">
+            <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
+              <span className="font-semibold text-white text-xs">1a. Le Journey (Compartido - Roxanne)</span>
+              <span className="text-[#D4AF37] font-semibold text-xs">550.000 VND (~20€) p.p. / 40€ total</span>
+            </div>
+            <p className="text-slate-300 text-xs m-0 leading-relaxed">
+              <strong>Horario:</strong> Recogida ~7:00-7:20 AM. Van Limusina compartida de Le Journey Cruise.
+            </p>
+            <p className="text-slate-400 text-[11px] m-0 mt-0.5">
+              <strong>Contacto:</strong> Roxanne (+84 38 958 6465).
+            </p>
+          </div>
+          <div className="p-2.5 rounded border border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.015)]">
+            <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
+              <span className="font-semibold text-white text-xs">1b. Le Journey (Privado - Roxanne)</span>
+              <span className="text-[#D4AF37] font-semibold text-xs">desde 2.800.000 VND (~103€) total</span>
+            </div>
+            <p className="text-slate-300 text-xs m-0 leading-relaxed">
+              <strong>Horario:</strong> Recogida 7:30 AM en Tam Coc Serenity. Coche privado 4-7 plazas.
+            </p>
+            <p className="text-slate-400 text-[11px] m-0 mt-0.5">
+              <strong>Contacto:</strong> Roxanne (+84 38 958 6465).
+            </p>
+          </div>
+          <div className="p-2.5 rounded border border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.015)]">
+            <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
+              <span className="font-semibold text-white text-xs">2. Cat Ba Express (Compartido - Limusina Bus) 🌟 MÁS ECONÓMICA</span>
+              <span className="text-[#D4AF37] font-semibold text-xs">15€ (408.000 VND) p.p. / 30€ total</span>
+            </div>
+            <p className="text-slate-300 text-xs m-0 leading-relaxed">
+              <strong>Horario:</strong> Recogida 7:00 AM en Estación de Botes de Tam Coc. Llegada al muelle a las 11:30 AM.
+            </p>
+            <p className="text-slate-400 text-[11px] m-0 mt-0.5">
+              <strong>Logística:</strong> Deja en Cherry Coffee (Tuan Chau). WhatsApp +84 84 824 4999.
+            </p>
+          </div>
+          <div className="p-2.5 rounded border border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.015)]">
+            <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
+              <span className="font-semibold text-white text-xs">3. Tommy's Travel (Privado - SUV Innova) 🌟 PRIVADO ECONÓMICO</span>
+              <span className="text-[#D4AF37] font-semibold text-xs">~81€ (2.203.200 VND) total</span>
+            </div>
+            <p className="text-slate-300 text-xs m-0 leading-relaxed">
+              <strong>Horario:</strong> Recogida 7:30 AM en el hotel. Llegada directa al muelle a las 11:00 AM.
+            </p>
+            <p className="text-slate-400 text-[11px] m-0 mt-0.5">
+              <strong>Logística:</strong> Puerta a puerta. Conductor privado de Tommy Pham. WhatsApp +84 916 998 777.
+            </p>
+          </div>
+        </div>
+      </div>,
+      "Llegada al puerto de Tuan Chau a las 11:00h - 11:30h. Embarque en Le Journey Luxury Cruise."
     ],
     lunch: "Almuerzo de bienvenida a bordo del crucero.",
     afternoon: [
@@ -287,9 +351,64 @@ const itineraryData: ItineraryDay[] = [
     ],
     lunch: "Comida en Hanói centro tras el traslado de vuelta.",
     afternoon: [
-      "Traslado de vuelta a Hanói. Opciones: Traslado privado Le Journey (60€ / 65 USD) o Bus Limusina compartido (14€ p.p.).",
-      "Dejar maletas en hotel del primer día (Valentino) dándoles una pequeña propina.",
-      "Paseo de compras por el Old Quarter. Subir al Lotte Center Observation Deck a las 19:00h."
+      "Traslado de vuelta del Crucero (Tuan Chau) a Hanói centro (Old Quarter).",
+      <div key="options-aug4" className="mt-3 p-3 rounded-lg border border-[rgba(197,160,89,0.2)] bg-[rgba(10,25,20,0.5)] text-sm">
+        <div className="font-semibold text-[#D4AF37] mb-2 flex items-center gap-1.5 text-xs tracking-wider uppercase">
+          🚗 Opciones de Traslado Ha Long ➔ Hanói Centro (4 de Agosto)
+        </div>
+        <div className="flex flex-col gap-2.5">
+          <div className="p-2.5 rounded border border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.015)]">
+            <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
+              <span className="font-semibold text-white text-xs">1a. Le Journey Limousine Estándar (Compartido - Roxanne)</span>
+              <span className="text-[#D4AF37] font-semibold text-xs">250.000 VND (~9,20€) p.p. / 18,40€ total</span>
+            </div>
+            <p className="text-slate-300 text-xs m-0 leading-relaxed">
+              <strong>Horario:</strong> Salida 11:15 AM del puerto. Deja en el hotel de Hanói a las 3:00 - 3:30 PM.
+            </p>
+            <p className="text-slate-400 text-[11px] m-0 mt-0.5">
+              <strong>Logística:</strong> Minibús compartido estándar del crucero. Roxanne (+84 38 958 6465).
+            </p>
+          </div>
+          <div className="p-2.5 rounded border border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.015)]">
+            <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
+              <span className="font-semibold text-white text-xs">1b. Le Journey Limousine VIP (Compartido - Roxanne)</span>
+              <span className="text-[#D4AF37] font-semibold text-xs">350.000 VND (~13€) p.p. / 26€ total</span>
+            </div>
+            <p className="text-slate-300 text-xs m-0 leading-relaxed">
+              <strong>Horario:</strong> Salida 11:15 AM del puerto. Van VIP D-Car Limusina del crucero.
+            </p>
+            <p className="text-slate-400 text-[11px] m-0 mt-0.5">
+              <strong>Logística:</strong> Confort mejorado. Roxanne (+84 38 958 6465).
+            </p>
+          </div>
+          <div className="p-2.5 rounded border border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.015)]">
+            <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
+              <span className="font-semibold text-white text-xs">2. Le Journey Coche Privado (Privado - Roxanne)</span>
+              <span className="text-[#D4AF37] font-semibold text-xs">1.800.000 VND (~66€) total por coche</span>
+            </div>
+            <p className="text-slate-300 text-xs m-0 leading-relaxed">
+              <strong>Horario:</strong> Salida 11:30 AM tras desembarcar. Llegada directa al hotel Valentino sobre las 2:00 PM.
+            </p>
+            <p className="text-slate-400 text-[11px] m-0 mt-0.5">
+              <strong>Logística:</strong> Puerta a puerta directo por autopista exprés. Roxanne (+84 38 958 6465).
+            </p>
+          </div>
+          <div className="p-2.5 rounded border border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.015)]">
+            <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
+              <span className="font-semibold text-white text-xs">3. Saigon DMC (Privado - vía 12Go Asia) 🌟 PRIVADO MÁS ECONÓMICO</span>
+              <span className="text-[#D4AF37] font-semibold text-xs">~46€ (1.251.200 VND) total por coche</span>
+            </div>
+            <p className="text-slate-300 text-xs m-0 leading-relaxed">
+              <strong>Horario:</strong> Salida 12:15 PM de Tuan Chau. Llegada al hotel Valentino sobre las 2:15 PM.
+            </p>
+            <p className="text-slate-400 text-[11px] m-0 mt-0.5">
+              <strong>Logística:</strong> Reservable online en 12Go.asia. Coche privado para 2 personas.
+            </p>
+          </div>
+        </div>
+      </div>,
+      "Dejar maletas en hotel del primer día (Dalvostro Valentino) dándoles una pequeña propina.",
+      "Tarde libre de paseos y compras en el Old Quarter. Subir al Lotte Center Observation Deck a las 19:00h."
     ],
     dinner: "Cena especial en Grill 63 o Jacksons Steakhouse.",
     hotel: {
@@ -315,9 +434,10 @@ const itineraryData: ItineraryDay[] = [
     lunch: "Comida rápida en el aeropuerto.",
     afternoon: [
       "Llegada al Aeropuerto de Denpasar (Bali). Pasar inmigración con la e-VoA y código QR de Aduanas.",
-      "Traslado Grab/Gojek o conductor privado a Ubud (Kubu Cemcem Mesari Private Villas)."
+      "Traslado Grab/Gojek a Ubud (Kubu Cemcem Mesari Private Villas).",
+      "Opcional (si no, hacer mañana): Paseo corto por Ubud centro en Grab para ver Ubud Palace, Saraswati Temple (exterior iluminado) y tiendas en calle Jalan Raya Ubud."
     ],
-    dinner: "Cena en la villa (solicitar previamente por WhatsApp para tenerla lista al llegar).",
+    dinner: "Cena en la villa (solicitar por WhatsApp antes de llegar) o restaurantes en el centro (Pistachio Ubud o Donna Ubud).",
     hotel: {
       name: "Kubu Cemcem Mesari Private Villas",
       details: "Villa privada con piscina. Desayuno incluido. Pagado en Booking."
@@ -336,12 +456,12 @@ const itineraryData: ItineraryDay[] = [
     morning: [
       "Desayuno en la villa.",
       "Ruta en coche con conductor privado (Pak Hendrik: +62 81999111798).",
-      "Visita al templo Tirta Empul (ritual Melukat) + Templo Gunung Kawi Sebatu."
+      "Visita al templo Tirta Empul (ritual de purificación Melukat opcional) + Templo Gunung Kawi Sebatu."
     ],
-    lunch: "Comida en Suka Espresso (Ubud centro).",
+    lunch: "Comida en Suka Espresso (Ubud centro). Sacar dinero en efectivo en cajero BNI o Mandiri.",
     afternoon: [
-      "Masaje relajante en Gisella Spa.",
-      "Paseo por el Monkey Forest o tiendas de Ubud."
+      "Masaje relajante en [Gisella Spa en Google Maps](https://www.google.com/maps/place/Gisella+Spa+-+Jl+Pengosekan/@-8.5223961,115.2629111,17z/data=!3m1!4b1!4m6!3m5!1s0x2dd23d3ccf0a5bcf:0x31212e456b9211be!8m2!3d-8.5223961!4d115.2629111!16s%2Fg%2F11fhr1z65y!18m1!1e1?entry=ttu).",
+      "Paseo por el Monkey Forest (opcional) o tiendas de Ubud (si no se hizo ayer)."
     ],
     dinner: "Atardecer y cena en Cantina Rooftop Restaurant (Reservado Nadia Alonso 18:30h).",
     hotel: {
@@ -846,9 +966,12 @@ export default function HoneymoonPage() {
                                   <div className={styles.timeBlock}>
                                     <h4>🌅 Mañana</h4>
                                     <ul>
-                                      {dayData.morning.map((step, idx) => (
-                                        <li key={idx}>{step}</li>
-                                      ))}
+                                      {dayData.morning.map((step, idx) => {
+                                        if (typeof step !== "string") {
+                                          return <div key={idx} className={styles.customStepContainer}>{step}</div>;
+                                        }
+                                        return <li key={idx}>{step}</li>;
+                                      })}
                                     </ul>
                                   </div>
                                 )}
@@ -864,9 +987,12 @@ export default function HoneymoonPage() {
                                   <div className={styles.timeBlock}>
                                     <h4>🌇 Tarde</h4>
                                     <ul>
-                                      {dayData.afternoon.map((step, idx) => (
-                                        <li key={idx}>{step}</li>
-                                      ))}
+                                      {dayData.afternoon.map((step, idx) => {
+                                        if (typeof step !== "string") {
+                                          return <div key={idx} className={styles.customStepContainer}>{step}</div>;
+                                        }
+                                        return <li key={idx}>{step}</li>;
+                                      })}
                                     </ul>
                                   </div>
                                 )}

@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Nadia y Adrián | Nuestra Boda",
     description: "Acompáñanos a celebrar nuestro gran día.",
-    url: "https://boda-nadia-adrian.vercel.app", // Placeholder
+    url: "https://nadiayadrian.vercel.app",
     siteName: "Nadia y Adrián Wedding",
     images: [
       {

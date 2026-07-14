@@ -3,12 +3,20 @@
 ## Current Implementations
 * **QR Code Redirect:** Configured a permanent 308 redirect in `next.config.mjs` from `/quiz/quiz` to `/quiz`. This ensures that all printed QR codes resolve correctly.
 * **Honeymoon Page Tab Selection Fix:** Corrected type mismatched string comparisons on the "Luna de miel" page, replacing `"itinerary"` with `"itinerario"`.
-* **Production Deployment:** Authenticated with the primary Vercel account (`alcatamy`) and successfully deployed the correct Next.js project (`boda`) serving `https://nadiayadrian.vercel.app`.
-* **Database Integration:** Configured and verified connection to the live Supabase database for saving and loading wedding quiz scores. Tested score submissions and verified they rank correctly. Cleaned up all test records afterwards.
+* **Itinerary Updates (Vietnam & Bali):** Added detailed items requested by the user:
+  - **July 28 (Hanoi):** Note Coffee/La Place breakfast, Ha Trung money change, Marionetas, Train street.
+  - **July 29 (Hanoi):** Catedral de San José and alternative dinner suggestions.
+  - **July 30 (Sapa):** Lao Cai pickup (sign "Nadia"), Fansipan 3-step route in the morning, waterfalls/spa in the afternoon.
+  - **August 1 (Ninh Binh):** Bus via 12goasia, 14 min walk to hotel, Le Brick/Gao breakfast, motorbike rental map link, Bich Dong/Buffalo/Mua Cave split.
+  - **August 2 (Ninh Binh):** Trang An departure boat ticket map link, takeaway breakfast recommendation.
+  - **August 5 (Bali):** Optional Ubud Palace/Saraswati Temple illuminated walk, Pistachio/Donna dinner suggestions.
+  - **August 6 (Bali):** Optional Melukat, optional Monkey Forest, and Gisella Spa map link.
+* **Production Deployment:** Linked and successfully deployed to the `adrianalcaide-codes-projects` Vercel account under project `boda` (https://boda-beta-five.vercel.app).
 
 ## Technical Decisions
-* **Redirect Level:** Kept Next.js `redirects` in `next.config.mjs` to resolve redirects at Vercel's edge routing level for maximum performance (< 10ms).
-* **Tab Selection typing:** Unified tab values to Spanish keys (`"itinerario"`) to avoid compilation crashes.
+* **Vercel CLI Scope:** Cleaned up `.vercel` linkage, linking explicitly to the project `boda` inside the `adrianalcaide-codes-projects` account (since the previous `alcatamys-projects` account returned 403 Forbidden).
+* **Itinerary Links:** Embedded rich markdown links for Google Maps locations directly into the itinerary details.
 
 ## Next Focus
-* Monitor wedding quiz responses and rankings when guests start playing.
+* Prepare for wedding guest RSVPs and monitor quiz scores.
+

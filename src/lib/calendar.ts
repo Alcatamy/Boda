@@ -1,6 +1,6 @@
 export const eventDetails = {
   title: "Boda de Nadia y Adrián",
-  description: "¡Nos casamos! Estamos deseando celebrar este día contigo. Todos los detalles en: https://boda-nadia-adrian.vercel.app/",
+  description: "¡Nos casamos! Estamos deseando celebrar este día contigo. Todos los detalles en: https://nadiayadrian.vercel.app/",
   location: "Hacienda Mityana, Ctra. M-607, Km 37.8, 28770 Colmenar Viejo, Madrid",
   startDate: "2026-07-25T18:00:00",
   endDate: "2026-07-26T05:00:00",

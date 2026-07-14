@@ -6,7 +6,7 @@ import { Printer, ArrowLeft, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
 export default function QuizQRPage() {
-  const [baseUrl, setBaseUrl] = useState("https://boda-nadia-adrian.vercel.app");
+  const [baseUrl, setBaseUrl] = useState("https://nadiayadrian.vercel.app");
   const [qrUrl, setQrUrl] = useState("");
   const [isLocalhost, setIsLocalhost] = useState(false);
 
@@ -86,7 +86,7 @@ export default function QuizQRPage() {
             lineHeight: "1.4",
             textAlign: "left"
           }}>
-            ⚠️ <strong>Modo Desarrollo Detectado:</strong> El código QR apunta a <strong>{qrUrl}</strong>. Para imprimir el cartel definitivo para la boda, asegúrate de escribir vuestra dirección web de producción en el cuadro de texto abajo (ej: <code>https://boda-nadia-adrian.vercel.app</code>) para que los invitados puedan entrar desde sus teléfonos móviles.
+            ⚠️ <strong>Modo Desarrollo Detectado:</strong> El código QR apunta a <strong>{qrUrl}</strong>. Para imprimir el cartel definitivo para la boda, asegúrate de escribir vuestra dirección web de producción en el cuadro de texto abajo (ej: <code>https://nadiayadrian.vercel.app</code>) para que los invitados puedan entrar desde sus teléfonos móviles.
           </div>
         )}
         

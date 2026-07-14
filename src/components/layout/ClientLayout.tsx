@@ -12,6 +12,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     const pathname = usePathname();
     const isAdmin = pathname?.startsWith('/admin');
     const isQuiz = pathname?.startsWith('/quiz');
+    const isHoneymoon = pathname?.startsWith('/luna-de-miel');
 
     const [hasOpenedEnvelope, setHasOpenedEnvelope] = useState(false);
     const [showContent, setShowContent] = useState(false);
@@ -37,7 +38,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         setShowContent(true);
     };
 
-    if (isAdmin || isQuiz) {
+    if (isAdmin || isQuiz || isHoneymoon) {
         return <>{children}</>;
     }
 
