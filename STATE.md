@@ -11,12 +11,13 @@
   - **August 2 (Ninh Binh):** Trang An departure boat ticket map link, takeaway breakfast recommendation.
   - **August 5 (Bali):** Optional Ubud Palace/Saraswati Temple illuminated walk, Pistachio/Donna dinner suggestions.
   - **August 6 (Bali):** Optional Melukat, optional Monkey Forest, and Gisella Spa map link.
-* **Production Deployment:** Linked and successfully deployed to the `adrianalcaide-codes-projects` Vercel account under project `boda` (https://boda-beta-five.vercel.app).
+* **Production Deployment:** Linked and successfully deployed to the `alcatamys-projects` Vercel account under project `boda` (serving `https://nadiayadrian.vercel.app`).
 
 ## Technical Decisions
-* **Vercel CLI Scope:** Cleaned up `.vercel` linkage, linking explicitly to the project `boda` inside the `adrianalcaide-codes-projects` account (since the previous `alcatamys-projects` account returned 403 Forbidden).
+* **Vercel CLI Scope:** Configured `.vercel/project.json` to link to `alcatamys-projects/boda` (projectId `prj_JkS9OQzuZ2z0EkKIv59doS40mt2t`), using a Vercel token to bypass the local CLI session scope.
 * **Itinerary Links:** Embedded rich markdown links for Google Maps locations directly into the itinerary details.
 
 ## Next Focus
 * Prepare for wedding guest RSVPs and monitor quiz scores.
+
 
