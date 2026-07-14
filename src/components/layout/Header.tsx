@@ -24,6 +24,7 @@ export default function Header() {
     { name: "RSVP", href: "/#rsvp" },
     { name: "Detalles", href: "/#logistics" },
     { name: "Quiz 🎮", href: "/quiz" },
+    { name: "Luna de Miel ✈️", href: "/luna-de-miel" },
   ];
 
   return (
