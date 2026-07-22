@@ -6,20 +6,16 @@ import styles from "./GallerySection.module.css";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
+import UploadWidget from "./UploadWidget";
+
 type Photo = {
   id: string;
   storage_path: string;
   caption: string;
 };
 
-// Wedding date: July 25, 2026
-const WEDDING_DATE = new Date("2026-07-25T00:00:00");
-
 export default function GallerySection() {
   const [photos, setPhotos] = useState<Photo[]>([]);
-
-  // Hide section until wedding day
-  const isWeddingDay = new Date() >= WEDDING_DATE;
 
   const fetchPhotos = useCallback(async () => {
     // Only approved photos
@@ -33,24 +29,17 @@ export default function GallerySection() {
   }, []);
 
   useEffect(() => {
-    if (!isWeddingDay) return; // Don't fetch if hidden
-
     // eslint-disable-next-line
     fetchPhotos();
 
-    // Optional: Real-time subscription
+    // Real-time subscription
     const channel = supabase
       .channel('public:photos')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'photos' }, fetchPhotos)
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [fetchPhotos, isWeddingDay]);
-
-  // Don't render until wedding day
-  if (!isWeddingDay) {
-    return null;
-  }
+  }, [fetchPhotos]);
 
   const getImageUrl = (path: string) => {
     const { data } = supabase.storage.from('photos').getPublicUrl(path);
@@ -69,6 +58,10 @@ export default function GallerySection() {
           <h2 className={styles.title}>Galería de Invitados</h2>
           <p className={styles.subtitle}>Recuerdos de nuestro gran día</p>
         </motion.div>
+
+        <div style={{ marginBottom: "2rem", display: "flex", justifyContent: "center" }}>
+          <UploadWidget onUploadComplete={fetchPhotos} />
+        </div>
 
         <div className={styles.grid}>
           {photos.map((photo) => (
