@@ -21,3 +21,9 @@ with check (true);
 create policy "Allow public score selection"
 on public.quiz_scores for select to anon
 using (true);
+
+-- Política: Permitir borrar puntuaciones (para limpiar pruebas)
+create policy "Allow public score deletion"
+on public.quiz_scores for delete to anon
+using (true);
+

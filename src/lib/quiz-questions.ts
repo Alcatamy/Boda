@@ -12,12 +12,12 @@ export const quizQuestions: QuizQuestion[] = [
     question: "¿Dónde se conocieron Nadia y Adrián?",
     options: [
       "En un festival de música electrónica",
-      "En un pabellón deportivo",
+      "En una ceremonia de premios",
       "En el cumpleaños de un amigo en común",
       "Por una app de citas (y fingen que fue en una cafetería)"
     ],
     correctAnswer: 1,
-    funFact: "¡En un pabellón deportivo! El deporte une pasiones y, en este caso, también corazones."
+    funFact: "¡En una ceremonia de premios! Entre aplausos, galardones y elegancia fue donde saltó la verdadera chispa."
   },
   {
     id: 2,
@@ -35,13 +35,13 @@ export const quizQuestions: QuizQuestion[] = [
     id: 3,
     question: "Si tuvieran que comer un solo plato el resto de su vida, ¿cuál elegirían de mutuo acuerdo?",
     options: [
-      "Pizza artesanal",
+      "Pasta",
       "Sushi de salmón y atún",
       "Tacos al pastor bien picantes",
       "Tortilla de patatas (con cebolla, por supuesto)"
     ],
     correctAnswer: 0,
-    funFact: "La pizza une matrimonios y soluciona cualquier cena de domingo."
+    funFact: "¡La pasta en todas sus variaciones! Podrían alimentarse a base de espaguetis y macarrones los 365 días del año sin cansarse."
   },
   {
     id: 4,
@@ -101,43 +101,43 @@ export const quizQuestions: QuizQuestion[] = [
       "Tienen una brújula interna infalible"
     ],
     correctAnswer: 1,
-    funFact: "¡Nadia se pierde incluso con Google Maps puesto! Menos mal que Adrián tiene un sentido de la orientación un poco mejor."
+    funFact: "¡Nadia se pierde incluso con el GPS puesto en su propia calle! Menos mal que Adrián posee un GPS satelital integrado e infalible."
   },
   {
     id: 9,
     question: "¿Qué es lo que más le saca de quicio a Nadia de Adrián?",
     options: [
-      "Que deje calcetines desparejados por el salón",
+      "Que la tenga siempre esperando diciendo '¡ya voy, me queda 1 minuto!'",
       "Que tarde tanto en decidir qué peli ver",
       "Que le robe patatas fritas cuando ella dijo que no quería",
       "Que ponga 5 alarmas cada mañana con 5 minutos de diferencia"
     ],
     correctAnswer: 0,
-    funFact: "¡Los calcetines huérfanos por el salón! El gran misterio de la física doméstica."
+    funFact: "¡La mítica frase 'ya salgo, me quedan 30 segundos' de Adrián, que misteriosamente se transforman en 20 minutos de espera!"
   },
   {
     id: 10,
     question: "¿Y qué es lo que más le saca de quicio a Adrián de Nadia?",
     options: [
-      "Que tenga la casa a 18°C en invierno para poder usar mantas",
-      "Que le robe toda la manta por la noche y le deje helado",
+      "Que le robe su sitio favorito en el sofá en cuanto se levanta un segundo",
+      "Que haga -10 °C en la calle y abra todas las ventanas de la casa durante 3 horas para ventilar",
       "Que use su taza favorita de café",
       "Que tarde 45 minutos en elegir plato en el restaurante"
     ],
     correctAnswer: 1,
-    funFact: "Adrián ha perfeccionado la técnica del anclaje de sábana para sobrevivir a la noche."
+    funFact: "¡Ventilar a temperatura polar! Adrián debe ponerse el abrigo dentro de casa en pleno invierno mientras Nadia renueva el aire."
   },
   {
     id: 11,
     question: "¿Quién es el más ordenado de la casa?",
     options: [
       "Adrián (todo organizado por colores, tamaños y fechas)",
-      "Nadia (su orden es conceptual, ella sabe dónde está todo en su caos)",
+      "Nadia (su nivel de orden es supremo y sabe las coordenadas exactas de todo)",
       "Los dos son muy caóticos (su casa es una zona de guerra pacífica)",
       "Tienen una rutina impecable de limpieza compartida"
     ],
     correctAnswer: 1,
-    funFact: "¡Nadia mantiene el orden impecable en el hogar! Adrián hace lo que puede, pero Nadia es la verdadera jefa de organización."
+    funFact: "¡Nadia tiene un radar milimétrico para el orden! Sabe la posición exacta de cada objeto en la casa sin dudar un segundo."
   },
   {
     id: 12,
@@ -156,12 +156,12 @@ export const quizQuestions: QuizQuestion[] = [
     question: "¿Cuál es su plan favorito para un domingo de lluvia?",
     options: [
       "Salir a hacer senderismo con chubasquero",
-      "Café calentito, mantita y videojuegos/juegos de mesa",
+      "Café calentito, mantita, maratón de series/pelis y juegos de mesa",
       "Ir al cine a ver una peli y comer palomitas gigantes",
       "Limpieza general profunda de toda la casa"
     ],
     correctAnswer: 1,
-    funFact: "Los domingos de mantita, café y piques al Mario Kart no se cambian por nada."
+    funFact: "Los domingos de mantita, café y maratonear 10 temporadas seguidas sin levantarse del sofá no se cambian por nada."
   },
   {
     id: 14,
@@ -169,11 +169,11 @@ export const quizQuestions: QuizQuestion[] = [
     options: [
       "Adrián (aparatos tecnológicos que usará una sola vez)",
       "Nadia (decoración, plantas y cosas bonitas para la casa)",
-      "Ambos por igual (el cartero ya es casi testigo de boda)",
+      "Ambos por igual (el cartero ya es casi un testigo de boda)",
       "Son súper ahorradores y lo compran todo en tiendas físicas"
     ],
-    correctAnswer: 0,
-    funFact: "¡Adrián! Sus paquetes con tecnología y gadgets inútiles llegan a ritmo casi diario."
+    correctAnswer: 2,
+    funFact: "¡Empate técnico! Entre la tecnología de Adrián y la decoración de Nadia, el repartidor de Amazon ya saluda por su nombre de pila."
   },
   {
     id: 15,

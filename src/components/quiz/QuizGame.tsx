@@ -68,6 +68,22 @@ export default function QuizGame() {
     if (savedMute) {
       setIsMuted(savedMute === "true");
     }
+
+    // Clean up test scores from local storage
+    try {
+      const localRaw = localStorage.getItem("local_quiz_scores");
+      if (localRaw) {
+        const parsed: ScoreEntry[] = JSON.parse(localRaw);
+        const filtered = parsed.filter((s) => {
+          const n = (s.player_name || "").toLowerCase();
+          return !n.includes("adrian") && !n.includes("alcaide") && !n.includes("prueba") && !n.includes("test");
+        });
+        localStorage.setItem("local_quiz_scores", JSON.stringify(filtered));
+      }
+    } catch (e) {
+      console.warn("Error cleaning local scores:", e);
+    }
+
     fetchLeaderboard();
   }, []);
 
@@ -86,14 +102,19 @@ export default function QuizGame() {
       if (!res.ok) throw new Error("No se pudo obtener el ranking");
       const data = await res.json();
       if (data.success) {
-        let scoresList = data.scores || [];
+        let scoresList = (data.scores || []).filter((s: any) => {
+          const n = (s.player_name || "").toLowerCase();
+          return !n.includes("adrian") && !n.includes("alcaide") && !n.includes("prueba") && !n.includes("test");
+        });
         
         // Merge with local storage entries for this browser (so they see their offline runs!)
         const localScoresRaw = localStorage.getItem("local_quiz_scores");
         if (localScoresRaw) {
           const localScores: ScoreEntry[] = JSON.parse(localScoresRaw);
-          // Check if they are already in the database response to avoid duplication
           localScores.forEach((local) => {
+            const n = (local.player_name || "").toLowerCase();
+            if (n.includes("adrian") || n.includes("alcaide") || n.includes("prueba") || n.includes("test")) return;
+
             const exists = scoresList.some(
               (s: any) =>
                 s.player_name === local.player_name &&
@@ -120,7 +141,11 @@ export default function QuizGame() {
       // fallback
       const localScoresRaw = localStorage.getItem("local_quiz_scores");
       if (localScoresRaw) {
-        setLeaderboardScores(JSON.parse(localScoresRaw));
+        const filtered = JSON.parse(localScoresRaw).filter((s: any) => {
+          const n = (s.player_name || "").toLowerCase();
+          return !n.includes("adrian") && !n.includes("alcaide") && !n.includes("prueba") && !n.includes("test");
+        });
+        setLeaderboardScores(filtered);
       }
     } finally {
       setIsLoadingScores(false);

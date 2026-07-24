@@ -195,13 +195,6 @@ export default function LeaderboardStep({
     });
   };
 
-  const handleClearLocalScores = () => {
-    if (window.confirm("¿Seguro que quieres borrar todas las puntuaciones locales?")) {
-      localStorage.removeItem("local_quiz_scores");
-      onRefresh();
-    }
-  };
-
   return (
     <div className={styles.fadeIn}>
       {/* ─── CURRENT USER RESULTS HEADER (ONLY SHOWN IF JUST PLAYED) ─── */}
@@ -442,15 +435,6 @@ export default function LeaderboardStep({
             style={{ width: "100%" }}
           >
             <ArrowLeft size={16} /> Volver al Inicio
-          </button>
-
-          <button
-            onClick={handleClearLocalScores}
-            className={styles.btnSecondary}
-            type="button"
-            style={{ width: "100%", borderColor: "rgba(244, 67, 54, 0.4)", color: "#f44336" }}
-          >
-            Borrar Resultados
           </button>
         </div>
       </div>

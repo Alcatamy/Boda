@@ -16,13 +16,22 @@ export async function GET() {
     const { data, error } = await supabase
       .from('quiz_scores')
       .select('player_name, group_name, score, total_questions, time_taken_seconds')
+      .not('player_name', 'ilike', '%adri%alcaide%')
+      .not('player_name', 'ilike', '%prueba%')
+      .not('player_name', 'ilike', '%test%')
       .order('score', { ascending: false })
       .order('time_taken_seconds', { ascending: true })
       .limit(20);
 
     if (error) throw error;
+
+    const cleanScores = (data || []).filter((s: any) => {
+      const n = (s.player_name || '').toLowerCase();
+      return !n.includes('adrian') && !n.includes('alcaide') && !n.includes('prueba') && !n.includes('test');
+    });
     
-    return NextResponse.json({ success: true, scores: data || [] });
+    return NextResponse.json({ success: true, scores: cleanScores });
+
   } catch (error: any) {
     console.warn('Using mock fallback for quiz scores:', error.message || error);
     // Devuelve un array vacío para empezar la clasificación limpia de prueba
@@ -74,4 +83,25 @@ export async function POST(request: Request) {
     });
   }
 }
+
+// DELETE: Borrar todas las puntuaciones de prueba
+export async function DELETE() {
+  try {
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase is not configured');
+    }
+
+    const { data, error } = await supabase
+      .from('quiz_scores')
+      .delete()
+      .gte('score', 0);
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true, data });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+
 
