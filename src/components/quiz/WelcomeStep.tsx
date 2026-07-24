@@ -70,12 +70,6 @@ export default function WelcomeStep({ onStart, isLoadingLeaderboard, onViewLeade
             Ver Clasificación 🏆
           </button>
         </div>
-
-        <div style={{ marginTop: "2rem", textAlign: "center" }}>
-          <Link href="/quiz/qr" style={{ fontSize: "0.75rem", color: "var(--color-primary-gold)", textDecoration: "underline", letterSpacing: "0.05em" }}>
-            🖨️ Carteles de mesa y Código QR para imprimir
-          </Link>
-        </div>
       </form>
     </div>
   );
