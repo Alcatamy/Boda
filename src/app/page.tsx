@@ -3,7 +3,6 @@ import Story from "@/components/layout/Story";
 import Logistics from "@/components/layout/Logistics";
 import RsvpSection from "@/components/rsvp/RsvpSection";
 import GiftRegistry from "@/components/features/GiftRegistry";
-import GallerySection from "@/components/gallery/GallerySection";
 import WaveDivider from "@/components/ui/WaveDivider";
 import SectionIcon from "@/components/ui/SectionIcon";
 
@@ -27,10 +26,6 @@ export default function Home() {
         <WaveDivider flip />
         <SectionIcon src="https://premiumelegante.thedigitalyes.com/assets/floral-vase-6x28LN74.png" />
         <GiftRegistry />
-        
-        <WaveDivider />
-        <SectionIcon src="https://premiumelegante.thedigitalyes.com/assets/swans-framed-ByH4RE7t.png" />
-        <GallerySection />
         
         <footer style={{
           display: "flex",
