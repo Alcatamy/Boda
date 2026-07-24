@@ -66,12 +66,12 @@ export default function Story() {
             transition={{ duration: 0.5, delay: (i % 5) * 0.08 }}
             onClick={() => setSelectedPhoto(photo)}
           >
-            <OptimizedImage
+            <img
               src={photo}
-              alt={`Historia - ${index}`}
-              fill
-              sizes="(max-width: 768px) 35vw, 150px"
+              alt={`Nuestra historia - ${index + 1}`}
+              loading="lazy"
               className={styles.image}
+              style={{ objectFit: "cover", width: "100%", height: "100%", display: "block" }}
             />
           </motion.div>
         );

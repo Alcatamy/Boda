@@ -104,9 +104,7 @@ export default function OptimizedImage({
           />
         )}
         {hasError && (
-          <div className={styles.errorFallback}>
-            <span>Imagen no disponible</span>
-          </div>
+          <div className={styles.errorFallback} />
         )}
       </div>
     );
