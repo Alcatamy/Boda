@@ -12,12 +12,12 @@ export const quizQuestions: QuizQuestion[] = [
     question: "¿Dónde se conocieron Nadia y Adrián?",
     options: [
       "En un festival de música electrónica",
-      "En una ceremonia de premios",
+      "En una ceremonia de premiación",
       "En el cumpleaños de un amigo en común",
       "Por una app de citas (y fingen que fue en una cafetería)"
     ],
     correctAnswer: 1,
-    funFact: "¡En una ceremonia de premios! Entre aplausos, galardones y elegancia fue donde saltó la verdadera chispa."
+    funFact: "¡En una ceremonia de premiación! Entre aplausos, galardones y elegancia fue donde saltó la verdadera chispa."
   },
   {
     id: 2,
