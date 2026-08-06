@@ -91,26 +91,13 @@ const TABLES: TableConfig[] = [
   { id: 18, name: 'Triple Corona' }
 ];
 
-const SEATS: Record<number, string[]> = {
-  1: ['Adrián', 'Nadia', 'Antonio', 'Raquel', 'Rafael', 'Mariví'],
-  2: ['Marta', 'Roberto', 'Ana', 'Nerea', 'Emma', 'Gabi', 'Silvia', 'Mary', 'Antonio'],
-  3: ['Virtudes', 'Ana', 'Manolo', 'Kiko', 'Martín', 'Leti', 'Andrea', 'Raúl'],
-  4: ['Josema', 'Soraya', 'Moreno', 'Nacho', 'Maca', 'Lucía', 'Pablo', 'Víctor', 'Aroa'],
-  5: ['Óscar', 'Laura', 'Claudia', 'Myri', 'Álvaro', 'Patri', 'Ale', 'Ana R', 'Alex'],
-  6: ['Mercedes', 'Carla', 'Víctor', 'Ana', 'Paula', 'Hugo', 'Jose V', 'Merce', 'Martín'],
-  7: ['Gerardo', 'Jimena', 'Esther', 'Gabi', 'Lucía', 'Bea', 'Jesús'],
-  8: ['Mariví', 'Juan Manuel', 'Beatriz', 'Gaizka', 'Ucho', 'Rafa', 'Úrsula', 'Novio'],
-  9: ['Lupe', 'Jose', 'Sergio', 'Uxue', 'Maitane', 'Luken', 'Darío', 'Ashraf', 'Rubén'],
-  10: ['Pepe', 'Lexis', 'Álvarez', 'Raquel', 'Claudia', 'Alex D.P', 'Vigar', 'Ludo', 'Giorgio'],
-  11: ['Tamara', 'Nacho', 'Nacho', 'Sandra', 'Marcos', 'Oliver', 'Sara', 'Sandra', 'Enrique'],
-  12: ['Luis', 'Juani', 'Javi', 'Luisje', 'Nines', 'Leo', 'Loli', 'Dioni', 'Rosi'],
-  13: ['Charo', 'Chelo', 'Pedro', 'Samuel', 'Mariana', 'Nerea', 'Víctor', 'Joel'],
-  14: ['Ernesto', 'Andoni', 'Alberto', 'Arturo', 'Lucía', 'Ignacio', 'Laia', 'Íñigo', 'Ainhoa'],
-  15: ['Ana', 'Diana', 'Valle', 'Cris', 'Lola'],
-  16: ['Alberto', 'Leticia', 'Alfredo', 'Alfredito', 'Alba', 'Alba', 'Elena', 'Fran', 'Kiko'],
-  17: ['Joel', 'Iván', 'Elena', 'Mirian', 'Alba', 'Dieguito', 'Diego', 'Esther', 'Natalia'],
-  18: ['Marisa', 'Gonzalo', 'Julián', 'Nieves', 'Adri', 'Andrei', 'Laura', 'Lucía']
-};
+// Seat templates are intentionally empty: the saved seating plan in Supabase
+// (seating_plan.plan_data) is the single source of truth. Previously this map
+// held a stale, hard-coded arrangement that the loader re-injected on every
+// load (see reconcile step in loadData), which repeatedly re-created phantom
+// "?" guests and inflated the per-table counts. Leaving it empty keeps the
+// planner showing exactly what is saved.
+const SEATS: Record<number, string[]> = {};
 
 const KIDS = new Set(['Emma', 'Martín', 'Paula', 'Hugo', 'Uxue', 'Luken', 'Darío', 'Fran', 'Dieguito']);
 
